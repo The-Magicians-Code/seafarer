@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Improving situational awareness of autonomous vessels using computer vision</title>
+  <style>
+    :root {
+      --fg: #1a1a1a;
+      --muted: #6b6b6b;
+      --border: #e2e2e2;
+      --bg: #ffffff;
+      --accent: #1a1a1a;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      color: var(--fg);
+      background: var(--bg);
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 0.7rem 1.2rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .meta {
+      margin-top: 0.2rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid var(--border);
+      background: #fafafa;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--fg);
+    }
+    .tab:hover { background: #f0f0f0; }
+    .tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .download {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .download:hover { color: var(--fg); }
+    iframe {
+      flex: 1;
+      border: 0;
+      width: 100%;
+      background: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Improving situational awareness of autonomous vessels using computer vision</h1>
+    <div class="meta">Tanel Treuberg &middot; TalTech bachelor&rsquo;s thesis &middot; 2023</div>
+  </header>
+  <nav>
+    <button class="tab active" data-lang="et" type="button">Eesti</button>
+    <button class="tab" data-lang="en" type="button">English</button>
+    <a id="download" class="download" href="thesis-et.pdf" download>&darr; Download PDF</a>
+  </nav>
+  <iframe id="viewer" src="thesis-et.pdf" title="Thesis PDF"></iframe>
+
+  <script>
+    (function () {
+      var viewer = document.getElementById('viewer');
+      var download = document.getElementById('download');
+      var tabs = document.querySelectorAll('.tab');
+
+      function select(lang) {
+        var src = 'thesis-' + lang + '.pdf';
+        viewer.src = src;
+        download.href = src;
+        tabs.forEach(function (t) {
+          t.classList.toggle('active', t.dataset.lang === lang);
+        });
+        try {
+          history.replaceState(null, '', '#' + lang);
+        } catch (e) { /* ignore */ }
+      }
+
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () { select(t.dataset.lang); });
+      });
+
+      var initial = (location.hash || '').replace('#', '');
+      if (initial === 'en' || initial === 'et') select(initial);
+    })();
+  </script>
+</body>
+</html>
