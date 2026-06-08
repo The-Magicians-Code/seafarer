@@ -24,6 +24,8 @@
 *.acr
 *.alg
 *.run.xml
+*.bcf
+missfont.log
 
 # macOS
 .DS_Store
