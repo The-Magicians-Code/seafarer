@@ -1,0 +1,23 @@
+
+For the development of the computer-vision system, suitable components were identified that, in the end result, worked well together, ensuring the system's successful, conformant operation in both hardware and software.
+
+In hardware terms, the chosen control unit was the Nvidia Jetson AGX Xavier, which can successfully run larger and more accurate neural-network models with multiple inputs. The hardware of this controller also allowed high-throughput model acceleration, which substantially contributed to the rate at which the computer-vision application processes frames received from the camera. The Arducam Fisheye module chosen as the camera also contributed to more accurate object detection by delivering information at the required resolution to the control unit.
+
+On the software side, containerising the entire application played a key role. It made development and running in the production environment easier, since the application could be run on different computer systems without modifications to the system software itself.
+
+The most important component of the computer-vision software was the chosen object-detection method, i.e.\ the neural-network models built for computer vision. From among them, YOLOv5 by Ultralytics was selected. It was the best compared with the other models available, both for its unified object-detection-and-classification architecture and for the best ratio of speed to accuracy. It was also one of the few models available that could be successfully accelerated in hardware.
+
+The most important results from the computer-vision model experiments:
+
+\begin{itemize}
+\item
+  Computer-vision model accuracy grows up to the YOLOv5m / YOLOv5l models.
+\item
+  The mean accuracy change between optimised and unoptimised models was small ($1.7 \cdot 10^{-3}$).
+\item
+  The mean model speed-up after optimisation was 3.5$\times$.
+\item
+  The best optimised model's speed gain compared with its unoptimised version was 4.3$\times$.
+\end{itemize}
+
+When optimising the computer-vision application, smooth and accelerated application performance was achieved; the optimisation also significantly reduced the control unit's energy consumption (by 26.8\%) and as a result the operating temperatures were lower. Consequently, data processing and the neural network's operation also became significantly faster, and all of the control unit's hardware accelerators were put to good use.
