@@ -1,0 +1,1491 @@
+% ============================================================
+%  BSc Thesis — Tanel Treuberg
+%  Tallinn University of Technology, 2023
+%  "Improving situational awareness of autonomous vessels
+%   using computer vision"
+%
+%  Generated from .docx source via pandoc + cleanup.
+%  Primary language: English | Secondary: Estonian
+% ============================================================
+
+\documentclass[12pt,a4paper]{report}
+
+% ── Encoding & fonts ────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage{lmodern} % not installed
+
+% ── Language (EN primary, ET secondary) ─────────────────────
+% babel: last listed = document default
+\usepackage[english]{babel}
+\babelprovide[import]{estonian}
+
+% ── Page geometry ────────────────────────────────────────────
+\usepackage[
+  a4paper,
+  top=25mm,
+  bottom=25mm,
+  left=30mm,
+  right=20mm
+]{geometry}
+
+% ── Line spacing ─────────────────────────────────────────────
+\usepackage{setspace}
+\onehalfspacing
+
+% ── Graphics ─────────────────────────────────────────────────
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[
+  labelfont=bf,
+  justification=centering
+]{caption}
+
+% ── Tables ───────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{multirow}
+\usepackage{ragged2e}
+
+% ── Maths (for the one equation) ─────────────────────────────
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ── Hyperlinks & PDF metadata ────────────────────────────────
+\usepackage[
+  pdftitle={Improving situational awareness of autonomous vessels using computer vision},
+  pdfauthor={Tanel Treuberg},
+  pdfsubject={Bachelor's Thesis, Tallinn University of Technology, 2023},
+  pdfkeywords={computer vision, machine vision, embedded system, optimisation,
+               containerisation, neural network, machine learning, hardware acceleration},
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black,
+  bookmarks=true,
+  bookmarksnumbered=true
+]{hyperref}
+
+% ── Misc ─────────────────────────────────────────────────────
+\usepackage[disable]{microtype}
+\usepackage{xurl}        % allow URL breaks anywhere
+\usepackage{parskip}     % space between paragraphs, no indent
+\usepackage{enumitem}    % control list spacing
+
+% ── Max image width = text width (prevents overfull hboxes) ──
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+% ── Redefine \paragraph so pandoc-generated paragraphs
+%    render as bold run-in headings rather than full sections ─
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\z@}%
+  {1ex \@plus 0.5ex \@minus .2ex}{-1em}%
+  {\normalfont\normalsize\bfseries}}
+\makeatother
+
+% ────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── TITLE PAGE ───────────────────────────────────────────────
+\begin{titlepage}
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{./media/media/image1.png}
+
+    \vspace{0.5cm}
+    {\large TALLINN UNIVERSITY OF TECHNOLOGY\\
+    School of Engineering\\
+    Department of Electrical Power Engineering and Mechatronics}
+
+    \vspace{3cm}
+    {\LARGE \textbf{Improving Situational Awareness of Autonomous Vessels\\
+    Using Computer Vision}}
+
+    \vspace{0.5cm}
+    {\large \textit{Autonoomse laeva situatsiooniteadlikkuse arendamine masinnägemise abil}}
+
+    \vspace{1cm}
+    {\large BACHELOR'S THESIS}
+
+    \vfill
+
+    \begin{tabular}{ll}
+      \textbf{Student:}          & Tanel Treuberg \\
+      \textbf{Student code:}     & 193761EAAB \\
+      \textbf{Supervisor:}       & Heigo Mõlder, PhD \\
+      \textbf{Co-supervisor:}    & Karl Janson, PhD \\
+    \end{tabular}
+
+    \vspace{1cm}
+    {\large Tallinn 2023}
+  \end{center}
+\end{titlepage}
+
+% ── ABSTRACT (Estonian) ───────────────────────────────────────
+\section*{LÕPUTÖÖ LÜHIKOKKUVÕTE}
+\addcontentsline{toc}{section}{Lõputöö lühikokkuvõte}
+\begin{otherlanguage}{estonian}
+\noindent
+\begin{tabular}{@{}ll@{}}
+  \emph{Autor:}     & Tanel Treuberg \\
+  \emph{Liik:}      & Bakalaureusetöö \\
+  \emph{Kuupäev:}   & 18.05.2023 \quad 58~lk \\
+  \emph{Ülikool:}   & Tallinna Tehnikaülikool \\
+  \emph{Teaduskond:}& Inseneriteaduskond \\
+  \emph{Instituut:} & Elektroenergeetika ja mehhatroonika instituut \\
+  \emph{Juhendaja:} & Heigo Mõlder (PhD), Karl Janson (PhD) \\
+  \emph{Konsultant:}& Uljana Reinsalu (PhD) \\
+\end{tabular}
+
+\vspace{0.5em}
+\noindent\textbf{Pealkiri:} Autonoomse laeva situatsiooniteadlikkuse arendamine masinnägemise abil
+
+\vspace{0.5em}
+\noindent\textbf{Sisu:} Lõputöö eesmärgiks on arendada välja masinnägemise süsteem, mis sobib
+laeva käigukatsete automatiseeritud läbiviimiseks. See eeldab sobiva riistvara ja masinnägemise
+mudeli valikut, masinnägemise süsteemi tarkvara loomist, süsteemi katsetusi ning tulemuste
+analüüsi. Analüüsis võrreldakse erinevate mudelite täpsust ja kiirust. Samuti uuritakse välja,
+kuidas ning milliste meetoditega on võimalik optimeerida tarkvara nii, et võimalikult efektiivselt
+utiliseerida riistvara ning selle tulemusena ka tarkvara tööd sujuvamaks ning kiiremaks muuta.
+
+\vspace{0.5em}
+\noindent\textbf{Märksõnad:} masinnägemine, tehisintellekt, sardsüsteem, manussüsteem,
+optimeerimine, konteinerdamine, virtuaalkeskkond, närvivõrk, masinõpe, riistvara kiirendus
+\end{otherlanguage}
+
+% ── ABSTRACT (English) ───────────────────────────────────────
+\section*{ABSTRACT}
+\addcontentsline{toc}{section}{Abstract}
+
+\noindent
+\begin{tabular}{@{}ll@{}}
+  \emph{Author:}     & Tanel Treuberg \\
+  \emph{Type:}       & Bachelor's Thesis \\
+  \emph{Date:}       & 18.05.2023 \quad 58~pages \\
+  \emph{University:} & Tallinn University of Technology \\
+  \emph{School:}     & School of Engineering \\
+  \emph{Department:} & Department of Electrical Power Engineering and Mechatronics \\
+  \emph{Supervisors:}& Heigo Mõlder (PhD), Karl Janson (PhD) \\
+  \emph{Consultant:} & Uljana Reinsalu (PhD) \\
+\end{tabular}
+
+\vspace{0.5em}
+\noindent\textbf{Title:} Improving situational awareness of autonomous vessels using
+computer vision
+
+\vspace{0.5em}
+\noindent\textbf{Abstract:} The aim of the thesis is to develop a computer vision system
+suitable for automated vessel maneuvering tests. This involves selecting appropriate hardware
+and computer vision model, developing software for the computer vision system, conducting
+system tests, and analysing the results. The analysis compares the accuracy and speed of
+different computer vision models. Additionally, research is conducted to determine ways to
+optimize the software in order to efficiently utilize the hardware and thereby make the system
+run smoother and faster.
+
+\vspace{0.5em}
+\noindent\textbf{Keywords:} computer vision, machine vision, embedded system, optimisation,
+containerisation, virtual environment, neural network, machine learning, hardware acceleration
+
+% ── TABLE OF CONTENTS ────────────────────────────────────────
+\tableofcontents
+\listoffigures
+\listoftables
+
+\section*{EESSÕNA}\label{eessuxf5na}
+\addcontentsline{toc}{section}{EESSÕNA}
+
+Käesoleva lõputöö teema kontsept algatati koostöös juhendajatega: Heigo Mõlder ja Karl Janson. Töös kirjeldatud ning selle käigus valminud süsteem on kasutusel TalTechi ja Baltic Workboatsi koostööprojektis „Laevade eelseadistatud autonoomsete avaveekatsete tehnoloogia arendamine``.
+
+Soovin tänada juhendajat Heigo Mõlder abi, lõputöö teema ja juhendamise eest, kaasjuhendajat Karl Janson tehnilise lahenduse läbiviimise assisteerimisel ning konsultanti Uljana Reinsalu närvivõrkude teemadel abi eest.
+
+\section*{Lühendite ja tähiste loetelu}\label{luxfchendite-ja-tuxe4histe-loetelu}
+\addcontentsline{toc}{section}{Lühendite ja tähiste loetelu}
+
+AIS automaatne identifitseerimise süsteem (\emph{ingl. k} \emph{Automatic Identification System)}
+
+ARM Arm Holdings'i poolt arendatav vähendatud käsustikuga arvutiarhitektuur (\emph{ingl. k Advanced RISC Machines)}
+
+CNN konvolutsiooniline närvivõrk (\emph{ingl. k} \emph{convolutional neural network)}
+
+COCO Tuntud objektid kontekstis, annoteeritud fotode andmestik (\emph{ingl. k} \emph{Common}
+
+\emph{Objects in Context)}
+
+CPU Arvuti protsessor \emph{(ingl. k} \emph{Central Processing Unit)}
+
+CSI Kaamera jadaühenduse liides (\emph{ingl. k} \emph{Camera Serial Interface)}
+
+CUDA Arvutamise ühtne seadmearhitektuur (\emph{ingl. k} \emph{Compute Unified Device}
+
+\emph{Architecture)}
+
+DL Süvaõpe (\emph{ingl. k} \emph{Deep Learning)}
+
+FPS Kaadrid sekundis (\emph{ingl. k} \emph{Frames Per Second)}
+
+FSD Täielikult autonoomne süsteem Tesla sõidukitele (\emph{ingl. k} \emph{Full Self Driving)}
+
+GB gigabait (\emph{ingl. k} \emph{GigaByte)}
+
+GFLOPs miljardit ujukomarvu operatsiooni sekundis (\emph{ingl. k} \emph{Billions of Floating point}
+
+\emph{Operations per second)}
+
+GPU graafikatöötlusseade, graafikakaart (\emph{ingl. k} \emph{Graphics Processing Unit)}
+
+Gbps gigabitti sekundis (\emph{ingl. k} \emph{Gigabits per second)}
+
+HAVS käsivarre vibratsiooni sündroom (\emph{ingl. k} \emph{Hand Arm Vibration Syndrome)}
+
+HMMA 16 komakohalise ujukomaarv maatriksi korrutamine ja summeerimine (\emph{ingl. k}
+
+\emph{Half precision Matrix Multiply and Accumulate)}
+
+IMMA täisarvulise maatriksi korrutamine ja summeerimine (\emph{ingl. k} \emph{Integer Matrix}
+
+\emph{Multiply and Accumulate)}
+
+L4T Linuxi operatsioonisüsteem Nvidia Tegra manussüsteemidega seadmetele (\emph{ingl.}
+
+\emph{k} \emph{Linux for Tegra)}
+
+MB megabait (\emph{ingl. k} \emph{megabyte)}
+
+NVDEC Nvidia videodekooder (\emph{ingl. k} \emph{Nvidia Video Decoder)}
+
+NVDLA~Nvidia süvaõppe kiirendi (\emph{ingl. k} \emph{Nvidia Deep Learning Accelerator)}
+
+ONNX Avatud värvivõrkude vahetamise formaat (\emph{ingl. k} \emph{Open Neural Network}
+
+\emph{Exchange)}
+
+POE toide üle võrgukaabli (\emph{ingl. k} \emph{Power Over Ethernet)}
+
+PVA Programmeeritav Masinnägemise Kiirendi (\emph{ingl. k} \emph{Programmable Vision}
+
+\emph{Accelerator)}
+
+SBC monoplaatarvuti (\emph{ingl. k} \emph{single board computer)}
+
+SoM süsteem moodulil või süsteem kiibistikul (\emph{ingl. k} \emph{System on Module or SOC}
+
+\emph{system on chip)}
+
+TFLOPs triljonit ujukomaarvu operatsiooni sekundis (\emph{ingl. k} \emph{Trillions of Floating point}
+
+\emph{Operations per second)}
+
+TOPs triljonit operatsiooni sekundis (\emph{ingl. k} \emph{Trillions of Operations per second)}
+
+USB universaalne jadasiin (\emph{ingl. k} \emph{Universal Serial Bus)}
+
+YOLO sa vaatad ainult korra, filosoofia, kus närvivõrk töötleb pilti ainult ühe korra
+
+~(\emph{ingl. k} \emph{You Only Look Once)}
+
+eMMC integreeritud multimeediumi kaart (\emph{ingl. k} \emph{embedded MultiMedia Card)}
+
+mAP täpsuste keskväärtuste keskmine (\emph{ingl. k} \emph{mean Average Precision)}
+
+ms millisekund (\emph{ingl. k} \emph{millisecond)}
+
+px piksel (\emph{ingl. k pixel})
+
+\section*{SISSEJUHATUS}\label{sissejuhatus}
+\addcontentsline{toc}{section}{SISSEJUHATUS}
+
+Logistika on inimkonna kui terviku optimaalseks toimimiseks äärmiselt olulisel kohal, hõlmates enda all inimeste ja kaupade transporti ning teenuste osutamist. Seetõttu on väga tähtis, et antud süsteem toimiks praktiliselt veatult ning tõrgeteta, kuid viimased on kahjuks vältimatud, näitena võib välja tuua konteinerlaeva Ever Giveni takerdumisintsidendi Suezi kanalis {[}1{]}. Üldjuhul on põhjuseks inimfaktor (tähelepanematus, ebaadekvaatne olukorra hindamine) ja/või tehniline rike, mis võib põhjustada tagajärjena õnnetuse.
+
+Laevade ja meremeeste seilamiseks ettevalmistamine on äärmiselt ressursimahukas ning rahaliselt ja ajaliselt kulukas. Avamerel liigeldes on mere käitumine väga ettearvamatu ning uppumisoht on kõrge isegi kõige parema ettevalmistuse juures ning 2019. aastal olid uppumissurmad kolmandal kohal surmade arvult maailmas {[}2{]} ning merenduses mängivad selles osa ebakompetente ettevalmistus (meremeeste ja laeva puhul), ülerahvastatus pardal, liigne autopiloodi usaldamine ning tähelepanematus või olukordade alahindamine.
+
+Samuti on ka pikk aeg merel vaimselt koormav, sest puudub otsene kontakt lähedastega ning suur osa ajast viibitakse sotsiaalses isolatsioonis, välja arvatud juhtudel kui meeskond koosneb vähemalt kahest liikmest. Lisaks sellele on ka suurem risk haiguste tekkeks nagu: käsivarre vibratsiooni sündroom (HAVS), südameveresoonkonna haigused, kopsupõletik, millest raskematel juhtudel kopsuvähk, üleüldine ülepinge (põhjustatuna lihaspingetest, liigsest emotsionaalsest stressist, üksildustundest, mida üritatakse peletada liigse alkoholi tarbimisega ja/või suitsetamisega, üleväsimusest või/ja vähesest füüsilisest aktiivsusest) ja krooniline depressioon {[}3{]}.
+
+Lahendusi taoliste probleemide vältimiseks on mitmeid, millest hetkel kõige aktuaalsemad ning efektiivseimate tulemustega on autonoomsed juhtimissüsteemid, kasutades radareid ja masinnägemist. Praeguseks on täisautonoomsuse poole püüdlevaid ettevõtteid autonduses mitmeid: Tesla (AutoPilot, FSD) {[}4{]}, Lucid (DreamDrive) {[}5{]}, Waymo {[}6{]}, Nvidia (Nvidia Drive) {[}7{]} ja Comma ai (odavaim semi-autonoomsust võimaldav süsteem) {[}8{]}.
+
+Merenduses on autonoomsete süsteemide arenduses vähem eelkäijaid: Kongsberg {[}9{]} ja Rolls Royce {[}10{]}.
+
+Autonoomse süsteemiga laev on palju suurema kasuteguriga kui oleks seda meeskonnaga laev mitmetel põhjustel: laeva mass on väiksem (puudub vajadus ventilatsioonisüsteemi, meeskonna ruumide, kambüüsi, koikude, käimlasüsteemi ja kapteni jaoks), seega meresõiduki tootmiseks vajalik materjali kogus on väiksem, mis omakorda suurendab manööverdusvõimet. Kuna meeskond otseselt ise laeval ei viibi, väheneb ka vajadus maabumiseks (ehk ainult hoolduse/remondi, kauba laadimise või/ja tankimise jaoks) ning laeva opereerimise energiakulu. Samuti saab ka laeva saata liiklema karmimatesse tingimustesse, kujutamata otsest ohtu inimese tervisele (ning parimal juhul säästa aega, võimalusega kasutada otsesemat, kuid ohtlikumat liikumisteed).
+
+Tallinna Tehnikaülikool ja AS Baltic Workboats on koostööpartnerid projektis, mille eesmärk on laevade käigukatsete läbiviimine autonoomselt ehk inimese osaluseta (vt Joonis 1) {[}11{]}. Samuti on tulevikus ka plaan edasiarendusi teha samas valdkonnas, et rakendada autonoomseid süsteeme ka väljaspool käigukatseid, andes laevadele võimekuse iseseisvalt ülesandeid täita ning merel navigeerida.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10278in,height=2.45694in]{./media/media/image3.jpg}
+  \caption{Joonis 1. Baltic Workboatsi patrullaevad Navy 18 WP {[}12{]}}
+  \label{fig:joonis_1__baltic_workboatsi_patrullaevad}
+\end{figure}
+
+
+Käesoleva bakalaureusetöö eesmärgiks on arendada välja masinnägemise süsteem, mis abistab laeva käigukatsete läbiviimisel. See eeldab sobiliku riistvara, tarkvara ja masinõppe mudeli valimist, seejärel masinnägemise tarkvara loomist ja mudeli optimeerimist.
+
+Püstitatud eesmärgi saavutamiseks otsitakse lahendust järgmistele probleemidele:
+
+\begin{itemize}
+\item
+  Millist riistvara masinnägemise süsteemi jaoks kasutada?
+\item
+  Milline masinõppe mudel suudab merel objekte kõige paremini tuvastada?
+\item
+  Kuidas tuvastada objekte autonoomsel laeval, kasutades masinnägemist?
+\item
+  Kuidas optimeerida masinõppe mudelit piiratud ressursiga riistvara jaoks?
+\end{itemize}
+
+Lõputöö on üles ehitatud järgnevalt: Käigukatsete peatükis tutvustatakse laevade käigukatsete meetodit ning lahendust nende automatiseerimiseks. Peatükis 1 tuleb juttu masinnägemisest, selle olemusest ja tööpõhimõttest ning masinnägemisel kasutusel olevatest mudelitest selgitatakse spetsiifilisemalt konvolutsioonist närvivõrku. Peatükis 2 räägitakse riistvarast, mida masinnägemise süsteemi loomisel kasutatakse, riistvaraliselt spetsialiseeritud kiirenditest ja antakse süsteemi lihtsustatud ülevaade. Peatükis 3 kajastub ülevaade erinevatest masinnägemise rakenduse loomist võimaldavatest tarkvaradest ja selgitatakse välja millist masinnägemismudelit masinnägemise rakenduses kasutatakse. Peatükis 4 selgitatakse masinnägemise rakenduse olemust ja tööpõhimõtet, samuti kirjeldatakse selle arendusprotsessi ning optimeerimist. Peatükis 5 tehakse katseid masinnägemise mudelitega ja analüüsitakse kui palju mudelite optimeerimine mõjutab rakenduses kaadrite töötluse kiirust. Peatükk 6 võtab kokku töö sisu ning eesmärkide soorituse.
+
+\section{KÄIGUKATSED}\label{kuxe4igukatsed}
+
+Laeva ehitusel on vaja välja selgitada laeva parameetrid, mis vastaksid eelnevalt sätestatud tingimustele. Samuti märgitakse laeva parameetrid hiljem ka laeva käsiraamatusse. Nende parameetrite välja selgitamiseks on loodud käigukatsed, kus laev läbib määratud teekonna, mille käigus tehakse käsitsi mõõtmised, mida kasutatakse hiljem laeva võimekuse hindamiseks ja tulevaste ehitatavate laevade arendamiseks.
+
+Laevade käigukatsed on vajalikud mõõdistuste täpsuse ja katsete reprodutseerimiseks. Lõputöö kirjutamise hetkel tehakse mõõdistusi küll täpsete seadmetega, kuid laevu juhivad erinevad inimesed ning tulemuste registreerimine käib manuaalselt, mis põhjustab ebatäpsusi ega taga katsete ühtset korratavust.
+
+Käsitsi läbiviidavatel käigukatsetel esinevad mitmed probleemid:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Mõõtetulemuste erinevused, mis sõltuvad laeva operaatori reaktsioonist ning psühholoogilisest seisundist
+\item
+  Kuna laeva juhib käigukatsetel üldjuhul üks isik, siis peab ta mitmete tegevuste jälgimisega paralleelselt tegelema, et andmeid koguda, see omakorda tähendab osalist andmekadu teatud perioodil
+\item
+  Mõõteandmete sisestamine ei ole automaatne, protokolli koostamine on mahukas ning nõuab mitme inimese koostööd
+\item
+  Laeval puudub arusaam teda ümbritsevast keskkonnast (võimekus iseseisvalt situatsioonides toime tulemisega ning õnnetuste vältimisega), seetõttu langeb ka see ülesanne laeva kaptenile, kes võib tähelepanematuse tõttu tekitada kriitilisi olukordi või põhjustada õnnetusi
+\end{enumerate}
+
+Seetõttu on mõistlik käigukatseid automatiseerida. Selleks oleks tarvis lisada laevale autonoomsust võimaldavad omadused, mis võimaldavad laeval katseid autonoomselt teha ning katsete käigus ka andmeid ise logida.
+
+Autonoomne süsteem edastab laevale konkreetsed navigeerimiskäsklused ja salvestab andmed määratud perioodi jooksul. Kogutud materjali põhjal selguvad täpsed tulemused. Näiteks lainetes liikuva laeva kiirus on alati muutlik, mistõttu mõõdetud kiirus on otseses seoses registreerimise momendiga. Analüüsides valitud salvestusperioodi andmeid, on võimalik määrata laeva kiiruse karakteristikud katse toimumisel. Eelprogrammeeritud käigukatsed aitavad vältida juhtide erinevusi, näiteks laeva pööramise kiirus ning selleks kulunud aeg sõltub juhi intuitsioonist ja muudest isikuomadustest, mis omakorda takistavad laeva maksimaalse võimekuse objektiivset hindamist {[}13{]} (vt Joonis 1.1).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=4.70017in,height=5.14081in]{./media/media/image4.png}
+  \caption{Joonis 1.1. Laeva pöörderaadiuse mõõtmiseks loodud käigukatse {[}13{]}}
+  \label{fig:joonis_1_1__laeva_p__rderaadiuse_m__tmis}
+\end{figure}
+
+
+Automaatsete käigukatsete jooksul kogutud info annab hea ülevaate laeva projekteerijatele ning inseneridele, mis omakorda on suureks abiks võimekamate laevade projekteerimisel ning olemasolevate veesõidukite arendamisel.
+
+\section{MASINNÄGEMINE}\label{masinnuxe4gemine}
+
+Masinnägemine on tehisintellekti valdkond, mis tegeleb digitaliseeritud visuaalsest materjalist (fotod, videod) inimesele arusaadava ning vajaliku informatsiooni eraldamisega ning seejärel otsuste tegemisega saadud info põhjal, kasutades arvuteid. Kui tehisintellekt annab arvutitele võime mõelda, siis masinnägemine annab neile võimekuse näha, vaadelda ja mõista ümbritsevat keskkonda.
+
+Masinnägemine toimib sarnaselt inimese nägemisele, kuid inimestel on selles astmes eluaegne edumaa, nad õpivad objekte eristama juba sünnist saati. Inimene on võimeline elu jooksul eristama mitmeid objekte, nende kaugust, nende statsionaarsust või dünaamilisust ning tuvastama vigu piltidel või objektidel.
+
+Masinnägemise puhul ``treenitakse'' arvuteid, et viia läbi sarnaseid operatsioone, kuid seda palju lühema ajaga, kasutades kaameraid, massiivseid andmehulki ning algoritme inimsilma võrkkesta, optiliste närvide ja aju nägemise interpreteerimise asemel. Antud süsteemil on ka eelisi inimnägemise ees, milleks on spetsialiseerumine. Kui õpetame süsteemile selgeks, milline näeb välja laev ja poi, siis valminud tuvastusmudel on võimeline analüüsima mitmeid sadu objekte ja olukordi sekundis ning vastavalt ka reageerima palju suurema täpsuse-, kindluse- ja kiirusega kui inimene, kes tegeleks sama operatsiooniga.
+
+Masinnägemine on kasutusel mitmetes valdkondades: energiahaldus (tarbimisprognoosid), tootmine (toodete defektide kontroll) ja autotööstus (autonoomsed sõidukid ja juhiabisüsteemid) ning nõudlus masinnägemise spetsialistidele on kasvuteel {[}14{]}.
+
+\subsection{Masinnägemise tööpõhimõte}\label{masinnuxe4gemise-tuxf6uxf6puxf5himuxf5te}
+
+Masinnägemise mudeli treenimiseks ning loomiseks on vaja massiivset andmehulka, mida analüüsitakse mitmeid tuhandeid kordi seni, kuni mudel leiab andmetest seaduspärasusi, mustreid ning objektide puhul iseloomulikke kujundeid, mis lõpuks võimaldavad iseseisvalt uutelt, seni nägemata piltidelt otsitavat objekti tuvastada.
+
+Antud toimingu läbiviimiseks kasutatakse masinõpet, mille üheks osaks on tehisnärvivõrgud ning selle alamosadest täpsemalt süvaõpet ja konvolutsioonilisi närvivõrke.
+
+Masinõppe puhul kasutatakse algoritmilisi mudeleid, mis võimaldavad arvutil aru saada visuaalsete andmete sisust. Piisava hulga andmete edastamisel mudelile suudab arvuti endale andmete põhjal selgeks teha, millega on pildil tegemist ning mis on piltide erinevused. Algoritmid võimaldavad masinal iseseisvalt õppida, mis on oluliselt efektiivsem kui see, et inimene eelprogrammerib arvuti pilte tuvastama.
+
+Konvolutsiooniline tehisnärvivõrk aitab masinnägemise mudelil pildist aru saada, vaadates sisendit mitmete väiksemate, sildistatud aladena. Sildistatud aladel tehakse konvolutsioonilisi operatsioone, mille alusel närvivõrk teeb ennustusi selle kohta, mida ta näeb. Närvivõrk kordab neid operatsioone ning kontrollib ennustuste täpsust iteratiivselt seni, kuni saadud tulemid on vajaliku täpsusega ning tõesed. Pärast taolise operatsiooni edukat kulgemist on mudel võimeline nägema ja tuvastama pilte inimesele arusaadavas formaadis {[}14{]}.
+
+\subsection{Konvolutsiooniline närvivõrk}\label{konvolutsiooniline-nuxe4rvivuxf5rk}
+
+Konvolutsioonilise närvivõrgu (\emph{Convolutional Neural Network, ConvNet, CNN}) puhul on tegemist süvaõppealgoritmiga, mis suudab sisendiks antud pildilt leida sellele iseloomulikud omadused ning neid üksteisest eristada. Võrreldes teiste pildituvastusalgoritmidega, on CNNi jaoks vajalik pildi eeltöötluse maht oluliselt väiksem. Samuti on CNN võimeline iseseisvalt piisava hulga treenimisega piltide omaduste eristamiseks filtreid looma (piltide eripärasid selgeks õppima), erinevalt käsitsi häälestatavatest algoritmidest, mis seda nii täpselt teha ei võimalda. {[}15{]}
+
+Antud närvivõrku eristavad teistest võrkudest kihid, mis on antud võrgu alustaladeks:
+
+\begin{itemize}
+\item
+  Konvolutsiooniline kiht (\emph{Convolutional layer})
+\item
+  Skaleerimise/ahendamise kiht (\emph{Pooling layer})
+\item
+  Täielikult ühendatud kiht (\emph{Fully Connected layer})
+\end{itemize}
+
+Konvolutsiooniline kiht on CNNi esimene kiht, täielikult ühendatud kiht on viimane, skaleerimine ning täiendavad kihid asetsevad nende vahel. Iga järgneva kihiga suureneb närvivõrgu kompleksus ning täieneb ka süsteemi arusaam sisendiks antud pildist. Ülemised kihid mõistavad lihtsamaid omadusi nagu näiteks värvid ja servad. Sügavamates kihtides tekib süsteemil generaliseeritum arusaam pildil olevatest elementidest või kujutistest ning saadud info põhjal, eeldusel, et seda on piisavalt, teeb süsteem otsuse, millega on fotol tegemist.
+
+\textbf{Konvolutsiooniline} kiht (\emph{convolutional layer}) on CNNi olulisim osa närvivõrgus, milles toimub kõige suurem hulk arvutusi. Antud kiht vajab sisendinfot, filtrit ja tunnusjoonte kaarti (\emph{feature map}). Eeldame et sisendina on tegemist värvilise pildiga, mis on kolme dimensioonilise maatriksi kujul (roheline, punane, sinine -- kolm kanalit, kõrgus, laius, sügavus -- kolm dimensiooni). Sellega on sisendandmed määratud. Samuti on meil tarvis ka tunnusjoonte tuvastusfunktsiooni ehk kernelit ehk \textbf{filtrit}, mis liigub astmeliselt üle andmete ning kontrollib kas teatud omadus eksisteerib pildil ning sooritab ka sellekohased arvutused. Eelnevalt kirjeldatud operatsioon on konvolutsioon.
+
+\textbf{Filtri} puhul on tegemist kahedimensioonilise, konstantsete kaaludega täidetud maatriksiga, mis esindab pildi osa. Filtreid on erinevates suurustes, kuid traditsiooniliselt on nad kolm korda kolm maatriksina. Pildi osale rakendatakse filter, mille tulemuseks on pildi ala maatriksi ning filtri maatriksi skalaarkorrutis, mis antakse edasi väljundmaatriksi. Seejärel nihkub filtri maatriks ette määratud pikslite arvu võrra edasi, kuni terve pildiga on antud operatsioon tehtud ning mille tulemusena on saadud konvolutsiooniliste tunnuste kaart (vt Joonis 2.2.1).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=3.55556in]{./media/media/image5.png}
+  \caption{Joonis 2.2.1. Maatrikskujul pildil (vasakul) tehakse operatsioon filtriga (keskel), mis annab tulemuseks skalaarkorrutise tunnuste kaardina (paremal)}
+  \label{fig:joonis_2_2_1__maatrikskujul_pildil__vasa}
+\end{figure}
+
+
+Joonist vaadeldes näeme, et väljundmaatriksis vastab üks argument mitmele sisendpikslile ehk antud operatsiooni puhul konvolutsiooniline kiht ja ka järgnevalt arutatav skaleerimise kiht kuuluvad osaliselt ühendatud närvivõrgu kihtide hulka. Pärast iga konvolutsioonilist operatsiooni toimub tunnuste kaardi protsesseerimine ReLU {[}16{]} aktiveerimise funktsiooni kihis ning seejärel saadetakse saadud väljundid \textbf{skaleerimise} kihti.
+
+\textbf{Skaleerimise} kiht (\emph{pooling layer}) tegeleb sisendi alla skaleerimisega vähendades seetõttu ka sisendparameetrite arvu, suurendades närvivõrgu efektiivsust ning vähendades võrgu ületreenimise riski. Sarnaselt konvolutsioonilise kihi operatsioonidele, toimub ka siin töötlus kogu pildi peal, ainukese erinevusena konvolutsioonist, puuduvad selle kihi filtril kaalud. Antud kihis on võimalik teha maksimaalset skaleerimist (\emph{max pooling}) ja keskmistatud skaleerimist (\emph{average pooling}). Esimesel puhul toimub filtri liikumisel üle pildi maksimaalse väärtusega piksli valik, mis saadetakse väljundmaatriksisse, teisel puhul arvutatakse filtri liikumisel üle pildi pikslite keskmine väärtus, mis väljundmaatriksisse edastatakse. Maksimaalset skaleerimist kasutatakse rohkem kui keskmistatud skaleerimist.
+
+\textbf{Täielikult ühendatud} kiht (\emph{fully connected layer}) tegeleb eelmistest kihtidest kogutud ja filtreeritud info klassifitseerimisega. Antud kiht kasutab softmax {[}17{]} aktiveerimisfunktsiooni sisendite korrektseks klassifitseerimiseks, väljastades igale klassile tõenäosuse hinnangu, kus kõikide klasside hinnangute summa on üks (vt Joonis 2.2.2). {[}18{]}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5.25073in,height=3.89638in]{./media/media/image6.png}
+  \caption{Joonis 2.2.2. SoftMaxi funktsiooniga rakendatud väljundite kiht närvivõrgus (lilla) ja tõenäosused iga klassi kohta (paremal) {[}17{]}}
+  \label{fig:joonis_2_2_2__softmaxi_funktsiooniga_rak}
+\end{figure}
+
+
+\section{RIISTVARA VALIK}\label{riistvara-valik}
+
+Riistvara valikul lähtuti etteantud nõuetest, et loodav juhttorni prototüüp toimiks võimalikult veatult ning töökindlalt. Samuti arvestati ka sellega, et juhttorn oleks võimalikult lihtsasti ümber seadistatav erinevatele laevatüüpidele kasutamiseks. Esitatud nõuded süsteemile olid järgnevad:
+
+\begin{itemize}
+\item
+  Sisendiks kolm kaamerat, resolutsiooniga vähemalt 1000x1000 pikslit
+\item
+  Laevade tuvastuskiirus vähemalt 15 kaadrit sekundis
+\end{itemize}
+
+Tulevikus plaanitakse taolist süsteemi rakendada erinevatel laevatüüpidel, mistõttu on komponendid valitud laialdaselt kasutatavate ning hõlpsasti saadaolevate seadmete hulgast.
+
+\subsection{Juhtkontroller ehk pardaarvuti}\label{juhtkontroller-ehk-pardaarvuti}
+
+Juhtkontroller on seade, mis tegeleb selle külge ühendatud kaameratelt saadud informatsiooni töötlemisega ning tulemuste edastamisega autopiloodile. Pardaarvuti asetseb laeva juhttornis, ümbritsetuna kolmest kaamerast. Kaameratelt saadava info peal (antud kontekstis reaalajas video) rakendatakse analüütilisi algoritme, mille väljundina saadakse info (tuvastatud objektid ning nende suhteline asukoht kaadris), mis edastatakse autopiloodile, andes lisainfot ümbritseva keskkonna kohta, mille põhjal viimane teeb otsuse, kuidas laevaga käituda.
+
+Antud ülesande lahendamiseks on saadaval mitmeid monoplaatarvuteid (\emph{Single-Board Computer}, (SBC) {[}19{]}, \emph{System on Module} (SoM)), populaarseimatena Nvidia Jetson seeria {[}20{]}, mis on tehisintellekti ning masinnägemise ja masinõppe rakendusteks spetsialiseeritud ja Raspberry Pi {[}21{]}. Antud ülesande lahendamisel välistame Raspberry Pi valikutest kuna juhttorni süsteem hõlmab 4 kaameraga paralleelselt töötamist, (Raspberry Pi'l ainult 1 kaamerasisend). See vajab rohket arvutusvõimsust, kuid antud seadmel pole selle kohast võimekust, ega vajalikku riistvara (seadme protsessoris on küll integreeritud graafikakaart, kuid antud ülesande lahendamiseks jääb see liiga nõrgaks). Seetõttu paralleelsete toimingute jaoks on eelkõige kasulik eraldiseisev graafikakaart (\emph{Graphics Processing Unit} (GPU) {[}22{]}) koos spetsialiseeritud graafikatuumadega (\emph{CUDA Cores} {[}23{]}), mis on Nvidia Jetson arvutite eeliseks.
+
+Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel 3.1.1). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (\emph{Tensor Cores}) {[}24{]}, (vt Joonis 3.1.1).
+
+Tabel 3.1.1. Jetson seeria arvutite parameetrid {[}24{]}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2092}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2420}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2744}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2744}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Parameters} & \textbf{Jetson Nano} & \textbf{Jetson TX2 Series (NX, TX2i)} & \textbf{Jetson Xavier Series (NX, AGX)} \\
+AI Performance & 472 GFLOPs & 1.33 TFLOPs & 21/30 TOPs \\
+GPU & 128-core NVIDIA Maxwell™ & 256-core NVIDIA Pascal™ & 384/512-core NVIDIA Volta™ with 48/64 Tensor Cores \\
+CPU & Quad-Core Arm Cortex-A57 & Dual-Core NVIDIA Denver and Quad-Core Arm Cortex-A57 & 6/8-core NVIDIA Carmel Arm \\
+DL Accelerator & --- & --- & 2x NVDLA v1 \\
+Vision Accelerator & --- & --- & 2x PVA v1 \\
+Memory & 4 GB
+
+64-bit LPDDR4 & 4/8 GB
+
+128-bit LPDDR4 & 8/16/32/64 GB
+
+128-bit LPDDR4x \\
+Storage & 16 GB & 16/32 GB & 16/35/64 GB \\
+CSI Camera & Up to 4 cameras
+
+(up to 18 Gbps) & \begin{minipage}[t]{\linewidth}\raggedright
+Up to 5/6 cameras\\
+(up to 30 Gbps)\strut
+\end{minipage} & Up to 6 cameras
+
+(up to 62 Gbps) \\
+\end{longtable}
+
+Eeldusel et vaja on analüüsida kolmest kaamerast tulevat infot paralleelselt ning täpselt, oleks kõige mõistlikum kasutada Xavier seeria süsteemi. Seda just seetõttu, et võrreldes teiste seeriatega on Xavier seeria arvutite jõudlus tagatud suurema hulga graafikakaardi tuumadega, uuema arhitektuuriga (Volta {[}25{]}), mis sisaldab endas maatrikskiirendeid (\emph{Tensor Cores}, mida vajavad närvivõrgud maatriksarvutustes) ning süvaõppe kiirendeid (\emph{Deep Learning Accelerator}), mis võimaldavad mitme kaamera sisendiga tõhusamalt operatsioone teha.
+
+Antud seerias on valikus nii NX kui ka AGX Jetsonid, mille hulgast on valitud parimad kandidaadid (vt Tabel 3.1.2). Nende hulgast sobilikuim on Jetson AGX Xavier, sest antud seade peab olema võimeline jooksutama mahukat närvivõrku ning tegelema mitme operatsiooniga korraga (kaameratelt info lugemine, info töötlemine närvivõrgus, töödeldud info kujutamine väljundvideol), mis nõuab suurt hulka arvutuslikku ressurssi.
+
+Tabel 3.1.2. Jetson AGX Xavieri ja Xavier NXi parameetrid {[}24{]}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2004}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3964}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4032}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Parameters} & \textbf{Jetson AGX Xavier} & \textbf{Jetson Xavier NX 16GB} \\
+AI Performance & 32 TOPs & 21 TOPs \\
+GPU & \begin{minipage}[t]{\linewidth}\raggedright
+512-core NVIDIA Volta™ GPU with\\
+64 Tensor Cores\strut
+\end{minipage} & 384-core NVIDIA Volta™ GPU with 48 Tensor Cores \\
+CPU & \begin{minipage}[t]{\linewidth}\raggedright
+8-core NVIDIA Carmel Arm®v8.2\\
+64-bit CPU\\
+8MB L2 + 4MB L3\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+6-core NVIDIA Carmel Arm®v8.2 64-bit CPU\\
+6MB L2 + 4MB L3\strut
+\end{minipage} \\
+DL Accelerator & 2x NVDLA v1 & 2x NVDLA v1 \\
+Vision Accelerator & 2x PVA v1 & 2x PVA v1 \\
+Memory & \begin{minipage}[t]{\linewidth}\raggedright
+32 GB 256-bit LPDDR4x\\
+136,5 GB/s\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+16 GB 128-bit LPDDR4x\\
+59,7 GB/s\strut
+\end{minipage} \\
+Storage & 32 GB eMMC 5.1 & 16 GB eMMC 5.1 \\
+CSI Camera & Up to 6 cameras (up to 62 Gbps) & Up to 6 cameras (up to 30 Gbps) \\
+\end{longtable}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=4.09763in,height=2.08472in]{./media/media/image7.png}
+  \caption{Joonis 3.1.1. Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) {[}26{]}}
+  \label{fig:joonis_3_1_1__valitud_arvuti__jetson_agx}
+\end{figure}
+
+
+\subsection{Tensorituumad ja CUDA}\label{tensorituumad-ja-cuda}
+
+Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA {[}23{]} tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (\emph{Half-Precision Matrix Multiply and Accumulate}) ja IMMA (\emph{Integer Matrix Multiply and Accumulate}), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad {[}27{]} (vt Joonis 3.2.1).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10278in,height=1.64514in]{./media/media/image8.png}
+  \caption{Joonis 3.2.1. Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine {[}27{]}}
+  \label{fig:joonis_3_2_1__tensor_core__kolmedimensio}
+\end{figure}
+
+
+CUDA puhul on tegemist paralleelarvutuseks mõeldud platvormi ning programmeerimise mudeliga, mis suurendab tehtavate arvutuste hulka mitmekordselt, kasutades selleks protsessori asemel graafikakaarti {[}23{]}.
+
+CUDA eesmärgiks on kiirendada paralleelarvutusi ning CUDA tuum on analoogne protsessori tuumaga. Ainukeseks erinevuseks on nende ehitus, protsessori tuum on võimeline lahendama kompleksseid arvutusi jadamisi, CUDA tuum lihtsamaid arvutusi graafikakaardis. Eeliseks graafikakaardil protsessori ees on see, et CUDA tuumasid on ühele kiibile paigutatud tuhandeid, mis võimaldab komplekssed arvutused jagada mitmete tuumade vahel ära ning seetõttu ka sooritada arvutused kiiremini, kui protsessor väiksema arvu võimekamate tuumadega. Antud tehnoloogia on integreeritud ning laialdaselt kasutusel masinõppe vallas Nvidia poolt.
+
+\subsection{Kaamerad}\label{kaamerad}
+
+Kaamerate puhul tuleb arvestada mitmete parameetritega, et tagada süsteemi nõuetekohasus ning edukas toimimine. Kuna antud ülesandes asetseb masinnägemissüsteem juhttornis, mis kinnitub laeva mastile, tuleb kindlasti arvestada sellega et kaamerad või seade kuhu nad asetatakse, peavad võimelised töötama laialdastes temperatuurivahemikes ning muutlikes ilmastikuoludes. Samuti tuleks kaamera tarkvara puhul eelistada üldjuhul värskeimat ja selgelt dokumenteeritud materjali ning arvestada selle ühilduvust juhtarvutiga. See tagab parema kaamera konfigureerimise ning võimaldab ka seeläbi rakendatavat masinnägemistarkvara hõlpsamini hallata.
+
+Kaamerate valikul arvestati järgnevate parameetritega:
+
+\begin{itemize}
+\item
+  \textbf{Resolutsioon} (pikslites, px) -- otseselt seotud objektide tuvastustäpsusega ning tuvastuskiirusega. Mida väiksema resolutsiooniga sisend antakse tuvastusalgoritmile, seda ebatäpsem/ebakindlam on närvivõrgu ennustustulemus. Sel juhul on tuvastusprotsessi kiirus suurem, kuna algoritm tegeleb väiksema andmehulgaga, millega arvutusprotsesse on vähe, mis lõpptulemusena parandab interferentsi kiirust.
+\end{itemize}
+
+\begin{quote}
+Suurema resolutsiooni korral paraneb seega tuvastustäpsus kuid väheneb interferentsi kiirus, sest sisendandmete hulk suureneb. Suure resolutsiooniga fotol on rohkem informatsiooni, mis omakorda võimaldab närvivõrgul kindlamaid ennustusi anda.
+\end{quote}
+
+\begin{itemize}
+\item
+  \textbf{Kaadrisagedus} (\emph{Frames per second} -- kaadrit sekundis, FPS) -- parameeter, mis kirjeldab kaamera informatsioonivoo edastuskiirust ehk suhet edastatava kaadrihulga ning aja vahel. Suur kaadrisagedus tagab visuaalselt sujuvama andmevoo kuvamise ning lihtsama jälgitavuse, samuti on ka andmekadu väiksem. Väikese kaadrisageduse korral oleks objekti jälgimine ning teekonna ennustamine oluliselt raskem, sest visuaalselt on objekti liikumine katkendlik ning seetõttu ka närvivõrgu ennustuste täpsus halvatud.
+\item
+  \textbf{Värvussensor} (mono-, polükromaatiline sensor) -- ehk ühevärviline või mitmevärviline sensor. Ühevärviline sensor on sobilik keskkondadesse, kus objekti ning keskkonna vaheline värvikontrast on suur, tagades efektiivse objektituvastuse. Kuna tegemist on monokromaatilise pildiga, siis iga piksli kohta esitatakse üks väärtus, mis jääb kindlasse vahemikku (üldjuhul 0\ldots255 või 0.0\ldots1.0)
+\end{itemize}
+
+\begin{quote}
+Polükromaatiline sensor sobib seevastu keskkonda, kus kontrast tausta ja objekti vahel ei ole kuigi suur või objekti tuvastamine nõuab rohkem informatsiooni. Sellisel moel pildi edastamisel esitatakse kolm väärtust maatriksina, RGB (vastavalt Red -- punane, Green -- roheline, Blue - sinine) värvustena vahemikes (0\ldots255 või 0.0\ldots1.0, näiteks {[}255, 0, 255{]}). Taoline edastusviis on andmete hulgalt kolm korda mahukam kui monokromaatilise pildi edastamisel, kuna iga piksli kohta esitatakse kolm väärtust.
+\end{quote}
+
+Seadmed, mis eelmainitud parameetrile vastaksid on järgnevad (vt Tabel 3.3.1):
+
+Tabel 3.3.1. Parameetritele sobilikud kaamerad
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2084}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1882}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2134}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1210}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1126}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1563}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Kaamera nimi} & \textbf{Resolutsioon(px)} & \textbf{Kaadrisagedus (FPS)} & \multicolumn{2}{>{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2336} + 2\tabcolsep}}{%
+\textbf{Töötemperatuur (°C)}} & \textbf{Liides} \\
+SurveilsQUAD - Sony IMX290 System {[}28{]} & 1920x1080 & 120 & -30 & 85 & CSI \\
+OpenCV AI Kit: OAK---D {[}29{]} & 1280x800 (stereo) 4056x3040 (keskmine) & 120 (stereo)
+
+60 (keskmine) & N/A & N/A & USB-C/PoE \\
+OpenCV AI Kit: OAK---1-PoE {[}30{]} & 4056x3040 & 60 & N/A & N/A & USB-C/PoE \\
+Atlas IP67 7.1 MP Model {[}31{]} & 3208x2200 & 74 & -20 & 55 & PoE \\
+Atlas IP67 2.8 MP Model {[}32{]} & 1936x1464 & 173 & -20 & 55 & PoE \\
+Arducam 12MP IMX477 {[}33{]} & 4056x3040 & 60 & N/A & N/A & USB-C \\
+Arducam Fisheye Camera {[}34{]} & 2592×1944 & 30 & N/A & N/A & CSI ja Ethernet \\
+\end{longtable}
+
+*N/A -- andmed puuduvad
+
+Töö kirjutamise hetkel kasutati algselt SurveilsQUAD kaameraid, kuna need olid antud arvutisüsteemi jaoks eelnevalt ette valmistatud ning projektis olevate osapoolte poolt olid ka Xavierile vastavad tarkvaralised muudatused tehtud arvutisüsteemide instituudis. Lõputöö kirjutamise käigus valmiv projekt oli arendusfaasis, mistõttu oli ka eelarve piiratud ning piirduti esialgu kaameratega, millel oli katsetuste jaoks põhivõimekus olemas. Juhttorni disaini käigus selgus, et valitud kaamerate paigutus oli lühikeste kaablite tõttu piiratud ning tootja ei tarninud seadmetele pikemaid kaableid.
+
+Seetõttu sai valitud Arducam Mini kaamera (vt Joonis 3.3.1), mis ühendati raspberry pi külge ning omakorda etherneti kaabliga Ethernet switchi ning sealt lõpuks Jetson Xavieri külge. Sellega lahendus ka kaablite pikkuse probleem ning samuti oli võimalik ka Xavierile installeerida värskeim tarkvara, mida eelmiste kaamerate vananenud draiverid ei toetanud.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=2.75104in,height=2.42839in]{./media/media/image9.png}
+  \caption{Joonis 3.3.1. Arducam Fisheye kaameraga moodul {[}34{]}}
+  \label{fig:joonis_3_3_1__arducam_fisheye_kaameraga}
+\end{figure}
+
+
+\subsection{Juhttorn}\label{juhttorn}
+
+Juhttorn asetseb laeva vööris (vt Joonis 3.4.2) ning selle ülesanne on laeva juhtimine üle võtta laeva kapteni käsul ning tegeleda sellega autonoomselt võimalikult vähese kapteni sekkumisega. Selleks on tornil olemas aju Jetson AGXi kujul, mis tegeleb kõikidest anduritest ning kaameratest saadava info kogumise, töötlemise ning seejärel juhtimisotsuse edasi saatmisega autopiloodile, mis omakorda saadab signaalid laeva mootoritele ja tüürile. Jetson saab infot oma ümbritseva keskkonna kohta kaameratest, X-band radarist, AISist ning ilmajaamast tuuleanduri kujul. Andmevahetus juhttorni süsteemis toimub läbi etherneti jaoturi ning 4G ruuteri mis võimaldab saata ning vastu võtta andmeid kasutajalt. Samuti on võimalik arendajatel teha tarkvara uuendusi laeva süsteemidele. AIS (Automaatne Identifitseerimise Süsteem) aitab määrata laeva asukoha teiste meresõidukite suhtes, kasutades satelliite, radar tuvastab punktipilvedega lähedasemaid objekte ning kaamerad ja nendel jooksev masinnägemine tuvastab objektide hulgast laevu ja teisi meresõidukeid. AIS, radar ning kaamerad masinnägemisega täiendavad üksteist, aidates laeval enda ümbruskonda tuvastada ning selles orienteeruda. Süsteemi toidab alalisvooluallikas (vt Joonis 3.4.1). 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10208in,height=5.125in]{./media/media/image10.png}
+  \caption{Joonis 3.4.1. Juhttorni lihtsustatud toimimisskeem}
+  \label{fig:joonis_3_4_1__juhttorni_lihtsustatud_toi}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=4.56944in]{./media/media/image11.jpg}
+  \caption{Joonis 3.4.2. Juhttorni asetus patrulllaeval {[}35{]}}
+  \label{fig:joonis_3_4_2__juhttorni_asetus_patrullla}
+\end{figure}
+
+
+\section{TARKVARA}\label{tarkvara}
+
+Masinnägemise süsteemide loomiseks on olemas erinevaid tarkvaralisi lahendusi. Antud töö tarkvara hõlmab endas mitmeid üksteisest sõltuvaid osi: pilditöötlus ja edastamine, andmetöötlus ja närvivõrgud.
+
+\textbf{Pilditöötluseks} on saadaval mitmeid mooduleid (OpenCV {[}36{]}, Scikit-Image {[}37{]}, SciPy {[}38{]}, Pillow {[}39{]}), mille hulgast masinõppe jaoks spetsiifiliselt on loodud OpenCV ja Scikit-Image. Antud ülesande lahendamisel rakendati OpenCV moodulit Scikit-Image asemel, kuna esimesel on ka olemas videote lugemise tugi Gstreameri {[}40{]} näol, mis võimaldab kasutada Jetson arvutisse integreeritud Nvidia video dekoodrit {[}41{]}. See säästab protsessorit pildivoo lugemisel ning teeb seda ka oluliselt efektiivsemalt, jättes pilditöötluse ning masinnägemise mudeli töö jaoks arvuti protsessorile rohkem võimekust alles.
+
+\textbf{Andmetöötluse} jaoks on laialdasel kasutusel Pandas {[}42{]} moodul, mis võimaldab lihtsate ning intuitiivsete käskudega andmeid analüüsida ning nendega manipuleerida. Antud moodul teeb toiminguid protsessori peal ning ekstreemsemate andmemahtude puhul võib andmete töötlemine ajamahukaks minna. Lisaks Pandasele on loodud mitmeid alternatiivseid mooduleid, mis on sarnaselt või minimaalse vahega paremini optimeeritud, kuid nendest kõige sarnasema tööpõhimõtte ja kirjakeelega on cuDF {[}44{]}. CuDF on olemuselt kõige sarnasem Pandasega, kuid kasutab protsessori asemel graafikakaarti andmete töötluseks, mis just suurte andmemahtude talitlemisel annab ajaliselt suure eelise Pandase ees, kuna andmete töötlus toimub palju suurema paralleelsusega, kui protsessorit kasutades. Antud töö kirjutamise hetkel on kasutuses Pandase moodul, kuna töö autoril on selle mooduliga laialdasem töötamise kogemus ning. Hiljem on plaan minna üle cuDFiga arendamisele tarkvara optimeerimise eesmärkidel.
+
+\textbf{Närvivõrkude} loomiseks on olemas mitmeid platvorme ning raamistikke: TensorFlow {[}45{]}, Keras {[}46{]}, PyTorch {[}47{]}, Scikit-Learn {[}48{]}, mille hulgast populaarseimad ning laialdasemas kasutuses on TensorFlow ja PyTorch. Antud töös kasutati PyTorchi, kuna võrreldes TensorFlowiga on PyTorchi süntaks rohkem püütonlik, mistõttu on ka seda Pythoni objektidega lihtsam ühildada ning veateadete puhul kergem aru saada kus viga tekkis. Samuti on töö autoril eelnev kogemus PyTorchiga arendamisel.
+
+\subsection{Masinnägemise närvivõrgu mudel}\label{masinnuxe4gemise-nuxe4rvivuxf5rgu-mudel}
+
+Objektide tuvastamiseks on saadaval mitmeid mudeleid, mis erinevad üksteisest täpsuse, sisendresolutsiooni, suuruse ja kiiruse poolest. Mudeli valimisel tuleb arvestada süsteemi jõudlusega, võimekamad süsteemid nagu näiteks serverid, suudavad jooksutada massiivseid ning täpseid mudeleid paralleelselt ja minimaalse mõjuga sisendite töötlemise kiirusele. Väiksemad süsteemid nagu sülearvutid ning manussüsteemid seevastu oleksid sobivamad väiksemate ning suurema kiirusega mudelite jooksutamiseks.
+
+Tabel 4.1.1. Populaarseimate mudelite parameetrite ülevaade
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2499}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Mudel} & \textbf{Maksimaalne sisend (px)} & \textbf{Kiirus (ms)} & \textbf{Täpsus (mAP)} \\
+FasterRCNN {[}49{]} & 1000x600 & 198 & 73,2 (PASCAL VOC 2007) \\
+YOLOv5 {[}50{]} & 1280x1280 & 26,2 (V100 GPU) & 72,7 (MSCOCO) \\
+MobileNet SSD V2 {[}51{]} & 320x320 & 200 (Google Pixel 1) & 22,2 (MSCOCO) \\
+EfficientDet {[}52{]} & 1536x1536 & 153 (V100 GPU) & 55,1 (MSCOCO) \\
+\end{longtable}
+
+Antud süsteemi jaoks tuli mudeli valimisel arvestada parima mudeli täpsuse ja kiiruse suhtega. Samuti pidi valitav mudel olema ka võimeline mitmelt videosisendilt korraga infot töötlema (vt Tabel 4.1.1).
+
+Antud ülesande lahendamiseks osutus valituks Yolov5 arhitektuuriga närvivõrk, mis on Ultralytics'i {[}53{]} poolt loodud edasiarendusena Yolov4st {[}54{]} ning on kiirem ja täpsem kui selle eelkäijad. Samuti on tegemist ka kompaktse mudeliga, mis on hõlpsasti sardsüsteemidel jooksutatav. Mudel toimib ühekordsel kaadri töötlemise filosoofial (\emph{You Only Look Once}) ehk pilt läbib võrku ainult ühe korra (erinevalt teistest mudelitest), mille käigus toimub objektituvastus ja klassifikatsioon korraga, mistõttu on ka mudeli tuvastuste operatsiooni kiirus suurem (vt Joonis 4.1.1).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=4.125in]{./media/media/image12.png}
+  \caption{Joonis 4.1.1. Yolov5 mudelite arhitektuur {[}55{]}}
+  \label{fig:joonis_4_1_1__yolov5_mudelite_arhitektuu}
+\end{figure}
+
+
+Mudel koosneb kolmest osast: Selgroog, kael ja pea.
+
+\begin{itemize}
+\item
+  \textbf{Selgroog} (\emph{backbone}) ehk baas millele mudel ehitatakse, antud juhul on selleks valitud CSPNet (\emph{Cross-Stage Partial Network}). Tegemist on närvivõrgu mudeli tüübiga, mis on jaotatud mitmeks osaks (\emph{Cross-Stage}), milles iga kiht tegeleb ette antud pildilt informatsiooni eraldamisega nagu äärised ja kujundid, mis on iseloomulikud antud objektile pildil. Osa informatsioonist mida eelnevates kihtides omastatakse, antakse edasi järgmistele kihtidele töötlemiseks (\emph{Partial}), mis võimaldab võrgul järgemööda paremini ning täpsemini aru saada mida pildil kujutatakse kasutades eelmistelt kihtidelt saadud töödeldud infot. Backbone koosneb peamiselt konvolutsioonilistest kihtidest ja allaskaleerimise kihist, mille väljund läheb edasi mudeli kaela. Taolise arhitektuuriga mudel aitab vähendada vajalike arvutuslike protsesside hulka.
+\item
+  \textbf{Kael} (\emph{neck}) närvivõrgus tegeleb selgroost saadud informatsiooni kokkupaneku ja organiseerimisega tunnusjoonte maatriksisse (\emph{feature map}), kasutades filtreid. Antud mudel rakendab ruumilist tähelepanu koondamise meetodit, mis aitab närvivõrgul keskenduda olulistele osadele pildil ja ruumilist püramiid-skaleerimise kihti (\emph{Spatial Pyramid Pooling}), mis võimaldab objekte tuvastada erinevatel resolutsioonidel.
+\item
+  \textbf{Pea} (\emph{head}) tegeleb tuvastuste tõenäosuste ning koordinaatide loomisega kaadrilt leitud objektidele. Antud mudelis kasutatakse ka ankurdamiskaste (\emph{anchor boxes}), mis on eelnevalt seadistatud kuvasuhetega, mis aitavad erinevate suurustega ning kujudega objekte tuvastada. Mudeli pea sisaldab endas hulka konvolutsioonilisi kihte, mis tegelevad tuvastuste koordinaatide ja tõenäosuste ennustamisega iga objekti kohta {[}55{]}
+\end{itemize}
+
+\section{MASINNÄGEMISE RAKENDUS}\label{masinnuxe4gemise-rakendus}
+
+Antud töö eesmärgiks oli luua masinnägemise rakendus selliselt, et ta oleks võimeline võimalikult varieeruvatel juhtkontrolleritel jooksma. Selleks oli tarvis pakendada rakendus ära nii, et kontrolleris olemasolevaid seadistusi ei muudetaks ega lisanduvaid tarkvarasid ei installitaks. Samal ajal pidi rakendus olema võimeline vastavalt riistvarale valima sisemised seadistused nii, et tarkvara töö oleks võimalikult riistvaralähedane ehk optimeeritud, tagades seetõttu oma universaalsuse. Rakenduse sisendid pidid olema kasutajale lihtsasti interpreteeritavad ning hästi dokumenteeritud, vältimaks valesid sisendeid. Tarkvara takerdunud töö korral oli tähtsal kohal korrektse ja informatiivse veateate kuvamine. Lihtsustatud versioon seadme tarkvaralisest lahendusest on töö autori poolt avaldatud, saadaval ning pidevalt uuendamisel Githubis {[}56{]}.
+
+\subsection{Töökeskkond}\label{tuxf6uxf6keskkond}
+
+Tarkvara arendamine ning masinnägemise protsesside töö toimub isoleeritud keskkonnas, mis võimaldab testida tarkvara erinevate riistvara konfiguratsioonidega süsteemidel. Samuti tagab selline arendusvõte turvalisuse ja stabiilsuse poolelt hostsüsteemi tarkvara ning oleku puutumatuse. Konteinerdamine võimaldab ühel seadmel jooksutada mitut rakendust, mis kõik võivad olla erinevate konfiguratsioonidega ning tarkvaradega, seejuures kasutaja poolt määratud otsese ligipääsuga hosti riistvarale (vt Joonis 5.1.1).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=4.67812in,height=3.72586in]{./media/media/image13.png}
+  \caption{Joonis 5.1.1. Konteinerdatud rakenduste toimimise lihtsustatud skeem {[}57{]}}
+  \label{fig:joonis_5_1_1__konteinerdatud_rakenduste}
+\end{figure}
+
+
+Süsteemi arenduseks ja testimiseks loodi keskkond eraldiseisva arendusmasina peal, kasutades virtualiseerimiskeskkonda Dockerit {[}58{]}. Aluseks võeti Nvidia NGC keskkonnast PyTorchi konteiner, mõeldud x86\_64 arhitektuuriga seadmetele {[}59{]}. Selle sisse ehitati Jetsoni tarkvaraliste spetsiifilisustega analoogne keskkond ning loodi ka koodis arhitektuuripõhised funktsioonid, mis rakendusid vastavalt eripäradele arendussüsteemile ja toodangsüsteemile (vt Joonis 5.1.2 ja 5.1.3).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=1.83333in]{./media/media/image14.png}
+  \caption{Joonis 5.1.2. Arendusmasina konteinerisse installeeritud tarkvarade versioonid, mis ühilduvad toodangmasina konteineri seisundiga kõige paremini}
+  \label{fig:joonis_5_1_2__arendusmasina_konteineriss}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.09626in,height=2.09526in]{./media/media/image15.png}
+  \caption{Joonis 5.1.3. Toodangsüsteemi konteineri tarkvarade versioonid}
+  \label{fig:joonis_5_1_3__toodangs_steemi_konteineri}
+\end{figure}
+
+
+Toodangsüsteemi jaoks loodi samuti konteiner, mille põhjaks konfigureeriti samuti NGC keskkonnast konteiner, mis on üles ehitatud L4T (\emph{Linux for Tegra}) süsteemiga, spetsiifiliselt loodud aarch64 arhitektuuriga Jetson seadmetele {[}60{]}. See konfigureeriti vastavalt masinnägemiseks vajalike lisateekide ning seoti riistvaral oleva närvivõrkude mudelite optimeerimise rakendusega TensorRT {[}61{]}.
+
+\subsection{Põhiprogramm}\label{puxf5hiprogramm}
+
+Peamine töö toimub inferentsi skriptis (vt lihtsustatud Joonis 5.2.1, tehniline Joonis 5.2.3), millele kasutaja annab sisendiks närvivõrgumudeli ning selle vajalikud parameetrid, sisendstriimi (videofail või kaamera) ning vajadusel ka soovitud režiimi (videosalvestus või videoväljastuseta debugimiseks ja kiiruse kontrolliks mõeldud režiim) (vt Joonis 5.2.2)
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.00897in,height=4.07576in]{./media/media/image16.png}
+  \caption{Joonis 5.2.1. Põhiprogrammi lihtsustatud plokkskeem}
+  \label{fig:joonis_5_2_1__p_hiprogrammi_lihtsustatud}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=0.33333in]{./media/media/image17.png}
+  \caption{Joonis 5.2.2. Põhiprogrammi käitamise näide käsurealt}
+  \label{fig:joonis_5_2_2__p_hiprogrammi_k_itamise_n}
+\end{figure}
+
+
+Pythoniga käitatakse skript nimega inference.py, millele antakse sisendiks TensorRT-ga optimeeritud mudel, nimega yolov5m6, sisendstriimiks antakse videofail video.mp4, samuti lülitatakse sisse performance režiim, mis käitab protsessi ilma veebiliidese videoväljundita kasutajale, selle abil on võimalik hinnata süsteemi latentsust ning otsest mõju Xavieri ressursside kasutusele.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5.71979in,height=6.17581in]{./media/media/image18.png}
+  \caption{Joonis 5.2.3. Masinnägemise programmi toimimise lihtsustatud plokkskeem}
+  \label{fig:joonis_5_2_3__masinn_gemise_programmi_to}
+\end{figure}
+
+
+Masina arhitektuuri tuvastamiseks kasutatakse pythoni moodulit, vastavalt millele rakendatakse vajalikud seadesätted skripti käitanud keskkonna jaoks. Arenduskeskkonnaks kasutatakse lauarvutit, mis on x86\_64 arhitektuuriga, mille seadistamisel initsialiseeritakse vastav videodekooder ning enkooder, samuti määratakse ka erikasutusel olev port ning kaameratest tuleva info jaoks skaleerimise parameeter (vt Joonis 5.2.4).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=4.21875in,height=1.96875in]{./media/media/image19.png}
+  \caption{Joonis 5.2.4. Arhitektuuripõhiste parameetrite initsialiseerimine}
+  \label{fig:joonis_5_2_4__arhitektuurip_histe_parame}
+\end{figure}
+
+
+Närvivõrgu mudel loetakse sisse kasutaja poolt defineeritud ``model'' parameetriga, mis kontrollib mudeli olemasolu ning faili formaati, antud juhul on mudeli formaadiks .engine tüüpi TensorRTga {[}60{]} optimeeritud mudelid. Pärast mudeli formaadi kontrolli loetakse sisse mudeli parameetrite metadata, vastavalt millele allokeeritakse graafikakaardi mälu ning tuumade ressurss.
+
+Kaameratest info lugemiseks kasutatakse Nvidia graafikakaardil asetsevat riistvarakiirendit Nvidia Video Decoder (NVDEC) {[}62{]}, mis võimaldab protsessoril ja graafikakaardil tegeleda täielikult närvivõrgu haldamise ning andmete töötlusega.
+
+Kaameratest saadud kaadrid skaleeritakse närvivõrgule sobivasse sisendformaati, seejärel toimub mudelis kaadritelt informatsiooni hankimine ning statistiliste väljundite formuleerimine. Seejärel saadetakse väljundinfo järeltöötlusesse, kus toimub tulemuste vormistamine ning kaadrile tuvastatud objektide asukohtade ning kindluse tõenäosuse kuvamine (vt Joonis 5.2.5). Seejärel loetakse sisse uus kaader ning programmi töö kordub kuni enam kaadreid sisse ei tule ehk kas kaamera töö lõpeb või kasutaja lõpetab programmi töö.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5.98021in,height=3.72487in]{./media/media/image20.png}
+  \caption{Joonis 5.2.5. Kaadrile kuvatud närvivõrgu poolt genereeritud ja töödeldud tuvastused (kastid ja nende sees olevad tuvastatud klassid koos tõenäosustega)}
+  \label{fig:joonis_5_2_5__kaadrile_kuvatud_n_rviv_rg}
+\end{figure}
+
+
+\subsection{Masinnägemise mudeli ja tarkvara optimeerimine}\label{masinnuxe4gemise-mudeli-ja-tarkvara-optimeerimine}
+
+Masinnägemise rakenduse algfaasis esinesid mitmed probleemid nii kaameratelt sisendite lugemisel kui ka masinnägemise mudeli jooksutamisel riistvara peal.
+
+Rakenduse esimeseks probleemiks oli kaameratelt tuleva striimi lugemine mitme sisendi korral, mis oli protsessorile koormav (kaadrite läbilaskevõime oli madal) ning seetõttu ka juhtkontrolleri temperatuur oli kõrge. Selle tagajärjena ei jätkunud ressurssi teistele seadmetele mis Jetsoniga suhtlesid (radari toimimine oli halvatud). Samuti ei olnud ka masinnägemine töövõimeline kuna kogu protsessor oli hõivatud kaameratelt tulevate kaadrite lugemise ning nende ümberskaleerimisega.
+
+Selle lahendamiseks võeti kasutusele Jetsonisse integreeritud riistvaraline videodekooder NVDEC {[}41{]}, OpenCV abil, millele anti ette kiirendusega gstreameri käsk, mis sisaldas endas sisendit ja videodekoodri kutsungit.
+
+Teise probleemina ei olnud võimalik suuremaid masinnägemise mudeleid edukalt jooksutada, kuna mudelid laeti protsessori mällu ning marginaalne osa arvutuslikust tööst koos kaadrite töötlusega närvivõrgus kandus graafikakaardile (vt Joonis 5.3.1).
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5.94792in,height=4.05208in]{./media/media/image21.png}
+  \caption{Joonis 5.3.1. YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeerimata mudeli jooksmine ei utiliseeri kogu graafikakaarti, monitooringurakenduses jtop {[}43{]}}
+  \label{fig:joonis_5_3_1__yolov5l___he_sisendiga__re}
+\end{figure}
+
+
+Antud probleemile leiti lahenduseks Nvidia TensorRT tööriist, mis on võimeline sisendiks võtma mitmes formaadis närvivõrke ning need vastavalt olemasolevale riistvarale kiirendama. Antud tööriista kasutamisel valmistati närvivõrgud ette ONNX {[}63{]} formaadis, mis on kõige universaalsem ning hõlpsasti kasutatav masinõppe mudelite interpreteerimise viis.
+
+TensorRT tööpõhimõte on mudelis kvantiseerimine ehk mudeli parameetrite arvutusliku täpsuse vähendamine (nt 32lt ujukomaarvult, 16le ujukomaarvule), see võimaldab kasutada suure jõudlusega vektorarvutusi selleks spetsialiseeritud riistvaral marginaalsete mõjutustega mudeli täpsusele. Teisena toimub mudeli kärpimine ehk ebavajalike ning minimaalselt mudeli inferentsi tulemusi mõjutavate parameetrite eemaldamine, tehes mudeli mahtu väiksemaks, mille tõttu ka mudeli kiirus paraneb (vt peatükk 5.2).
+
+Optimeerimiste tulemusena (vt Joonis 5.3.2) on:
+
+\begin{itemize}
+\item
+  graafikakaardi kasutus tõusnud (43,1 \% langes 99,8 \%)
+\item
+  keskmine energiakasutus vähenenud 26,8 \% (20,1 W langes 14,7 W)
+\item
+  töötemperatuurid langenud 3,3 \% (46 ° langes 44,5 °)
+\item
+  mälu kasutus langenud 1,6 \% (18,5 GB langes 18,2 GB)
+\end{itemize}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=5.90625in,height=4.03125in]{./media/media/image22.png}
+  \caption{Joonis 5.3.2. YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeeritud mudeli jooksmine utiliseerib kogu graafikakaardi}
+  \label{fig:joonis_5_3_2__yolov5l___he_sisendiga__re}
+\end{figure}
+
+
+\section{TULEMUSED}\label{tulemused}
+
+Kõige sobivama mudeli valimisel lähtuti inferentsi kiirusest ja mudeli täpsusest objektide hindamisel. Kõik katsed on läbi viidud Jetson AGX Xavier 32 GB masina peal. Mudelite hindamise katsed on läbi viidud ideaaltingimustes, mis välistab kõikvõimalikud faktorid, mis võivad hinnatava mudeli testimise tulemustes hälbeid tekitada.
+
+Antud katsetes analüüsitakse ainult närvivõrgu mudeli töötlemisvõimekust, eraldatuna ülejäänud süsteemist (kaamerad ning nendelt tulevate kaadrite eeltöötlus ning kaadritele tuvastatud objektide informatsiooni kuvamine ning edastamine teistele süsteemidele), et saada kõige optimaalsem ning hälbevaba tulemus mudelite jõudluse ning riistvara utiliseerituse kohta.
+
+\subsection{Katsete läbiviimine}\label{katsete-luxe4biviimine}
+
+Katsete läbiviimise keskkond vastab järgnevatele tingimustele:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Inferentsil kasutatavad kaadrid on spetsiifiliselt välja valitud, standardiseeritud ning enne testi algust ettevalmistatud ehk närvivõrgu sisendi suuruse jaoks skaleeritud ning eeltöödeldud. See välistab igasuguse lisatöö ja koormuse graafikakaardile ja protsessorile mis mõjutaks närvivõrgu tööd negatiivselt ning võimaldab kõiki katsetatavaid mudeleid hinnata samaväärselt ühise andmestiku peal.
+\item
+  Katsetatavad mudelid on enne testjooksu läbiviimist riistvaraliselt eelsoojenduse faasi läbinud ehk on täielikult masina graafikakaardi mällu loetud ja läbinud 50 kalibreerimise inferentsi iteratsiooni, kasutades eelnevalt mainitud ette valmistatud testkaadreid, see võimaldab mudelite testfaasi jaoks luua keskkonna kus kõik mudelid on võrdselt ette valmistatud ning valmis töötama oma maksimaalsel võimekusel.
+\item
+  Testjooksude arv on 1000, mille jooksul mõõdetakse ette valmistatud kaadritel tehtavat inferentsi kiirust ja tuvastustäpsust.
+\item
+  Tuvastustäpsust hinnatakse järgmise valemiga:
+\end{enumerate}
+
+\begin{quote}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=3.18442in,height=0.37002in]{./media/media/image23.png}
+\end{figure}
+
+Mida lähemal tulem on ühele, seda täpsem on mudel ning suuteline tuvastama objekte.
+\end{quote}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\item
+  Mudeli kiirust hinnatakse inferentsiks kulunud ajaga millisekundites, (graafikutel kuvatuna töödeldud kaadrite hulk ühe sekundi jooksul)
+\end{enumerate}
+
+Jetson AGX Xavieri tarkvaraline konfiguratsioon:
+
+\begin{itemize}
+\item
+  JetPack 5.0.2
+\item
+  Ubuntu 20.04.5
+\item
+  kernel 5.10.104-tegra
+\item
+  L4T 35.1.0
+\item
+  Python 3.8.10
+\item
+  torch 1.12.0
+\item
+  torchvision 0.13.0
+\item
+  cv2 4.5.0
+\item
+  TensorRT 8.4.1.5
+\item
+  CUDA 11.4
+\end{itemize}
+
+\subsection{Tulemuste analüüs}\label{tulemuste-analuxfcuxfcs}
+
+Katsed viidi läbi kahes konfiguratsioonis: ühe kaadriga ning kolme kaadriga paralleelselt protsessides, kuna toodangkeskkonnas rakendatakse kolmest kaadrist tuleva info peal närvivõrgu töötlust. Joonistel kujutatud \emph{mean Average Precision} parameeter (kollases) väljendab mudeli keskmist summaarset täpsust kõikide klasside peale kokku, see tuleneb katsetest, mis viidi läbi COCO 2017 aasta valideerimise andmestikust valitud klassidel, kus kõikidest klassidest valiti võrdne hulk testandmeid {[}64{]}, \emph{accuracy} parameeter (punases) saavutati eraldi loodud andmestikul, mis sisaldas ainult laevu. Katsete tulemused on kujutatud mudelite suuruste ehk parameetrite hulga järgi kasvavas järjekorras, väikseim mudel vasakul, suurim paremal, et tagada intuitiivne ülevaade kõikidest parameetritest.
+
+Suuremate sisenditega mudelite joonistel (vt Joonis 6.2.2 ja 6.2.4) tekkinud täpsuse kõikumised on põhjustatud sellest et ``6'' lõpuga mudelite skaleerimisekihid on loodud suuremate sisendresolutsioonide jaoks ning teiste mudelite kihid, väiksemate sisendresolutsioonide jaoks {[}65{]}. Seetõttu on ka viimaste täpsus väiksem antud resolutsioonil.
+
+Optimeeritud mudelite ja optimeerimata mudelite kiiruste vahe on vähemalt kahekordne, kõige suurem kiiruste vahe on 4,28 kordne, mudelitepaaril yolov5l6 (vt Joonis 6.2.3). Optimeeritud ning optimeerimata mudelite täpsuste vahe minimaalne (\({1,7 \cdot 10}^{- 3}\)), ehk optimeerimine täpsust oluliselt ei mõjutanud. Seetõttu graafikul algselt kuvatud täpsuste väärtused olid ülekattega, mistõttu kuvatakse nende keskmistatud väärtusi.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=3.77778in]{./media/media/image24.png}
+  \caption{Joonis 6.2.1. Mudelite jõudlus 1 kaadri sisendiga, suurusel 640x640 pikslit}
+  \label{fig:joonis_6_2_1__mudelite_j_udlus_1_kaadri}
+\end{figure}
+
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 108 kaadrit sekundis, kusjuures parim kiirendus neljakordne. Keskmine optimeeritud kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5l mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=3.77778in]{./media/media/image25.png}
+  \caption{Joonis 6.2.2. Mudelite jõudlus 1 kaadri sisendiga, suurusel 1280x1280 pikslit}
+  \label{fig:joonis_6_2_2__mudelite_j_udlus_1_kaadri}
+\end{figure}
+
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 40 kaadrit sekundis, parim kiirendus 4,1 kordne. Keskmine optimeeritud kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5m mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+
+Ühe sisendiga 640x640 ja 1280x1280 resolutsiooniga mudelite kiiruste keskmine vahe on 36 kaadrit sekundis.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=3.77778in]{./media/media/image26.png}
+  \caption{Joonis 6.2.3. Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 640x640 pikslit}
+  \label{fig:joonis_6_2_3__mudelite_j_udlus_3_kaadri}
+\end{figure}
+
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 52 kaadrit sekundis, parim kiirendus 4,3 kordne. Keskmine optimeeritud kiiruste vahe 3,4 kordne. Mudelite täpsus kasvab YOLOv5l mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+
+Kolme sisendiga resolutsiooniga 640x640 mudelid on keskmiselt 1,4 korda kiiremad kui ühe sisendiga sama resolutsiooniga mudelid.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=6.10174in,height=3.77778in]{./media/media/image27.png}
+  \caption{Joonis 6.2.4. Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 1280x1280 pikslit}
+  \label{fig:joonis_6_2_4__mudelite_j_udlus_3_kaadri}
+\end{figure}
+
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe 16 kaadrit sekundis, parim kiirendus 4,2 kordne. Keskmine optimeeritud mudelite kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5m mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb. Antud juhul on tegemist 1,1 korda kiiremate mudelitega, võrreldes ühe sisendiga mudeleid, samal resolutsioonil.
+
+Kolme sisendiga 640x640 ja 1280x1280 resolutsiooniga mudelite kiiruste keskmine vahe on 18 kaadrit sekundis.
+
+Kolme sisendiga mudelid on keskmiselt 1,2 korda kiiremad kui ühe sisendiga mudelid.
+
+\section*{KOKKUVÕTE}\label{kokkuvuxf5te}
+\addcontentsline{toc}{section}{KOKKUVÕTE}
+
+Masinnägemise süsteemi arenduseks leiti sobivad komponendid, mis lõpptulemusena toimisid omavahel heas koostöös, tagades süsteemi eduka ning nõuetekohase toimimise riistvara ja tarkvara näol.
+
+Riistvaraliselt valitud juhtkontrolleriks Nvidia Jetson AGX Xavier, mis suudab edukalt mitme sisendiga, suuremaid ning täpseid närvivõrgu mudeleid jooksutada. Samuti võimaldas ka antud kontrolleri riistvara suure kasuteguriga mudelite kiirendamist, mis aitas oluliselt masinnägemise rakenduse tööl kaameralt saadud kaadrite töötlemise kiirusele kaasa. Samuti aitas ka täpsematele objektide tuvastamisele kaasa kaamerateks valitud Arducam Fisheye moodul võimaldas edastada juhtkontrollerile nõuetekohase resolutsiooniga informatsiooni.
+
+Tarkvaraliselt oli olulisel kohal kogu rakenduse konteinerdamine, mis võimaldas rakenduse arendamist ning toodangkeskkonnas käitamist hõlpsamaks teha, kuna sellisel meetodil oli rakendust võimalik käitada erinevatel arvutisüsteemidel ilma muudatusteta süsteemi enda tarkvaras.
+
+Masinnägemise tarkvara olulisim komponent oli objektide tuvastuseks valitud meetod ehk masinnägemise jaoks loodud närvivõrgumudelid. Nende seast valiti YOLOv5 Ultralyticsi poolt, mis oli parim võrreldes teiste saadavalolevate mudelitega oma ühendatud objektide tuvastuse ning nende sildistamise arhitektuuri ja parima kiiruse ning täpsuse suhte poolest. Samuti oli see üks vähestest saadavalolevatest mudelitest, mida oli võimalik edukalt riistvaraliselt kiirendada.
+
+Kõige olulisemad tulemused masinnägemise mudelite katsetes
+
+\begin{itemize}
+\item
+  Masinnägemise mudelite täpsus kasvab YOLOv5m / YOLOv5l mudelini
+\item
+  Keskmine täpsuse muutus optimeeritud ja optimeerimata mudelite võrdluses oli väike \({1,7 \cdot 10}^{- 3}\)
+\item
+  Keskmine mudelite kiiruse kasv pärast optimeerimist oli 3,5 kordne
+\item
+  Parima optimeeritud mudeli kiiruse kasv võrreldes optimeerimata versiooniga oli 4,3 kordne
+\end{itemize}
+
+Masinnägemise rakenduse optimeerimisel saavutati sujuv ja kiirendatud rakenduse töö, kusjuures optimeerimise tulemusena vähenes juhtkontrolleri energiakasutus olulisel määral (26,8 \%) ning seetõttu olid ka töötemperatuurid madalamad. Samuti toimus selle tõttu ka andmete töötlus ja närvivõrgu töö oluliselt kiiremini ning kogu juhtkontrolleri riistvaralised kiirendid olid otstarbekalt kasutuses.
+
+\section*{KASUTATUD KIRJANDUSE LOETELU}\label{kasutatud-kirjanduse-loetelu}
+\addcontentsline{toc}{section}{KASUTATUD KIRJANDUSE LOETELU}
+
+{[}1{]} Blockage of the Suez Canal, March 2021 {[}WWW{]}
+
+\begin{quote}
+\url{https://porteconomicsmanagement.org/pemp/contents/part6/port-}resilience/suez-canal-blockage-2021/
+\end{quote}
+
+(20. okt. 2021)
+
+{[}2{]} Drowning, WHO {[}WWW{]}
+
+\begin{quote}
+https://www.who.int/news-room/fact-sheets/detail/drowning
+
+(28. okt. 2021)
+\end{quote}
+
+{[}3{]} Marine Insight, 7 Dangerous Diseases/Disorders Seafarers Should Be Aware Of {[}WWW{]}
+
+\begin{quote}
+https://www.marineinsight.com/marine-safety/7-dangerous-diseasesdisorders-seafarers-should-be-aware-of/
+
+(28. okt. 2021)
+\end{quote}
+
+{[}4{]} Tesla, Future of Driving {[}WWW{]}
+
+\begin{quote}
+https://www.tesla.com/autopilot
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}5{]} Lucid Announces Integration of Its Proprietary DreamDrive Pro Advanced Driver-Assistance System with NVIDIA DRIVE Hyperion Software-Defined Platform {[}WWW{]}
+
+\begin{quote}
+https://ir.lucidmotors.com/news-releases/news-release-details/lucid-announces-integration-its-proprietary-dreamdrive-pro
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}6{]} Waymo, The World's Most Experienced Driver {[}WWW{]}
+
+\begin{quote}
+https://waymo.com
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}7{]} Nvidia Drive, End-to-End Solutions for Autonomous Vehicles {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/drive
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}8{]} Comma.ai, Openpilot: An open source driver assistance system {[}WWW{]}
+
+https://github.com/commaai/openpilot
+
+(10. jaanuar 2023)
+
+{[}9{]} Kongsberg, Autonomous Shipping {[}WWW{]}
+
+https://www.kongsberg.com/maritime/support/themes/autonomous-shipping/
+
+(20. okt. 2021)
+
+{[}10{]} Rolls Royce, Autonomous Ships {[}WWW{]}
+
+\begin{quote}
+https://www.rolls-royce.com/\textasciitilde/media/Files/R/Rolls-Royce/documents/\%20customers/marine/ship-intel/rr-ship-intel-aawa-8pg.pdf
+
+(20. okt. 2021)
+\end{quote}
+
+{[}11{]} Täisskaalas laevade autonoomsed käigukatsed avavees {[}WWW{]}
+
+\begin{quote}
+https://www.scc.ee/taisskaalas-laevade-autonoomsed-kaigukatsed-avavees/
+
+(14. veeb 2022)
+\end{quote}
+
+{[}12{]} Navy 18 WP -- Baltic WorkBoats {[}WWW{]}
+
+\begin{quote}
+https://bwb.ee/vessel/navy-18-wp/
+
+(27. märts 2022)
+\end{quote}
+
+{[}13{]} Laevade eelseadistatud autonoomsete avaveekatsete tehnoloogia arendamine {[}WWW{]}
+
+\begin{quote}
+https://www.etis.ee/Portal/Projects/Display/fde46bb2-4579-42ad-bbe9-5bc7c1bef77d
+
+(31. märts 2022)
+\end{quote}
+
+{[}14{]} What is computer vision? {[}WWW{]}
+
+\begin{quote}
+https://www.ibm.com/topics/computer-vision\#:\textasciitilde:text=Computer\%20vision\%20is\%20a\%20field,recommendations\%20based\%20on\%20that\%20information.
+
+(04. aprill 2022)
+\end{quote}
+
+{[}15{]} A Comprehensive Guide to Convolutional Neural Networks {[}WWW{]}
+
+\begin{quote}
+https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53
+
+(02. mai 2022)
+\end{quote}
+
+{[}16{]} Rectified Linear Unit, DeepAI {[}WWW{]}
+
+\begin{quote}
+https://deepai.org/machine-learning-glossary-and-terms/relu
+
+(13. mai 2022)
+\end{quote}
+
+{[}17{]} Multi-Class Neural Networks: Softmax {[}WWW{]}
+
+\begin{quote}
+https://developers.google.com/machine-learning/crash-course/multi-class-neural-networks/softmax
+
+(14. mai 2022)
+\end{quote}
+
+{[}18{]} Convolutional Neural Networks {[}WWW{]}
+
+\begin{quote}
+https://www.ibm.com/cloud/learn/convolutional-neural-networks
+
+(15. mai 2022)
+\end{quote}
+
+{[}19{]} Technopedia, Single-Board Computer {[}WWW{]}
+
+\begin{quote}
+https://www.techopedia.com/definition/9266/single-board-computer-sbc
+
+(06. dets. 2021)
+\end{quote}
+
+{[}20{]} Nvidia Embedded AI Systems {[}WWW{]}
+
+\begin{quote}
+https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/
+
+(06. dets. 2021)
+\end{quote}
+
+{[}21{]} Raspberry Pi, Model 4B datasheet {[}WWW{]}
+
+\begin{quote}
+https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-datasheet.pdf
+
+(06. dets. 2021)
+\end{quote}
+
+{[}22{]} Graphics Processing Unit {[}WWW{]}
+
+\begin{quote}
+https://graphics.fandom.com/wiki/Graphics\_processing\_unit
+
+(06. dets. 2021)
+\end{quote}
+
+{[}23{]} CUDA FAQ {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/cuda-faq
+
+(11. veeb 2022)
+\end{quote}
+
+{[}24{]} Jetson Modules Technical Specifications {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/embedded/jetson-modules
+
+(22. jaan. 2022)
+\end{quote}
+
+{[}25{]} Nvidia Volta Architecture {[}WWW{]}
+
+\begin{quote}
+https://www.olcf.ornl.gov/wp-content/uploads/2018/12/summit\_workshop\_Volta-Architecture.pdf
+
+(12. märts 2022)
+\end{quote}
+
+{[}26{]} Jetson AGX Xavier {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/
+
+(09. veeb 2022)
+\end{quote}
+
+{[}27{]} NVIDIA Jetson AGX Xavier Delivers 32 TeraOps for New Era of AI in Robotics {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/blog/nvidia-jetson-agx-xavier-32-teraops-ai-robotics/
+
+(10. veeb 2022)
+\end{quote}
+
+{[}28{]} SurveilsQUAD - Sony IMX290 Synchronized Multi-Camera System {[}WWW{]}
+
+\begin{quote}
+https://www.e-consystems.com/nvidia-cameras/jetson-agx-xavier-cameras/sony-starvis-imx290-synchronized-multi-camera.asp\#key-features
+
+(07. veeb 2022)
+\end{quote}
+
+{[}29{]} OpenCV AI Kit: OAK---D-PoE-- OpenCV.AI {[}WWW{]}
+
+\begin{quote}
+https://store.opencv.ai/products/oak-d-poe
+
+(07. veeb 2022)
+\end{quote}
+
+{[}30{]} OAK-1-PoE --- DepthAI Hardware Documentation 1.0.0 documentation {[}WWW{]}
+
+\begin{quote}
+https://docs.luxonis.com/projects/hardware/en/latest/pages/SJ2096POE.html
+
+(07. veeb 2022)
+\end{quote}
+
+{[}31{]} Atlas IP67 7.1 MP Model {[}WWW{]}
+
+\begin{quote}
+https://thinklucid.com/product/atlas-ip67-7-1-mp-imx420/
+
+(06. veeb 2022)
+\end{quote}
+
+{[}32{]} Atlas IP67 2.8 MP Model {[}WWW{]}
+
+\begin{quote}
+https://thinklucid.com/product/atlas-ip67-2-8-mp-imx421/
+
+(06. veeb 2022)
+\end{quote}
+
+{[}33{]} Arducam 12MP IMX477 {[}WWW{]}
+
+\begin{quote}
+https://www.uctronics.com/arducam-12mp-imx477-camera-and-2-1mp-ov9282-monochrome-camera-with-dm1090ffc.html
+
+(08. veeb 2022)
+\end{quote}
+
+{[}34{]} Arducam Fisheye Camera for Raspberry Pi -- 5MP OV5647 {[}WWW{]}
+
+\begin{quote}
+https://www.arducam.com/product/arducam-raspberry-pi-camera-5mp-fisheye-m12-picam-b0055/
+
+(29. märts 2022)
+\end{quote}
+
+{[}35{]} Mindchip Artificial Captain {[}WWW{]}
+
+\begin{quote}
+https://mindchip.ee/artificial-captain/
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}36{]} OpenCV {[}WWW{]}
+
+\begin{quote}
+https://opencv.org/
+
+(22. aprill 2022)
+\end{quote}
+
+{[}37{]} Scikit-Image, Image processing in Python {[}WWW{]}
+
+\begin{quote}
+https://scikit-image.org/
+
+(22. aprill 2022)
+\end{quote}
+
+{[}38{]} SciPy - Fundamental algorithms for scientific computing in Python {[}WWW{]}
+
+\begin{quote}
+https://scipy.org/
+
+(22. aprill 2022)
+\end{quote}
+
+{[}39{]} Pillow -- Python Imaging Library (Fork) {[}WWW{]}
+
+\begin{quote}
+https://pillow.readthedocs.io/en/stable/
+
+(22. aprill 2022)
+\end{quote}
+
+{[}40{]} GStreamer, Open source multimedia framework {[}WWW{]}
+
+\begin{quote}
+https://gstreamer.freedesktop.org/
+
+(26. aprill 2022)
+\end{quote}
+
+{[}41{]} Nvidia Video Decoder {[}WWW{]}
+
+\begin{quote}
+https://developer.nvidia.com/nvidia-video-codec-sdk
+
+(26. aprill 2022)
+\end{quote}
+
+{[}42{]} Pandas - Python Data Analysis Library {[}WWW{]}
+
+\begin{quote}
+https://pandas.pydata.org/
+
+(29. aprill 2022)
+\end{quote}
+
+{[}43{]} Jetson-Stats {[}WWW{]}
+
+\begin{quote}
+https://github.com/rbonghi/jetson\_stats
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}44{]} cuDF, A Python GPU DataFrame library {[}WWW{]}
+
+\begin{quote}
+https://docs.rapids.ai/api/cudf/stable/
+
+(29. aprill 2022)
+\end{quote}
+
+{[}45{]} Create production-grade machine learning models with TensorFlow {[}WWW{]}
+
+\begin{quote}
+https://www.tensorflow.org
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}46{]} Keras, Deep Learning for humans {[}WWW{]}
+
+\begin{quote}
+https://keras.io
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}47{]} PyTorch, Tensors and Dynamic neural networks in Python with strong GPU acceleration {[}WWW{]}
+
+\begin{quote}
+https://pytorch.org
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}48{]} scikit-learn, Machine Learning in Python {[}WWW{]}
+
+https://scikit-learn.org/stable/
+
+(10. jaanuar 2023)
+
+{[}49{]} Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks {[}WWW{]}
+
+https://arxiv.org/pdf/1506.01497.pdf
+
+(10. jaanuar 2023)
+
+{[}50{]} Ultralytics, YOLOv5 {[}WWW{]}
+
+\begin{quote}
+https://github.com/ultralytics/yolov5
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}51{]} MobileNetV2: Inverted Residuals and Linear Bottlenecks {[}WWW{]}
+
+\begin{quote}
+https://arxiv.org/pdf/1801.04381.pdf
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}52{]} EfficientDet: Scalable and Efficient Object Detection {[}WWW{]}
+
+\begin{quote}
+https://arxiv.org/pdf/1911.09070.pdf
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}53{]} YOLOv5: The friendliest AI architecture you\textquotesingle ll ever use {[}WWW{]}
+
+\begin{quote}
+https://ultralytics.com/yolov5
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}54{]} YOLOv4 / Scaled-YOLOv4 / YOLO - Neural Networks for Object Detection {[}WWW{]}
+
+\begin{quote}
+https://github.com/AlexeyAB/darknet
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}55{]} A Forest Fire Detection System Based on Ensemble Learning {[}WWW{]}
+
+\begin{quote}
+https://www.mdpi.com/1999-4907/12/2/217
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}56{]} Yolo-dualdev, Develop and deploy TensorRT optimized YOLO models on Nvidia
+
+Jetson and PC environments
+
+https://github.com/The-Magicians-Code/yolo-dualdev
+
+(17. mai 2023)
+
+{[}57{]} Docker, Use containers to Build, Share and Run your applications {[}WWW{]}
+
+\begin{quote}
+https://www.docker.com/resources/what-container/
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}58{]} Docker: Accelerated, Containerized Application Development {[}WWW{]}
+
+\begin{quote}
+https://www.docker.com
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}59{]} The PyTorch NGC Container {[}WWW{]}
+
+\begin{quote}
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}60{]} Machine Learning Container for Jetson and JetPack {[}WWW{]}
+
+\begin{quote}
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/l4t-ml
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}61{]} Nvidia TensorRT {[}WWW{]}
+
+https://developer.nvidia.com/tensorrt
+
+(10. jaanuar 2023)
+
+{[}62{]} Accelerated GStreamer User Guide {[}WWW{]}
+
+\begin{quote}
+https://developer.download.nvidia.com/embedded/L4T/r32\_Release\_v1.0/Docs/Accelerated\_GStreamer\_User\_Guide.pdf?t=eyJscyI6ImdzZW8iLCJsc2QiOiJodHRwczovL3d3dy5nb29nbGUuY29tLyJ9
+\end{quote}
+
+(10. jaanuar 2023)
+
+{[}63{]} Open Neural Network Exchange {[}WWW{]}
+
+\begin{quote}
+https://onnx.ai
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}64{]} COCO, Common Objects in Context {[}WWW{]}
+
+\begin{quote}
+https://cocodataset.org
+
+(10. jaanuar 2023)
+\end{quote}
+
+{[}65{]} YOLOv5, Pretrained checkpoints {[}WWW{]}
+
+\begin{quote}
+https://github.com/ultralytics/yolov5\#pretrained-checkpoints
+
+(10. jaanuar 2023
+\end{quote}
+
+\end{document}
