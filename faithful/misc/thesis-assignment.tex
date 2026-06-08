@@ -1,0 +1,175 @@
+\begin{flushleft}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}p{0.32\linewidth}p{0.62\linewidth}@{}}
+\hline
+Lõputöö teema:                                                  & \textbf{Autonoomse laeva situatsiooniteadlikkuse arendamine masinnägemise abil} \\
+Lõputöö teema inglise keeles:                                   & \textbf{Improving situational awareness of autonomous vessels using computer vision} \\
+Üliõpilane:                                                     & \textbf{Tanel Treuberg, 193761EAAB} \\
+Eriala:                                                         & \textbf{Elektroenergeetika ja Mehhatroonika} \\
+Lõputöö liik:                                                   & \textbf{bakalaureusetöö} \\
+Lõputöö juhendaja:                                              & \textbf{Heigo Mõlder, PhD} \\
+Lõputöö kaasjuhendaja:                                          & \textbf{Karl Janson, PhD} \\
+(ettevõte, amet ja kontakt)                                     & \textbf{TTÜ Arvutisüsteemide instituut, Email: karl.janson@taltech.ee} \\
+Lõputöö ülesande kehtivusaeg: (kehtivusaja annab juhendaja)     & 2022/2023 Kevad \\
+Lõputöö esitamise tähtaeg:                                      & \textbf{18.05.23} \\
+\hline
+\end{tabular}
+\end{flushleft}
+
+\vspace{1.5em}
+
+\noindent\rule{6cm}{0.4pt}\\
+Üliõpilane (allkiri)
+
+\noindent\rule{6cm}{0.4pt}\\
+Juhendaja (allkiri)
+
+\noindent\rule{6cm}{0.4pt}\\
+Õppekava juht (allkiri)
+
+\noindent\rule{6cm}{0.4pt}\\
+Kaasjuhendaja (allkiri)
+
+\section*{1. Teema põhjendus}
+
+TTÜ Elektroenergeetika ja mehhatroonika instituudi, TTÜ Väikelaevaehituse kompetentsikeskuse ja merendusettevõtte Baltic Workboatsi vahelise koostööprojekti raames on eesmärgiks automatiseerida laevade käigukatsed, mida seni on läbi viinud erinevad kaptenid käsijuhtimisega. Seetõttu ei ole katsete tulemused objektiivsed, vaid sõltuvad kapteni laeva käsitsemisest ning andmetes võivad tekkida hälbed, mille põhjal ei saa laeva parameetreid soovitud täpsusega kinnitada. Samuti on käigukatsete läbiviimine väga ajamahukas, sest tihti on vaja teha teatud manöövrit mitu korda, sest mõnel katsel võidakse tüürida liiga suure raadiusega või vale kiirusega, mistõttu tekitab inimlik viga katsete tulemustes ebameeldivaid hälbeid.
+
+Koostööprojekti raames on need käigukatsed plaan teostada arvutiprogrammi abil, mille juures märgib suurt rolli laeva situatsiooniteadlikus. Antud lõputöö raames püütakse arendada laeva situatsiooniteadlikust, luues ümbruskonna tajumiseks masinnägemisel põhineva lahenduse.
+
+\section*{2. Töö eesmärk}
+
+Lõputöö eesmärgiks on arendada välja masinnägemise süsteem, mis sobib laeva käigukatsete automatiseeritud läbiviimiseks. See tähendab sobiva riistvara valikut ja masinnägemise süsteemi tarkvara loomist, selle vahekatsetusi sadamas ja lõpuks ka reaalsel laeval. Samuti välja uurida kuidas on võimalik optimeerida tarkvara nii et võimalikult efektiivselt utiliseerida riistvara ning selle tulemusena ka tarkvara töötlemist sujuvamaks ning kiiremaks muuta.
+
+\section*{3. Lahendamisele kuuluvate küsimuste loetelu}
+
+\begin{itemize}
+  \item Milline juhtkontroller masinnägemissüsteemi jaoks valida?
+  \item Milline kaamerate süsteem masinnägemise jaoks valida?
+  \item Millist tarkvaralist lahendust probleemi lahenduseks kasutada?
+  \item Kuidas anda masinnägemise süsteemi abil tuvastatud objekti info edasi laeva juhtkontrolleritele?
+  \item Milliseid meetodeid on võimalik tarkvara optimeerimisel rakendada?
+  \item Millist närvivõrku objektide tuvastusel kasutada ning miks?
+\end{itemize}
+
+\section*{4. Lähteandmed}
+
+Lähteinfo koondatakse kokku järgmistest allikatest:
+
+\begin{itemize}
+  \item Uuritakse olemasolevaid lahendusi, mis on maailmas varem tehtud.
+  \item Seadmete andmelehed, skeemid.
+  \item Projektimeeskonna poolt antav lähteinfo laeva juhtsüsteemi osas.
+  \item Erialane kirjandus, veebilehed, teadusartiklid jne.
+\end{itemize}
+
+\section*{5. Uurimismeetodid}
+
+Töö teoreetilises osas lähtutakse allikate (kirjanduse, veebiartiklite, teadusartiklite) analüüsist ning autori erialastest teadmistest ning nende omavahelisest kooskõlast.
+
+Praktilises osas käsitletakse katseid, masinnägemisel kasutavate mudelite võrdlusi ja võimekust, mõõtmiste sooritamisi nende analüüsi (nii graafiliselt kui ka statistiliselt), et saadud tulemused võimaldaksid püstitatud probleemi optimaalseimat lahendamist.
+
+\section*{6. Graafiline osa}
+
+Graafikud, tabelid, joonised on valdavalt töö põhiosas.
+
+\section*{7. Töö struktuur}
+
+\textit{(Teoreetilises osas võimalikud väiksemad alateemade muutused)}
+
+\begin{itemize}
+  \item Lõputöö ülesanne
+  \item Sisukord
+  \item Eessõna
+  \item Mõistete, lühendite, sümbolite loetelu
+  \item Sissejuhatus
+    \begin{enumerate}
+      \item Probleemi püstitus
+      \item Ülevaade seni loodud lahendustest maailmas
+      \item Projekti ülevaade
+    \end{enumerate}
+  \item Riistvara valik, võrdlustega
+    \begin{enumerate}
+      \item Juhtkontroller
+      \item Kaamerad
+      \item Juhttorni koostejoonis/üldistatud skeem
+      \item Elektriskeem
+    \end{enumerate}
+  \item Masinnägemine ning masinnägemise tarkvara valik, võrdlustega
+    \begin{enumerate}
+      \item Masinnägemise tarkvara platvormid, milline, milleks sobilik
+      \item Objektide tuvastamine, mis, kuidas ja miks
+    \end{enumerate}
+  \item Masinnägemise ühildamine teiste anduritega täpsema info saamiseks
+    \begin{enumerate}
+      \item Radariga
+      \item Lidariga
+    \end{enumerate}
+  \item Katsed
+    \begin{enumerate}
+      \item Katsed video põhjal simuleeritud keskkonnas masinnägemise testimiseks
+      \item Katsed sadamas, juhttorni test
+      \item Katsed laeval
+      \item Katsete tulemuste analüüs
+    \end{enumerate}
+  \item Järeldused
+  \item Kokkuvõtte
+  \item Tuleviku arendustööd
+    \begin{enumerate}
+      \item Ühildamine AIS marine (Automatic Identification System) süsteemiga
+    \end{enumerate}
+  \item Allikate loetelu
+  \item Lisad
+\end{itemize}
+
+\section*{8. Kasutatud kirjanduse allikad}
+
+Allikatena kasutatakse erialast kirjandust, samuti merenduseteemalisi artikleid, Baltic Workboatsi loal ka katsetatavate laevade manööverdamisvõimekuse informatsioon.
+
+\begin{itemize}
+  \item Nvidia Jetson AGX Xavier Developer Kit, \url{https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit}
+  \item Marine Insight, \url{https://www.marineinsight.com/}
+  \item OpenCV, \url{https://opencv.org/}
+  \item TensorFlow, \url{https://www.tensorflow.org/}
+  \item Baltic Workboats, \url{https://bwb.ee/}
+  \item MindChip, \url{https://mindchip.ee/}
+\end{itemize}
+
+\section*{9. Lõputöö konsultandid}
+
+Võimalik konsulteerimine Baltic Workboatsi projekti juhi/tellija/esindajaga, seoses masinnägemise süsteemi installeerimisega prototüüplaevale ning vajalike sisendparameetrite sätestamisega. Samuti ka parameetrite täpsustamisega (pöörderaadius, lubatud kalle, maksimaalne kiirus, kabariidid vöörist ahtrini ja pakpoordist tüüripardani).
+
+\section*{10. Töö etapid ja ajakava}
+
+\begin{itemize}
+  \item Teoreetiline osa (11. märts)
+    \begin{itemize}
+      \item Allikate sirvimine/kogumine
+      \item Peatükkide sisu loomine
+    \end{itemize}
+  \item Praktiline osa (2. aprill)
+    \begin{itemize}
+      \item Masinnägemise mudel
+        \begin{itemize}
+          \item Mudeli valik
+          \item Implementatsioon
+          \item Treenimine
+        \end{itemize}
+      \item Katsed
+        \begin{itemize}
+          \item Siseruumides
+          \item Sadamas
+          \item Laeval
+          \item Mudeli parameetrite arendamine/täiustamine
+        \end{itemize}
+    \end{itemize}
+  \item Lõputöö lähteversioon (23. aprill)
+    \begin{itemize}
+      \item Teoreetilise osaga
+      \item Praktilise osaga
+      \item Esitamine juhendajale (24. aprill)
+      \item Täpsustuste tegemine, täiendamine (26. aprill)
+    \end{itemize}
+  \item Lõputöö valminud (8. mai)
+\end{itemize}
+
+\textit{Kinnise kaitsmise ja/või lõputöö avalikustamise piirangu tingimused formuleeritakse pöördel.}

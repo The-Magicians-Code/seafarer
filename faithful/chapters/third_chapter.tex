@@ -14,11 +14,11 @@ Tulevikus plaanitakse taolist süsteemi rakendada erinevatel laevatüüpidel, mi
 
 Juhtkontroller on seade, mis tegeleb selle külge ühendatud kaameratelt saadud informatsiooni töötlemisega ning tulemuste edastamisega autopiloodile. Pardaarvuti asetseb laeva juhttornis, ümbritsetuna kolmest kaamerast. Kaameratelt saadava info peal (antud kontekstis reaalajas video) rakendatakse analüütilisi algoritme, mille väljundina saadakse info (tuvastatud objektid ning nende suhteline asukoht kaadris), mis edastatakse autopiloodile, andes lisainfot ümbritseva keskkonna kohta, mille põhjal viimane teeb otsuse, kuidas laevaga käituda.
 
-Antud ülesande lahendamiseks on saadaval mitmeid monoplaatarvuteid (\emph{Single-Board Computer}, (SBC) {[}19{]}, \emph{System on Module} (SoM)), populaarseimatena Nvidia Jetson seeria {[}20{]}, mis on tehisintellekti ning masinnägemise ja masinõppe rakendusteks spetsialiseeritud ja Raspberry Pi {[}21{]}. Antud ülesande lahendamisel välistame Raspberry Pi valikutest kuna juhttorni süsteem hõlmab 4 kaameraga paralleelselt töötamist, (Raspberry Pi'l ainult 1 kaamerasisend). See vajab rohket arvutusvõimsust, kuid antud seadmel pole selle kohast võimekust, ega vajalikku riistvara (seadme protsessoris on küll integreeritud graafikakaart, kuid antud ülesande lahendamiseks jääb see liiga nõrgaks). Seetõttu paralleelsete toimingute jaoks on eelkõige kasulik eraldiseisev graafikakaart (\emph{Graphics Processing Unit} (GPU) {[}22{]}) koos spetsialiseeritud graafikatuumadega (\emph{CUDA Cores} {[}23{]}), mis on Nvidia Jetson arvutite eeliseks.
+Antud ülesande lahendamiseks on saadaval mitmeid monoplaatarvuteid (\emph{Single-Board Computer}, (SBC) \cite{ref19}, \emph{System on Module} (SoM)), populaarseimatena Nvidia Jetson seeria \cite{ref20}, mis on tehisintellekti ning masinnägemise ja masinõppe rakendusteks spetsialiseeritud ja Raspberry Pi \cite{ref21}. Antud ülesande lahendamisel välistame Raspberry Pi valikutest kuna juhttorni süsteem hõlmab 4 kaameraga paralleelselt töötamist, (Raspberry Pi'l ainult 1 kaamerasisend). See vajab rohket arvutusvõimsust, kuid antud seadmel pole selle kohast võimekust, ega vajalikku riistvara (seadme protsessoris on küll integreeritud graafikakaart, kuid antud ülesande lahendamiseks jääb see liiga nõrgaks). Seetõttu paralleelsete toimingute jaoks on eelkõige kasulik eraldiseisev graafikakaart (\emph{Graphics Processing Unit} (GPU) \cite{ref22}) koos spetsialiseeritud graafikatuumadega (\emph{CUDA Cores} \cite{ref23}), mis on Nvidia Jetson arvutite eeliseks.
 
-Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel 3.1.1). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (\emph{Tensor Cores}) {[}24{]}, (vt Joonis 3.1.1).
+Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel 3.1.1). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (\emph{Tensor Cores}) \cite{ref24}, (vt Joonis 3.1.1).
 
-Tabel 3.1.1. Jetson seeria arvutite parameetrid {[}24{]}
+Tabel 3.1.1. Jetson seeria arvutite parameetrid \cite{ref24}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -83,11 +83,11 @@ cameras\\
 \end{longtable}
 }
 
-Eeldusel et vaja on analüüsida kolmest kaamerast tulevat infot paralleelselt ning täpselt, oleks kõige mõistlikum kasutada Xavier seeria süsteemi. Seda just seetõttu, et võrreldes teiste seeriatega on Xavier seeria arvutite jõudlus tagatud suurema hulga graafikakaardi tuumadega, uuema arhitektuuriga (Volta {[}25{]}), mis sisaldab endas maatrikskiirendeid (\emph{Tensor Cores}, mida vajavad närvivõrgud maatriksarvutustes) ning süvaõppe kiirendeid (\emph{Deep Learning Accelerator}), mis võimaldavad mitme kaamera sisendiga tõhusamalt operatsioone teha.
+Eeldusel et vaja on analüüsida kolmest kaamerast tulevat infot paralleelselt ning täpselt, oleks kõige mõistlikum kasutada Xavier seeria süsteemi. Seda just seetõttu, et võrreldes teiste seeriatega on Xavier seeria arvutite jõudlus tagatud suurema hulga graafikakaardi tuumadega, uuema arhitektuuriga (Volta \cite{ref25}), mis sisaldab endas maatrikskiirendeid (\emph{Tensor Cores}, mida vajavad närvivõrgud maatriksarvutustes) ning süvaõppe kiirendeid (\emph{Deep Learning Accelerator}), mis võimaldavad mitme kaamera sisendiga tõhusamalt operatsioone teha.
 
 Antud seerias on valikus nii NX kui ka AGX Jetsonid, mille hulgast on valitud parimad kandidaadid (vt Tabel 3.1.2). Nende hulgast sobilikuim on Jetson AGX Xavier, sest antud seade peab olema võimeline jooksutama mahukat närvivõrku ning tegelema mitme operatsiooniga korraga (kaameratelt info lugemine, info töötlemine närvivõrgus, töödeldud info kujutamine väljundvideol), mis nõuab suurt hulka arvutuslikku ressurssi.
 
-Tabel 3.1.2. Jetson AGX Xavieri ja Xavier NXi parameetrid {[}24{]}
+Tabel 3.1.2. Jetson AGX Xavieri ja Xavier NXi parameetrid \cite{ref24}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -128,11 +128,11 @@ CSI Camera & Up to 6 cameras (up to 62 Gbps) & Up to 6 cameras (up to 30 Gbps) \
 
 \includegraphics[width=4.09763in,height=2.08472in]{media/image7.png}
 
-Joonis 3.1.1. Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) {[}26{]}
+Joonis 3.1.1. Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) \cite{ref26}
 
 \section{Tensorituumad ja CUDA}\label{tensorituumad-ja-cuda}
 
-Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA {[}23{]} tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (\emph{Half-Precision Matrix Multiply and Accumulate}) ja IMMA (\emph{Integer Matrix Multiply and Accumulate}), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad {[}27{]} (vt Joonis 3.2.1).
+Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA \cite{ref23} tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (\emph{Half-Precision Matrix Multiply and Accumulate}) ja IMMA (\emph{Integer Matrix Multiply and Accumulate}), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad \cite{ref27} (vt Joonis 3.2.1).
 
 \begin{figure}
 \centering
@@ -140,9 +140,9 @@ Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maa
 \caption{Jetson Xavier Tensor Core Matrix diagram}
 \end{figure}
 
-Joonis 3.2.1. Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine {[}27{]}
+Joonis 3.2.1. Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine \cite{ref27}
 
-CUDA puhul on tegemist paralleelarvutuseks mõeldud platvormi ning programmeerimise mudeliga, mis suurendab tehtavate arvutuste hulka mitmekordselt, kasutades selleks protsessori asemel graafikakaarti {[}23{]}.
+CUDA puhul on tegemist paralleelarvutuseks mõeldud platvormi ning programmeerimise mudeliga, mis suurendab tehtavate arvutuste hulka mitmekordselt, kasutades selleks protsessori asemel graafikakaarti \cite{ref23}.
 
 CUDA eesmärgiks on kiirendada paralleelarvutusi ning CUDA tuum on analoogne protsessori tuumaga. Ainukeseks erinevuseks on nende ehitus, protsessori tuum on võimeline lahendama kompleksseid arvutusi jadamisi, CUDA tuum lihtsamaid arvutusi graafikakaardis. Eeliseks graafikakaardil protsessori ees on see, et CUDA tuumasid on ühele kiibile paigutatud tuhandeid, mis võimaldab komplekssed arvutused jagada mitmete tuumade vahel ära ning seetõttu ka sooritada arvutused kiiremini, kui protsessor väiksema arvu võimekamate tuumadega. Antud tehnoloogia on integreeritud ning laialdaselt kasutusel masinõppe vallas Nvidia poolt.
 
@@ -196,26 +196,26 @@ nimi} & \textbf{Resolutsioon(px)} & \textbf{Kaadrisagedus
 (°C)}} & \textbf{Liides} \\
 SurveilsQUAD -
 Sony IMX290
-System {[}28{]} & 1920x1080 & 120 & -30 & 85 & CSI \\
+System \cite{ref28} & 1920x1080 & 120 & -30 & 85 & CSI \\
 OpenCV AI Kit:
-OAK---D {[}29{]} & 1280x800 (stereo)
+OAK---D \cite{ref29} & 1280x800 (stereo)
 4056x3040 (keskmine) & 120 (stereo)
 
 60 (keskmine) & N/A & N/A & USB-C/PoE \\
 OpenCV AI Kit:
 OAK---1-PoE
-{[}30{]} & 4056x3040 & 60 & N/A & N/A & USB-C/PoE \\
+\cite{ref30} & 4056x3040 & 60 & N/A & N/A & USB-C/PoE \\
 Atlas IP67 7.1
 MP Model
-{[}31{]} & 3208x2200 & 74 & -20 & 55 & PoE \\
+\cite{ref31} & 3208x2200 & 74 & -20 & 55 & PoE \\
 Atlas IP67 2.8
 MP Model
-{[}32{]} & 1936x1464 & 173 & -20 & 55 & PoE \\
+\cite{ref32} & 1936x1464 & 173 & -20 & 55 & PoE \\
 Arducam 12MP
-IMX477 {[}33{]} & 4056x3040 & 60 & N/A & N/A & USB-C \\
+IMX477 \cite{ref33} & 4056x3040 & 60 & N/A & N/A & USB-C \\
 Arducam
 Fisheye Camera
-{[}34{]} & 2592×1944 & 30 & N/A & N/A & CSI ja
+\cite{ref34} & 2592×1944 & 30 & N/A & N/A & CSI ja
 Ethernet \\
 \end{longtable}
 }
@@ -228,7 +228,7 @@ Seetõttu sai valitud Arducam Mini kaamera (vt Joonis 3.3.1), mis ühendati rasp
 
 \includegraphics[width=2.75104in,height=2.42839in]{media/image9.png}
 
-Joonis 3.3.1. Arducam Fisheye kaameraga moodul {[}34{]}
+Joonis 3.3.1. Arducam Fisheye kaameraga moodul \cite{ref34}
 
 \section{Juhttorn}\label{juhttorn}
 
@@ -236,4 +236,4 @@ Juhttorn asetseb laeva vööris (vt Joonis 3.4.2) ning selle ülesanne on laeva 
 
 \includegraphics[width=6.10174in,height=4.56944in]{media/image11.jpg}
 
-Joonis 3.4.2. Juhttorni asetus patrulllaeval {[}35{]}
+Joonis 3.4.2. Juhttorni asetus patrulllaeval \cite{ref35}

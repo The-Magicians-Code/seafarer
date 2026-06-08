@@ -8,6 +8,10 @@
 \input{misc/authordeclaration.tex} % This inserts the content from the authordeclaration.tex file located in the misc folder.
 \pagebreak % To move to the next page.
 
+\chapter*{LÕPUTÖÖ ÜLESANNE}\label{chapter:assignment}
+\input{misc/thesis-assignment.tex}
+\pagebreak
+
 \chapter*{{\abstactTitle}}\label{chapter:abstract}
 \ifthenelse{\equal{\lang}{ENG}}
     {\input{misc/abstract-english.tex}}
@@ -21,6 +25,10 @@
 \ifthenelse{\equal{\lang}{ENG}}
     {\input{misc/abstract-estonian.tex}}
     {\input{misc/abstract-english.tex}}
+\pagebreak
+
+\chapter*{Eessõna}\label{chapter:foreword}
+\input{misc/foreword.tex}
 \pagebreak
 
 \chapter*{{\listOfTermsTitle}}\label{chapter:terms}
