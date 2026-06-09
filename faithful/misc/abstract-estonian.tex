@@ -4,8 +4,8 @@ Lõputöö eesmärgiks on arendada välja masinnägemise süsteem, mis sobib lae
 
 % No need to change this
 Lõputöö on kirjutatud \langEst~keeles ning sisaldab teksti \calculatepages leheküljel,
-\total{totalchapters} peatükki\ifthenelse{\equal{\totvalue{figure}}{0}}{}{% If no figures, do nothing
-, \total{figure} \ifnum\totvalue{figure}=1 joonis\else joonist\fi%
-}\ifthenelse{\equal{\totvalue{table}}{0}}{}{% If no tables, do nothing
-, \total{table} \ifnum\totvalue{table}=1 tabel\else tabelit\fi%
+\total{totalchapters} peatükki\ifthenelse{\equal{\totvalue{totalfigures}}{0}}{}{% If no figures, do nothing
+, \total{totalfigures} \ifnum\totvalue{totalfigures}=1 joonis\else joonist\fi%
+}\ifthenelse{\equal{\totvalue{totaltables}}{0}}{}{% If no tables, do nothing
+, \total{totaltables} \ifnum\totvalue{totaltables}=1 tabel\else tabelit\fi%
 }.

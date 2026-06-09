@@ -71,11 +71,16 @@
     \counterwithin{table}{chapter}                  % Table counters reset per chapter, numbered as <chapter>.<n>
     \counterwithin{figure}{chapter}                 % Figure counters reset per chapter, numbered as <chapter>.<n>
 \usepackage{totcount}                               % Displaying the total value of counters
-    \regtotcounter{figure}
-    \regtotcounter{table}
     \newtotcounter{totalchapters}
+    \newtotcounter{totalfigures}                    % cumulative; figure resets per chapter
+    \newtotcounter{totaltables}                     % cumulative; table resets per chapter
 \usepackage{assoccnt}                               % Avoiding mistakes while counting chapters
     \DeclareAssociatedCounters{chapter}{totalchapters}
+% Hook the figure/table cumulative counters directly: assoccnt + chngcntr
+% \counterwithin interact in a way that resets totalfigures/totaltables to 0
+% at each chapter break, so step them ourselves at each captioned env start.
+\AtBeginEnvironment{figure}{\stepcounter{totalfigures}}
+\AtBeginEnvironment{longtable}{\stepcounter{totaltables}}
 \usepackage[abspage,user,lastpage]{zref}            % Counting the pages of the main text
     \newcounter{netpages}
     \makeatletter
