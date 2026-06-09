@@ -1,0 +1,17 @@
+---
+import { withBase } from '../lib/i18n';
+
+interface Props {
+  id: string;
+  n: number;
+  word: string;
+  src: string;
+}
+const { id, n, word, src } = Astro.props;
+---
+<figure id={id}>
+  <img src={withBase(`media/${src}`)} alt={`${word} ${n}`} loading="lazy" decoding="async" />
+  <figcaption>
+    <span class="fignum">{word} {n}.</span> <slot />
+  </figcaption>
+</figure>

@@ -1,0 +1,53 @@
+---
+title: "Software"
+order: 5
+slug: "05-software"
+lang: "en"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+There are different software solutions for building computer-vision systems. The software for this work encompasses several interdependent parts: image processing and transmission, data processing, and neural networks.
+
+For **image processing**, several modules are available (OpenCV <Cite lang="en" items={[{"n":36,"id":"ref36","title":"OpenCV"}]} />, Scikit-Image <Cite lang="en" items={[{"n":37,"id":"ref37","title":"Scikit-Image, Image processing in Python"}]} />, SciPy <Cite lang="en" items={[{"n":38,"id":"ref38","title":"SciPy - Fundamental algorithms for scientific computing in Python"}]} />, Pillow <Cite lang="en" items={[{"n":39,"id":"ref39","title":"Pillow -- Python Imaging Library (Fork)"}]} />), of which OpenCV and Scikit-Image were built specifically for machine learning. To solve this task, the OpenCV module was used instead of Scikit-Image, because the former also supports reading video via Gstreamer <Cite lang="en" items={[{"n":40,"id":"ref40","title":"GStreamer, Open source multimedia framework"}]} />, which allows use of the Nvidia video decoder <Cite lang="en" items={[{"n":41,"id":"ref41","title":"Nvidia Video Decoder"}]} /> integrated into the Jetson. This saves the CPU when reading the image stream and does so significantly more efficiently, leaving more headroom on the system’s CPU for image processing and the computer-vision model’s work.
+
+For **data processing** the Pandas <Cite lang="en" items={[{"n":42,"id":"ref42","title":"Pandas - Python Data Analysis Library"}]} /> module is widely used, providing simple and intuitive commands to analyse and manipulate data. This module performs operations on the CPU, and for extreme data volumes data processing can become time-consuming. In addition to Pandas, several alternative modules have been built that are similarly or marginally better optimised, the closest in operating principle and writing style being cuDF <Cite lang="en" items={[{"n":44,"id":"ref44","title":"cuDF, A Python GPU DataFrame library"}]} />. cuDF is essentially most similar to Pandas, but uses the GPU instead of the CPU for data processing, which – especially when handling large data volumes – gives a significant time advantage over Pandas, because processing takes place with much greater parallelism than on the CPU. At the time of writing, the Pandas module is in use, because the thesis author has broader experience working with this module. There are later plans to switch to development with cuDF for the purpose of software optimisation.
+
+For **neural networks** there are several platforms and frameworks: TensorFlow <Cite lang="en" items={[{"n":45,"id":"ref45","title":"Create production-grade machine learning models with TensorFlow"}]} />, Keras <Cite lang="en" items={[{"n":46,"id":"ref46","title":"Keras, Deep Learning for humans"}]} />, PyTorch <Cite lang="en" items={[{"n":47,"id":"ref47","title":"PyTorch, Tensors and Dynamic neural networks in Python with strong GPU acceleration"}]} />, Scikit-Learn <Cite lang="en" items={[{"n":48,"id":"ref48","title":"scikit-learn, Machine Learning in Python"}]} />, of which the most popular and widely used are TensorFlow and PyTorch. This work used PyTorch, because compared with TensorFlow, PyTorch’s syntax is more Pythonic, which makes it easier to integrate with Python objects and makes error messages easier to understand. The thesis author also has prior experience developing with PyTorch.
+
+## Computer-vision neural network model
+
+There are several models available for object detection, differing from one another in accuracy, input resolution, size, and speed. Choosing a model means accounting for the system’s throughput: more capable systems such as servers can run massive, accurate models in parallel with minimal impact on input-processing speed. Smaller systems such as laptops and embedded systems, by contrast, are better suited to running smaller, faster models.
+
+<div id="tab:4-1-1">
+
+|  |  |  |  |
+|:---|:---|:---|:---|
+| **Model** | **Max input (px)** | **Speed (ms)** | **Accuracy (mAP)** |
+| FasterRCNN <Cite lang="en" items={[{"n":49,"id":"ref49","title":"Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks"}]} /> | 1000x600 | 198 | 73.2 (PASCAL VOC 2007) |
+| YOLOv5 <Cite lang="en" items={[{"n":50,"id":"ref50","title":"Ultralytics, YOLOv5"}]} /> | 1280x1280 | 26.2 (V100 GPU) | 72.7 (MSCOCO) |
+| MobileNet SSD V2 <Cite lang="en" items={[{"n":51,"id":"ref51","title":"MobileNetV2: Inverted Residuals and Linear Bottlenecks"}]} /> | 320x320 | 200 (Google Pixel 1) | 22.2 (MSCOCO) |
+| EfficientDet <Cite lang="en" items={[{"n":52,"id":"ref52","title":"EfficientDet: Scalable and Efficient Object Detection"}]} /> | 1536x1536 | 153 (V100 GPU) | 55.1 (MSCOCO) |
+
+Overview of the parameters of the most popular models
+
+</div>
+
+For this system, the model had to be chosen with the best accuracy-to-speed ratio in mind. The chosen model also had to be capable of processing information from several video inputs at once (see Table <Ref label="4" title="Table 4" href="en/05-software#tab:4-1-1" />).
+
+The YOLOv5 architecture network was selected to solve the task; it was built by Ultralytics <Cite lang="en" items={[{"n":53,"id":"ref53","title":"YOLOv5: The friendliest AI architecture you'll ever use"}]} /> as an evolution of YOLOv4 <Cite lang="en" items={[{"n":54,"id":"ref54","title":"YOLOv4 / Scaled-YOLOv4 / YOLO - Neural Networks for Object Detection"}]} /> and is faster and more accurate than its predecessors. It is also a compact model that is easy to run on embedded systems. The model operates on the single-pass frame-processing philosophy (*You Only Look Once*) – the image passes through the network only once (unlike other models), and within that single pass object detection and classification happen together, which is why the model’s detection operation is also faster (see Figure <Ref label="10" title="Figure 10" href="en/05-software#fig:image12" />).
+
+<Figure id="fig:image12" n={10} word="Figure" src="image12.png">
+Architecture of the YOLOv5 models <Cite lang="en" items={[{"n":55,"id":"ref55","title":"A Forest Fire Detection System Based on Ensemble Learning"}]} />
+</Figure>
+
+The model consists of three parts: backbone, neck, and head.
+
+- The **backbone** is the base on which the model is built; here, CSPNet (*Cross-Stage Partial Network*) was chosen. It is a kind of neural-network model split into several stages (*Cross-Stage*), in which each layer extracts information from the given image – such as edges and shapes characteristic of the object in the image. Part of the information acquired in earlier layers is passed on to the next layers for processing (*Partial*), which allows the network to progressively understand what the image depicts better and more accurately, using processed information from the previous layers. The backbone consists mainly of convolutional layers and a downsampling layer, whose output passes on to the model’s neck. A model with this kind of architecture helps reduce the number of computations required.
+
+- The **neck** of the neural network is responsible for assembling and organising the information received from the backbone into a feature map, using filters. This model applies a spatial attention pooling method that helps the network focus on important parts of the image, and a Spatial Pyramid Pooling layer, which allows objects to be detected at different resolutions.
+
+- The **head** generates the probabilities and coordinates of detections for the objects found in the frame. This model also uses anchor boxes, which are pre-configured with given aspect ratios that help detect objects of different sizes and shapes. The model’s head contains a number of convolutional layers that predict detection coordinates and probabilities for each object <Cite lang="en" items={[{"n":55,"id":"ref55","title":"A Forest Fire Detection System Based on Ensemble Learning"}]} />.

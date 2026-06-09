@@ -1,0 +1,25 @@
+---
+import { withBase, type Lang } from '../lib/i18n';
+
+interface Item {
+  n: number;
+  id: string;
+  title: string;
+}
+interface Props {
+  items: Item[];
+  lang: Lang;
+}
+const { items, lang } = Astro.props;
+const sorted = [...items].sort((a, b) => a.n - b.n);
+---
+<span class="cite"
+  >[{
+    sorted.map((it, i) => (
+      <>
+        {i > 0 ? ', ' : ''}
+        <a href={withBase(`${lang}/references#ref-${it.n}`)} title={it.title}>{it.n}</a>
+      </>
+    ))
+  }]</span
+>

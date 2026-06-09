@@ -1,0 +1,14 @@
+---
+import { withBase } from '../lib/i18n';
+
+interface Props {
+  /** Visible link text (the figure/table number). */
+  label: string;
+  /** Full label for accessibility, e.g. "Figure 5". */
+  title: string;
+  /** Internal target, e.g. "en/07-results#fig:image26". */
+  href: string;
+}
+const { label, title, href } = Astro.props;
+---
+<a class="xref" href={withBase(href)} title={title}>{label}</a>

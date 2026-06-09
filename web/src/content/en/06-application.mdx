@@ -1,0 +1,99 @@
+---
+title: "Computer-vision application"
+order: 6
+slug: "06-application"
+lang: "en"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+The aim of this work was to build the computer-vision application in such a way that it would be able to run on as wide a range of control units as possible. To do this, the application had to be packaged so that the controller’s existing configuration was not altered and no additional software was installed. At the same time, the application had to be able to choose its internal settings based on the hardware, so that the software’s operation would be as close to the hardware as possible – i.e. optimised – thus ensuring universality. The application’s inputs had to be easily interpreted by the user and well documented, to avoid bad inputs. If the software’s operation got stuck, displaying a correct and informative error message was important. A simplified version of the device’s software solution has been released by the author and is available – and continuously updated – on GitHub <Cite lang="en" items={[{"n":56,"id":"ref56","title":"Yolo-dualdev, Develop and deploy TensorRT optimized YOLO models on Nvidia"}]} />.
+
+## Working environment
+
+Software development and the computer-vision processes’ work take place in an isolated environment, allowing the software to be tested on systems with different hardware configurations. This development approach also guarantees, from a security and stability standpoint, that the host system’s software and state remain untouched. Containerisation lets a single device run several applications, all of which can have different configurations and software, while granting the user-defined direct access to the host’s hardware (see Figure <Ref label="11" title="Figure 11" href="en/06-application#fig:image13" />).
+
+<Figure id="fig:image13" n={11} word="Figure" src="image13.png">
+Simplified diagram of how containerised applications operate <Cite lang="en" items={[{"n":57,"id":"ref57","title":"Docker, Use containers to Build, Share and Run your applications"}]} />
+</Figure>
+
+For system development and testing an environment was set up on a separate development machine using the virtualisation platform Docker <Cite lang="en" items={[{"n":58,"id":"ref58","title":"Docker: Accelerated, Containerized Application Development"}]} />. The base was the PyTorch container from the Nvidia NGC catalogue, intended for x86_64-architecture devices <Cite lang="en" items={[{"n":59,"id":"ref59","title":"The PyTorch NGC Container"}]} />. An environment analogous to the Jetson’s software specifics was built into it, and architecture-specific functions were also added in code that took effect according to the peculiarities of the development system and the production system (see Figures <Ref label="12" title="Figure 12" href="en/06-application#fig:image14" /> and <Ref label="13" title="Figure 13" href="en/06-application#fig:image15" />).
+
+<Figure id="fig:image14" n={12} word="Figure" src="image14.png">
+Versions of the software installed in the development-machine container, chosen to match the production-machine container state as closely as possible
+</Figure>
+
+<Figure id="fig:image15" n={13} word="Figure" src="image15.png">
+Software versions in the production-system container
+</Figure>
+
+A container was likewise created for the production system; its base was a container from the NGC catalogue built on L4T (*Linux for Tegra*), specifically designed for aarch64-architecture Jetson devices <Cite lang="en" items={[{"n":60,"id":"ref60","title":"Machine Learning Container for Jetson and JetPack"}]} />. It was configured with the additional libraries needed for computer vision and tied in with the on-device neural-network model optimisation tool, TensorRT <Cite lang="en" items={[{"n":61,"id":"ref61","title":"Nvidia TensorRT"}]} />.
+
+## Main program
+
+The main work happens in the inference script (see the simplified Figure <Ref label="14" title="Figure 14" href="en/06-application#fig:image16" /> and the technical Figure <Ref label="16" title="Figure 16" href="en/06-application#fig:image18" />), to which the user provides as input the neural-network model and its required parameters, the input stream (a video file or a camera), and, if needed, the desired mode (video recording, or a mode without video output intended for debugging and speed checks) (see Figure <Ref label="15" title="Figure 15" href="en/06-application#fig:image17" />).
+
+<Figure id="fig:image16" n={14} word="Figure" src="image16.png">
+Simplified block diagram of the main program
+</Figure>
+
+<Figure id="fig:image17" n={15} word="Figure" src="image17.png">
+Example of running the main program from the command line
+</Figure>
+
+A script called `inference.py` is run with Python; it is given as input a TensorRT-optimised model named `yolov5m6`, the input stream is a video file `video.mp4`, and performance mode is also enabled, which runs the process without the web-interface video output to the user – making it possible to evaluate system latency and the direct effect on Xavier resource usage.
+
+<Figure id="fig:image18" n={16} word="Figure" src="image18.png">
+Simplified block diagram of the computer-vision program’s operation
+</Figure>
+
+To detect the machine architecture, a Python module is used; based on its output, the required settings are applied for the environment that ran the script. The development environment is a desktop computer with an x86_64 architecture; during setup the corresponding video decoder and encoder are initialised, the special-use port is set, and a scaling parameter for the information coming from the cameras is configured (see Figure <Ref label="17" title="Figure 17" href="en/06-application#fig:image19" />).
+
+<Figure id="fig:image19" n={17} word="Figure" src="image19.png">
+Initialisation of architecture-specific parameters
+</Figure>
+
+The neural-network model is loaded using the user-defined “model” parameter, which checks the existence of the model and the file format – in this case, `.engine`-type models optimised with TensorRT <Cite lang="en" items={[{"n":60,"id":"ref60","title":"Machine Learning Container for Jetson and JetPack"}]} />. After the model-format check, the model parameters’ metadata is read in; based on it, GPU memory and core resources are allocated.
+
+To read information from the cameras, the Nvidia Video Decoder (NVDEC) <Cite lang="en" items={[{"n":62,"id":"ref62","title":"Accelerated GStreamer User Guide"}]} />, a hardware accelerator located on the Nvidia GPU, is used; this allows the CPU and GPU to be fully dedicated to managing the neural network and processing data.
+
+Frames received from the cameras are scaled to an input format suitable for the neural network, after which the model extracts information from the frames and formulates statistical outputs. The output information is then sent to post-processing, where the results are formatted and the locations of detected objects on the frame are displayed along with their confidence probabilities (see Figure <Ref label="18" title="Figure 18" href="en/06-application#fig:image20" />). A new frame is then read in, and the program’s work repeats until no more frames come in – i.e. either the camera stops working or the user terminates the program.
+
+<Figure id="fig:image20" n={18} word="Figure" src="image20.png">
+Detections generated and processed by the neural network, displayed on a frame (bounding boxes and the detected classes inside them together with the probabilities)
+</Figure>
+
+## Computer-vision model and software optimisation
+
+In the early phase of the computer-vision application, several problems arose both with reading inputs from the cameras and with running the computer-vision model on the hardware.
+
+The first problem with the application was reading the stream from the cameras with multiple inputs, which was demanding for the CPU (frame throughput was low) and therefore the control unit’s temperature was high. As a result, there was not enough resource left over for the other devices that communicated with the Jetson (the radar’s operation was crippled). Computer vision was also not operational, because the CPU was fully occupied with reading the frames from the cameras and rescaling them.
+
+To solve this, the hardware video decoder NVDEC <Cite lang="en" items={[{"n":41,"id":"ref41","title":"Nvidia Video Decoder"}]} /> integrated into the Jetson was put into use, via OpenCV, by providing it with an accelerated GStreamer command that included the input and the video-decoder call.
+
+A second problem was that larger computer-vision models could not be run successfully, because the models were loaded into CPU memory and a marginal portion of the computational work, alongside frame processing in the neural network, fell on the GPU (see Figure <Ref label="19" title="Figure 19" href="en/06-application#fig:image21" />).
+
+<Figure id="fig:image21" n={19} word="Figure" src="image21.png">
+Running YOLOv5l, with a single input at 640<span class="math inline">×</span>640-pixel resolution, in unoptimised form does not utilise the whole GPU, as seen in the monitoring tool jtop <Cite lang="en" items={[{"n":43,"id":"ref43","title":"Jetson-Stats"}]} />
+</Figure>
+
+The solution to this problem was Nvidia’s TensorRT tool, which can take neural networks in several formats as input and accelerate them according to the hardware available. When using this tool, neural networks were prepared in ONNX <Cite lang="en" items={[{"n":63,"id":"ref63","title":"Open Neural Network Exchange"}]} /> format, the most universal and easy-to-use way of interpreting machine-learning models.
+
+TensorRT’s operating principle is model quantisation – reducing the precision of the model’s parameter computations (for example, from 32-bit floating-point to 16-bit floating-point). This allows the use of high-performance vector operations on hardware specialised for them, with marginal impact on the model’s accuracy. Second, model pruning takes place – the removal of unnecessary parameters that have minimal impact on the model’s inference results, reducing the size of the model and thereby improving its speed (see section 5.2).
+
+As a result of the optimisations (see Figure <Ref label="20" title="Figure 20" href="en/06-application#fig:image22" />):
+
+- GPU utilisation rose (from 43.1% to 99.8%);
+
+- average power consumption decreased by 26.8% (from 20.1 W to 14.7 W);
+
+- operating temperatures dropped by 3.3% (from 46° to 44.5°);
+
+- memory usage dropped by 1.6% (from 18.5 GB to 18.2 GB).
+
+<Figure id="fig:image22" n={20} word="Figure" src="image22.png">
+Running the YOLOv5l model, with a single input at 640<span class="math inline">×</span>640-pixel resolution, in optimised form utilises the whole GPU
+</Figure>

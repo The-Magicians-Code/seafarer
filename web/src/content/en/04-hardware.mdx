@@ -1,0 +1,258 @@
+---
+title: "Hardware selection"
+order: 4
+slug: "04-hardware"
+lang: "en"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+Hardware selection was guided by the given requirements so that the control-tower prototype would operate as flawlessly and reliably as possible. It was also taken into account that the control tower should be as easy as possible to reconfigure for different vessel types. The requirements set for the system were:
+
+- Three cameras as inputs, with a resolution of at least 1000$\times$1000 pixels.
+
+- Vessel-detection rate of at least 15 frames per second.
+
+A similar system is intended to be applied to different vessel types in the future, so the components were chosen from among widely used and readily available devices.
+
+## Control unit / onboard computer
+
+The control unit is a device that processes information from the cameras attached to it and forwards the results to the autopilot. The onboard computer sits in the vessel’s control tower, surrounded by three cameras. Analytical algorithms are applied to the information from the cameras (in this context, real-time video); their output – detected objects and their relative positions in the frame – is passed to the autopilot, providing additional information about the surrounding environment, on the basis of which the autopilot decides how the vessel should behave.
+
+There are several single-board computers suitable for this task (*Single-Board Computer*, SBC <Cite lang="en" items={[{"n":19,"id":"ref19","title":"Technopedia, Single-Board Computer"}]} />, *System on Module* (SoM)), the most popular being the Nvidia Jetson series <Cite lang="en" items={[{"n":20,"id":"ref20","title":"Nvidia Embedded AI Systems"}]} />, which is specialised for AI, computer-vision, and machine-learning applications, and the Raspberry Pi <Cite lang="en" items={[{"n":21,"id":"ref21","title":"Raspberry Pi, Model 4B datasheet"}]} />. The Raspberry Pi is ruled out here because the control-tower system involves working with four cameras in parallel (the Raspberry Pi has only one camera input). The task requires substantial compute, but the Raspberry Pi lacks both the necessary throughput and the requisite hardware (the device’s CPU does include an integrated graphics processor, but it is too weak for the task at hand). For parallel work, a discrete graphics processor (*Graphics Processing Unit* (GPU) <Cite lang="en" items={[{"n":22,"id":"ref22","title":"Graphics Processing Unit"}]} />) together with specialised CUDA cores (*CUDA Cores* <Cite lang="en" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} />) is particularly beneficial – one of the Nvidia Jetson computers’ main advantages.
+
+The Jetson family contains four devices: Nano, TX2, Xavier NX, and AGX Xavier, the last of which is the most capable (see Table <Ref label="1" title="Table 1" href="en/04-hardware#tab:3-1-1" />). The Nano is the most basic version, suitable for the simplest computer-vision applications; the TX2 is somewhat more capable in CPU and GPU performance; and the Xavier NX and AGX Xavier are aimed at industrial use cases, with six- and eight-core CPUs and Volta-architecture GPUs that also include matrix-operation accelerators (*Tensor Cores*) <Cite lang="en" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} /> (see Figure <Ref label="5" title="Figure 5" href="en/04-hardware#fig:image7" />).
+
+<div id="tab:3-1-1">
+
+<table>
+<caption>Parameters of the Jetson-series computers <Cite lang="en" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} /></caption>
+
+<tbody>
+<tr>
+<td><strong>Parameters</strong></td>
+<td><strong>Jetson Nano</strong></td>
+<td><strong>Jetson TX2 Series (NX, TX2i)</strong></td>
+<td><strong>Jetson Xavier Series (NX, AGX)</strong></td>
+</tr>
+<tr>
+<td>AI Performance</td>
+<td>472 GFLOPs</td>
+<td>1.33 TFLOPs</td>
+<td>21/30 TOPs</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>128-core NVIDIA Maxwell™</td>
+<td>256-core NVIDIA Pascal™</td>
+<td>384/512-core NVIDIA Volta™ with 48/64 Tensor Cores</td>
+</tr>
+<tr>
+<td>CPU</td>
+<td>Quad-Core Arm Cortex-A57</td>
+<td>Dual-Core NVIDIA Denver and Quad-Core Arm Cortex-A57</td>
+<td>6/8-core NVIDIA Carmel Arm</td>
+</tr>
+<tr>
+<td>DL Accelerator</td>
+<td><div class="center">
+<hr />
+</div></td>
+<td><div class="center">
+<hr />
+</div></td>
+<td>2x NVDLA v1</td>
+</tr>
+<tr>
+<td>Vision Accelerator</td>
+<td><div class="center">
+<hr />
+</div></td>
+<td><div class="center">
+<hr />
+</div></td>
+<td>2x PVA v1</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td><p>4 GB</p>
+<p>64-bit LPDDR4</p></td>
+<td><p>4/8 GB</p>
+<p>128-bit LPDDR4</p></td>
+<td><p>8/16/32/64 GB</p>
+<p>128-bit LPDDR4x</p></td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>16 GB</td>
+<td>16/32 GB</td>
+<td>16/35/64 GB</td>
+</tr>
+<tr>
+<td>CSI Camera</td>
+<td><p>Up to 4 cameras</p>
+<p>(up to 18 Gbps)</p></td>
+<td></td>
+<td><p>Up to 6 cameras</p>
+<p>(up to 62 Gbps)</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+Given that information from three cameras must be analysed in parallel and with high accuracy, it makes the most sense to use a Xavier-series system. Compared with the other series, the Xavier-series computers offer their performance through a larger number of GPU cores, a newer architecture (Volta <Cite lang="en" items={[{"n":25,"id":"ref25","title":"Nvidia Volta Architecture"}]} />) that includes matrix accelerators (*Tensor Cores*, which neural networks need for matrix computations), and Deep Learning Accelerators, which enable more efficient processing with multiple camera inputs.
+
+Within this series both the NX and AGX Jetsons are available, and the best candidates have been chosen (see Table <Ref label="2" title="Table 2" href="en/04-hardware#tab:3-1-2" />). The most suitable among these is the Jetson AGX Xavier, because the device must be able to run a large neural network and handle several operations at once (reading information from the cameras, processing it in the neural network, and presenting the processed information in the output video), which requires substantial computational resources.
+
+<div id="tab:3-1-2">
+
+|  |  |  |
+|:---|:---|:---|
+| **Parameters** | **Jetson AGX Xavier** | **Jetson Xavier NX 16GB** |
+| AI Performance | 32 TOPs | 21 TOPs |
+| GPU |  | 384-core NVIDIA Volta™ GPU with 48 Tensor Cores |
+| CPU |  |  |
+| DL Accelerator | 2x NVDLA v1 | 2x NVDLA v1 |
+| Vision Accelerator | 2x PVA v1 | 2x PVA v1 |
+| Memory |  |  |
+| Storage | 32 GB eMMC 5.1 | 16 GB eMMC 5.1 |
+| CSI Camera | Up to 6 cameras (up to 62 Gbps) | Up to 6 cameras (up to 30 Gbps) |
+
+Parameters of the Jetson AGX Xavier and the Xavier NX <Cite lang="en" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} />
+
+</div>
+
+<Figure id="fig:image7" n={5} word="Figure" src="image7.png">
+The chosen computer: the Jetson AGX Xavier (right, without the heat-sink module) <Cite lang="en" items={[{"n":26,"id":"ref26","title":"Jetson AGX Xavier"}]} />
+</Figure>
+
+## Tensor cores and CUDA
+
+Tensor Cores are programmable matrix-operation accelerators that perform their operations in parallel with the CUDA <Cite lang="en" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} /> cores. These cores implement a newer kind of mixed-precision floating-point and integer operations – HMMA (*Half-Precision Matrix Multiply and Accumulate*) and IMMA (*Integer Matrix Multiply and Accumulate*) – which accelerate linear algebra, signal processing, and deep-learning inference <Cite lang="en" items={[{"n":27,"id":"ref27","title":"NVIDIA Jetson AGX Xavier Delivers 32 TeraOps for New Era of AI in Robotics"}]} /> (see Figure <Ref label="6" title="Figure 6" href="en/04-hardware#fig:image8" />).
+
+<Figure id="fig:image8" n={6} word="Figure" src="image8.png">
+A Tensor Core multiplying and summing three-dimensional 4<span class="math inline">×</span>4<span class="math inline">×</span>4 matrices <Cite lang="en" items={[{"n":27,"id":"ref27","title":"NVIDIA Jetson AGX Xavier Delivers 32 TeraOps for New Era of AI in Robotics"}]} />
+</Figure>
+
+CUDA is a parallel-computing platform and programming model that increases the number of computations multi-fold by using the GPU in place of the CPU <Cite lang="en" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} />.
+
+The purpose of CUDA is to accelerate parallel computation, and a CUDA core is analogous to a CPU core. The only difference is in their construction: a CPU core is able to solve complex computations sequentially, while a CUDA core handles simpler computations in the GPU. The GPU’s advantage over the CPU is that thousands of CUDA cores are placed on a single chip, which allows complex computations to be divided among many cores and therefore performed faster than a CPU with a smaller number of more capable cores. This technology is integrated and widely used in the machine-learning field by Nvidia.
+
+## Cameras
+
+When selecting cameras, several parameters must be considered to ensure that the system meets the requirements and operates successfully. Because in this task the computer-vision system is housed in the control tower, which is mounted on the vessel’s mast, the cameras (or the housing in which they are placed) must be capable of operating across wide temperature ranges and changing weather conditions. The camera software should also be chosen to favour the newest and clearly documented material, and its compatibility with the host computer must be considered. This ensures better camera configuration and makes the deployed computer-vision software easier to manage.
+
+The following parameters were considered when selecting cameras:
+
+- **Resolution** (in pixels, px) – directly tied to object-detection accuracy and detection speed. The lower the resolution of the input given to the detection algorithm, the less accurate/less certain the neural network’s prediction. In this case the detection process is faster, since the algorithm deals with a smaller amount of data and fewer computations, which ultimately improves inference speed.
+
+> At higher resolution, detection accuracy improves but inference speed decreases, because the amount of input data grows. A high-resolution photograph contains more information, which in turn allows the neural network to give more confident predictions.
+
+- **Frame rate** (*Frames per second*, FPS) – a parameter that describes the camera’s information throughput, i.e. the ratio between the number of frames transmitted and the time. A high frame rate ensures a visually smoother data stream and easier tracking, and also reduces data loss. At a low frame rate, tracking an object and predicting its trajectory would be significantly more difficult, because the object’s motion is visually intermittent and the accuracy of the neural network’s predictions is harmed accordingly.
+
+- **Colour sensor** (monochromatic or polychromatic sensor) – i.e., single-colour or multi-colour sensor. A monochromatic sensor suits environments where the colour contrast between the object and the environment is large, ensuring effective object detection. Since this is a monochromatic image, a single value is given per pixel, falling in a fixed range (typically 0$\dots$255 or 0.0$\dots$1.0).
+
+> A polychromatic sensor, on the other hand, suits environments where the contrast between background and object is not very large, or where object detection requires more information. With this kind of image transmission, three values are given as a matrix per pixel, the RGB (Red, Green, Blue) colours each in the range 0$\dots$255 or 0.0$\dots$1.0 (for example \[255, 0, 255\]). This transmission mode is three times as data-heavy as transmitting a monochromatic image, since three values are given per pixel.
+
+Devices that would meet the parameters mentioned above are listed below (see Table <Ref label="3" title="Table 3" href="en/04-hardware#tab:3-3-1" />):
+
+<div id="tab:3-3-1">
+
+<table>
+<caption>Cameras matching the parameters</caption>
+
+<tbody>
+<tr>
+<td><strong>Camera name</strong></td>
+<td><strong>Resolution (px)</strong></td>
+<td><strong>Frame rate (FPS)</strong></td>
+<td colspan="2"><strong>Operating temp. (°C)</strong></td>
+<td><strong>Interface</strong></td>
+</tr>
+<tr>
+<td>SurveilsQUAD – Sony IMX290 System <Cite lang="en" items={[{"n":28,"id":"ref28","title":"SurveilsQUAD - Sony IMX290 Synchronized Multi-Camera System"}]} /></td>
+<td>1920x1080</td>
+<td>120</td>
+<td>-30</td>
+<td>85</td>
+<td>CSI</td>
+</tr>
+<tr>
+<td>OpenCV AI Kit: OAK—D <Cite lang="en" items={[{"n":29,"id":"ref29","title":"OpenCV AI Kit: OAK---D-PoE-- OpenCV.AI"}]} /></td>
+<td>1280x800 (stereo) 4056x3040 (centre)</td>
+<td><p>120 (stereo)</p>
+<p>60 (centre)</p></td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C/PoE</td>
+</tr>
+<tr>
+<td>OpenCV AI Kit: OAK—1-PoE <Cite lang="en" items={[{"n":30,"id":"ref30","title":"OAK-1-PoE --- DepthAI Hardware Documentation 1.0.0 documentation"}]} /></td>
+<td>4056x3040</td>
+<td>60</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C/PoE</td>
+</tr>
+<tr>
+<td>Atlas IP67 7.1 MP Model <Cite lang="en" items={[{"n":31,"id":"ref31","title":"Atlas IP67 7.1 MP Model"}]} /></td>
+<td>3208x2200</td>
+<td>74</td>
+<td>-20</td>
+<td>55</td>
+<td>PoE</td>
+</tr>
+<tr>
+<td>Atlas IP67 2.8 MP Model <Cite lang="en" items={[{"n":32,"id":"ref32","title":"Atlas IP67 2.8 MP Model"}]} /></td>
+<td>1936x1464</td>
+<td>173</td>
+<td>-20</td>
+<td>55</td>
+<td>PoE</td>
+</tr>
+<tr>
+<td>Arducam 12MP IMX477 <Cite lang="en" items={[{"n":33,"id":"ref33","title":"Arducam 12MP IMX477"}]} /></td>
+<td>4056x3040</td>
+<td>60</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C</td>
+</tr>
+<tr>
+<td>Arducam Fisheye Camera <Cite lang="en" items={[{"n":34,"id":"ref34","title":"Arducam Fisheye Camera for Raspberry Pi -- 5MP OV5647"}]} /></td>
+<td>2592×1944</td>
+<td>30</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>CSI and Ethernet</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+\*N/A – data not available
+
+At the time of writing, the SurveilsQUAD cameras were initially used, since they had been prepared in advance for the computer system, and the relevant software modifications for the Xavier had already been made by project parties at the Department of Computer Systems. The project under development at the time of writing was in its development phase, so the budget was limited; we therefore made do, at first, with cameras whose baseline capabilities sufficed for the experiments. During the control-tower design it became apparent that the placement of the chosen cameras was limited by their short cables, and the manufacturer did not supply longer cables for the units.
+
+Therefore the Arducam Mini camera was chosen (see Figure <Ref label="7" title="Figure 7" href="en/04-hardware#fig:image9" />), connected to a Raspberry Pi and from there, via an Ethernet cable, to an Ethernet switch and ultimately to the Jetson Xavier. This also solved the cable-length issue, and it became possible to install the latest software on the Xavier, which the older cameras’ outdated drivers did not support.
+
+<Figure id="fig:image9" n={7} word="Figure" src="image9.png">
+Module with the Arducam Fisheye camera <Cite lang="en" items={[{"n":34,"id":"ref34","title":"Arducam Fisheye Camera for Raspberry Pi -- 5MP OV5647"}]} />
+</Figure>
+
+## Control tower
+
+The control tower sits at the bow of the vessel (see Figure <Ref label="9" title="Figure 9" href="en/04-hardware#fig:image11" />) and its task is to take over control of the vessel on the captain’s command and handle it autonomously with as little captain intervention as possible. To do this, the tower has a brain in the form of the Jetson AGX, which gathers information from all sensors and cameras, processes it, and then forwards a control decision to the autopilot, which in turn sends signals to the vessel’s engines and rudder. The Jetson receives information about the surrounding environment from cameras, X-band radar, AIS, and a weather-station wind sensor. Data exchange within the control-tower system takes place via an Ethernet switch and a 4G router, which enables data to be sent and received from the user. Developers can also push software updates to the vessel’s systems. AIS (Automatic Identification System) helps determine the vessel’s position relative to other watercraft using satellites, the radar detects nearby objects as point clouds, and the cameras and the computer vision running on them identify vessels and other watercraft among the detected objects. AIS, radar, and the cameras with computer vision complement one another, helping the vessel detect and orient itself in its surroundings. The system is powered by a direct-current power source (see Figure <Ref label="8" title="Figure 8" href="en/04-hardware#fig:image10" />).
+
+<Figure id="fig:image10" n={8} word="Figure" src="image10.png">
+Simplified operating diagram of the control tower
+</Figure>
+
+<Figure id="fig:image11" n={9} word="Figure" src="image11.jpg">
+The control tower’s placement on the patrol vessel <Cite lang="en" items={[{"n":35,"id":"ref35","title":"Mindchip Artificial Captain"}]} />
+</Figure>

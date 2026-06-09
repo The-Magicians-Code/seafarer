@@ -1,0 +1,76 @@
+{
+  "_provenance": "Inference benchmarks for YOLOv5 {n,s,m,l,x}{,6} on an NVIDIA Jetson AGX Xavier 32 GB (1000 runs each, JetPack 5.0.2 / TensorRT 8.4). The thesis author never published the raw CSV logs (the linked repo github.com/The-Magicians-Code/yolo-dualdev contains only tooling), so these values were digitised by hand from the original Google Sheets chart screenshots (faithful/media/image24-27.png). FPS values are read to the nearest 0.1-1 FPS; mAP/accuracy to the nearest 0.01. They reproduce the figures faithfully but are approximate — treat them as read-offs, not the underlying measurements. Cross-checks against the prose (e.g. fastest-minus-slowest FP16 deltas of 108/40/52/16 FPS) match.",
+  "models": ["yolov5n", "yolov5n6", "yolov5s", "yolov5s6", "yolov5m", "yolov5m6", "yolov5l", "yolov5l6", "yolov5x", "yolov5x6"],
+  "series": {
+    "fp16": "FP16 (TensorRT-optimised), FPS",
+    "unoptimised": "Unoptimised (PyTorch), FPS",
+    "map": "mean Average Precision (COCO subset)",
+    "accuracy": "Accuracy (ship-only dataset)"
+  },
+  "datasets": {
+    "image24": {
+      "title": { "et": "Mudelite jõudlus 1 kaadri sisendiga, suurusel 640×640 pikslit", "en": "Model performance with a single 640×640-pixel frame input" },
+      "inputShape": "1×3×640×640",
+      "rows": [
+        { "model": "yolov5n", "fp16": 122, "unoptimised": 36, "map": 0.70, "accuracy": 0.63 },
+        { "model": "yolov5n6", "fp16": 112, "unoptimised": 29, "map": 0.61, "accuracy": 0.84 },
+        { "model": "yolov5s", "fp16": 81, "unoptimised": 28, "map": 0.81, "accuracy": 0.85 },
+        { "model": "yolov5s6", "fp16": 76, "unoptimised": 26, "map": 0.73, "accuracy": 0.93 },
+        { "model": "yolov5m", "fp16": 41, "unoptimised": 12, "map": 0.78, "accuracy": 0.90 },
+        { "model": "yolov5m6", "fp16": 38, "unoptimised": 11, "map": 0.82, "accuracy": 0.92 },
+        { "model": "yolov5l", "fp16": 26, "unoptimised": 6, "map": 0.87, "accuracy": 0.93 },
+        { "model": "yolov5l6", "fp16": 23, "unoptimised": 6, "map": 0.85, "accuracy": 0.95 },
+        { "model": "yolov5x", "fp16": 14, "unoptimised": 3.5, "map": 0.86, "accuracy": 0.95 },
+        { "model": "yolov5x6", "fp16": 14, "unoptimised": 3.5, "map": 0.84, "accuracy": 0.93 }
+      ]
+    },
+    "image25": {
+      "title": { "et": "Mudelite jõudlus 1 kaadri sisendiga, suurusel 1280×1280 pikslit", "en": "Model performance with a single 1280×1280-pixel frame input" },
+      "inputShape": "1×3×1280×1280",
+      "rows": [
+        { "model": "yolov5n", "fp16": 44, "unoptimised": 19, "map": 0.73, "accuracy": 0.42 },
+        { "model": "yolov5n6", "fp16": 42, "unoptimised": 18.5, "map": 0.65, "accuracy": 0.70 },
+        { "model": "yolov5s", "fp16": 28, "unoptimised": 8.7, "map": 0.74, "accuracy": 0.55 },
+        { "model": "yolov5s6", "fp16": 27, "unoptimised": 8.3, "map": 0.80, "accuracy": 0.91 },
+        { "model": "yolov5m", "fp16": 13, "unoptimised": 3.8, "map": 0.86, "accuracy": 0.73 },
+        { "model": "yolov5m6", "fp16": 12.5, "unoptimised": 3.6, "map": 0.85, "accuracy": 0.93 },
+        { "model": "yolov5l", "fp16": 8, "unoptimised": 2, "map": 0.85, "accuracy": 0.77 },
+        { "model": "yolov5l6", "fp16": 7.5, "unoptimised": 2, "map": 0.87, "accuracy": 0.93 },
+        { "model": "yolov5x", "fp16": 4.5, "unoptimised": 1.1, "map": 0.88, "accuracy": 0.61 },
+        { "model": "yolov5x6", "fp16": 4.3, "unoptimised": 0.7, "map": 0.87, "accuracy": 0.92 }
+      ]
+    },
+    "image26": {
+      "title": { "et": "Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 640×640 pikslit", "en": "Model performance with three 640×640-pixel frame inputs in parallel" },
+      "inputShape": "3×3×640×640",
+      "rows": [
+        { "model": "yolov5n", "fp16": 58, "unoptimised": 25, "map": 0.70, "accuracy": 0.68 },
+        { "model": "yolov5n6", "fp16": 55, "unoptimised": 24, "map": 0.65, "accuracy": 0.86 },
+        { "model": "yolov5s", "fp16": 36, "unoptimised": 13, "map": 0.83, "accuracy": 0.86 },
+        { "model": "yolov5s6", "fp16": 34, "unoptimised": 12.5, "map": 0.73, "accuracy": 0.95 },
+        { "model": "yolov5m", "fp16": 18, "unoptimised": 5.5, "map": 0.79, "accuracy": 0.92 },
+        { "model": "yolov5m6", "fp16": 16, "unoptimised": 5, "map": 0.83, "accuracy": 0.94 },
+        { "model": "yolov5l", "fp16": 12, "unoptimised": 3.5, "map": 0.88, "accuracy": 0.95 },
+        { "model": "yolov5l6", "fp16": 11.5, "unoptimised": 3, "map": 0.85, "accuracy": 0.97 },
+        { "model": "yolov5x", "fp16": 6.5, "unoptimised": 1.5, "map": 0.86, "accuracy": 0.97 },
+        { "model": "yolov5x6", "fp16": 6, "unoptimised": 1.3, "map": 0.85, "accuracy": 0.95 }
+      ]
+    },
+    "image27": {
+      "title": { "et": "Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 1280×1280 pikslit", "en": "Model performance with three 1280×1280-pixel frame inputs in parallel" },
+      "inputShape": "3×3×1280×1280",
+      "rows": [
+        { "model": "yolov5n", "fp16": 17, "unoptimised": 7.1, "map": 0.73, "accuracy": 0.38 },
+        { "model": "yolov5n6", "fp16": 16.5, "unoptimised": 6.8, "map": 0.65, "accuracy": 0.71 },
+        { "model": "yolov5s", "fp16": 10.5, "unoptimised": 3.2, "map": 0.74, "accuracy": 0.55 },
+        { "model": "yolov5s6", "fp16": 10.2, "unoptimised": 3.1, "map": 0.80, "accuracy": 0.91 },
+        { "model": "yolov5m", "fp16": 4.9, "unoptimised": 1.3, "map": 0.86, "accuracy": 0.73 },
+        { "model": "yolov5m6", "fp16": 4.7, "unoptimised": 1.2, "map": 0.85, "accuracy": 0.93 },
+        { "model": "yolov5l", "fp16": 3, "unoptimised": 0.7, "map": 0.85, "accuracy": 0.77 },
+        { "model": "yolov5l6", "fp16": 3, "unoptimised": 0.7, "map": 0.87, "accuracy": 0.93 },
+        { "model": "yolov5x", "fp16": 1.5, "unoptimised": 0.4, "map": 0.88, "accuracy": 0.61 },
+        { "model": "yolov5x6", "fp16": 1.5, "unoptimised": 0.3, "map": 0.87, "accuracy": 0.92 }
+      ]
+    }
+  }
+}

@@ -1,0 +1,100 @@
+---
+title: "Tulemused"
+order: 7
+slug: "07-results"
+lang: "et"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+Kõige sobivama mudeli valimisel lähtuti inferentsi kiirusest ja mudeli täpsusest objektide hindamisel. Kõik katsed on läbi viidud Jetson AGX Xavier 32 GB masina peal. Mudelite hindamise katsed on läbi viidud ideaaltingimustes, mis välistab kõikvõimalikud faktorid, mis võivad hinnatava mudeli testimise tulemustes hälbeid tekitada.
+
+Antud katsetes analüüsitakse ainult närvivõrgu mudeli töötlemisvõimekust, eraldatuna ülejäänud süsteemist (kaamerad ning nendelt tulevate kaadrite eeltöötlus ning kaadritele tuvastatud objektide informatsiooni kuvamine ning edastamine teistele süsteemidele), et saada kõige optimaalsem ning hälbevaba tulemus mudelite jõudluse ning riistvara utiliseerituse kohta.
+
+## Katsete läbiviimine
+
+Katsete läbiviimise keskkond vastab järgnevatele tingimustele:
+
+1.  Inferentsil kasutatavad kaadrid on spetsiifiliselt välja valitud, standardiseeritud ning enne testi algust ettevalmistatud ehk närvivõrgu sisendi suuruse jaoks skaleeritud ning eeltöödeldud. See välistab igasuguse lisatöö ja koormuse graafikakaardile ja protsessorile mis mõjutaks närvivõrgu tööd negatiivselt ning võimaldab kõiki katsetatavaid mudeleid hinnata samaväärselt ühise andmestiku peal.
+
+2.  Katsetatavad mudelid on enne testjooksu läbiviimist riistvaraliselt eelsoojenduse faasi läbinud ehk on täielikult masina graafikakaardi mällu loetud ja läbinud 50 kalibreerimise inferentsi iteratsiooni, kasutades eelnevalt mainitud ette valmistatud testkaadreid, see võimaldab mudelite testfaasi jaoks luua keskkonna kus kõik mudelid on võrdselt ette valmistatud ning valmis töötama oma maksimaalsel võimekusel.
+
+3.  Testjooksude arv on 1000, mille jooksul mõõdetakse ette valmistatud kaadritel tehtavat inferentsi kiirust ja tuvastustäpsust.
+
+4.  Tuvastustäpsust hinnatakse järgmise valemiga:
+
+> 
+
+$$
+\alpha = \frac{\text{Korrektsed tuvastused}}{\text{K\~oik tuvastused}},\ 0 \le \alpha \le 1
+$$
+
+>
+> Mida lähemal tulem on ühele, seda täpsem on mudel ning suuteline tuvastama objekte.
+
+1.  Mudeli kiirust hinnatakse inferentsiks kulunud ajaga millisekundites, (graafikutel kuvatuna töödeldud kaadrite hulk ühe sekundi jooksul)
+
+Jetson AGX Xavieri tarkvaraline konfiguratsioon:
+
+- JetPack 5.0.2
+
+- Ubuntu 20.04.5
+
+- kernel 5.10.104-tegra
+
+- L4T 35.1.0
+
+- Python 3.8.10
+
+- torch 1.12.0
+
+- torchvision 0.13.0
+
+- cv2 4.5.0
+
+- TensorRT 8.4.1.5
+
+- CUDA 11.4
+
+## Tulemuste analüüs
+
+Katsed viidi läbi kahes konfiguratsioonis: ühe kaadriga ning kolme kaadriga paralleelselt protsessides, kuna toodangkeskkonnas rakendatakse kolmest kaadrist tuleva info peal närvivõrgu töötlust. Joonistel kujutatud *mean Average Precision* parameeter (kollases) väljendab mudeli keskmist summaarset täpsust kõikide klasside peale kokku, see tuleneb katsetest, mis viidi läbi COCO 2017 aasta valideerimise andmestikust valitud klassidel, kus kõikidest klassidest valiti võrdne hulk testandmeid <Cite lang="et" items={[{"n":64,"id":"ref64","title":"COCO, Common Objects in Context"}]} />, *accuracy* parameeter (punases) saavutati eraldi loodud andmestikul, mis sisaldas ainult laevu. Katsete tulemused on kujutatud mudelite suuruste ehk parameetrite hulga järgi kasvavas järjekorras, väikseim mudel vasakul, suurim paremal, et tagada intuitiivne ülevaade kõikidest parameetritest.
+
+Suuremate sisenditega mudelite joonistel (vt Joonis <Ref label="22" title="Joonis 22" href="et/07-results#fig:image25" /> ja <Ref label="24" title="Joonis 24" href="et/07-results#fig:image27" />) tekkinud täpsuse kõikumised on põhjustatud sellest et “6” lõpuga mudelite skaleerimisekihid on loodud suuremate sisendresolutsioonide jaoks ning teiste mudelite kihid, väiksemate sisendresolutsioonide jaoks <Cite lang="et" items={[{"n":65,"id":"ref65","title":"YOLOv5, Pretrained checkpoints"}]} />. Seetõttu on ka viimaste täpsus väiksem antud resolutsioonil.
+
+Optimeeritud mudelite ja optimeerimata mudelite kiiruste vahe on vähemalt kahekordne, kõige suurem kiiruste vahe on 4,28 kordne, mudelitepaaril yolov5l6 (vt Joonis <Ref label="23" title="Joonis 23" href="et/07-results#fig:image26" />). Optimeeritud ning optimeerimata mudelite täpsuste vahe minimaalne (${1,7 \cdot 10}^{- 3}$), ehk optimeerimine täpsust oluliselt ei mõjutanud. Seetõttu graafikul algselt kuvatud täpsuste väärtused olid ülekattega, mistõttu kuvatakse nende keskmistatud väärtusi.
+
+<ModelChart id="fig:image24" n={21} word="Joonis" lang="et" dataset="image24">
+Mudelite jõudlus 1 kaadri sisendiga, suurusel 640x640 pikslit
+</ModelChart>
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 108 kaadrit sekundis, kusjuures parim kiirendus neljakordne. Keskmine optimeeritud kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5l mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+
+<ModelChart id="fig:image25" n={22} word="Joonis" lang="et" dataset="image25">
+Mudelite jõudlus 1 kaadri sisendiga, suurusel 1280x1280 pikslit
+</ModelChart>
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 40 kaadrit sekundis, parim kiirendus 4,1 kordne. Keskmine optimeeritud kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5m mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+
+Ühe sisendiga 640x640 ja 1280x1280 resolutsiooniga mudelite kiiruste keskmine vahe on 36 kaadrit sekundis.
+
+<ModelChart id="fig:image26" n={23} word="Joonis" lang="et" dataset="image26">
+Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 640x640 pikslit
+</ModelChart>
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe on 52 kaadrit sekundis, parim kiirendus 4,3 kordne. Keskmine optimeeritud kiiruste vahe 3,4 kordne. Mudelite täpsus kasvab YOLOv5l mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb.
+
+Kolme sisendiga resolutsiooniga 640x640 mudelid on keskmiselt 1,4 korda kiiremad kui ühe sisendiga sama resolutsiooniga mudelid.
+
+<ModelChart id="fig:image27" n={24} word="Joonis" lang="et" dataset="image27">
+Mudelite jõudlus 3 kaadri sisendiga paralleelselt, suurusel 1280x1280 pikslit
+</ModelChart>
+
+Kiireima ja aeglaseima optimeeritud mudeli kiiruste vahe 16 kaadrit sekundis, parim kiirendus 4,2 kordne. Keskmine optimeeritud mudelite kiiruste vahe 3,5 kordne. Mudelite täpsus kasvab YOLOv5m mudelini ning sealt edasi olulist täpsuse kasvu ei ole, seega sellest mudelist alates kiiruse ja täpsuse suhe väheneb. Antud juhul on tegemist 1,1 korda kiiremate mudelitega, võrreldes ühe sisendiga mudeleid, samal resolutsioonil.
+
+Kolme sisendiga 640x640 ja 1280x1280 resolutsiooniga mudelite kiiruste keskmine vahe on 18 kaadrit sekundis.
+
+Kolme sisendiga mudelid on keskmiselt 1,2 korda kiiremad kui ühe sisendiga mudelid.

@@ -1,0 +1,118 @@
+---
+import '../styles/global.css';
+import { ui, withBase, type Lang } from '../lib/i18n';
+import LangToggle from '../components/LangToggle.astro';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  /** Equivalent page in the other language (path without base). */
+  otherPath: string;
+  description?: string;
+}
+const { lang, title, otherPath, description } = Astro.props;
+const t = ui[lang];
+const pdf = withBase(`pdf/#${lang}`);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {t.author}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" href={withBase('favicon.svg')} />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href={withBase(`${lang}/`)}>
+        <span class="brand-mark" aria-hidden="true">⚓</span>
+        <span class="brand-text">{t.author} · 2023</span>
+      </a>
+      <nav class="site-nav">
+        <a href={withBase(`${lang}/#contents`)}>{t.contents}</a>
+        <a href={withBase(`${lang}/references`)}>{t.references}</a>
+        <a href={pdf}>{t.readPdf}</a>
+        <LangToggle lang={lang} otherPath={otherPath} />
+      </nav>
+    </header>
+
+    <main class="page">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        {t.title} — {t.author}, {t.meta}.
+        <a href={pdf}>{t.downloadPdf}</a>
+      </p>
+      <p class="fine">
+        Tallinn University of Technology · School of Engineering. Interactive
+        web edition generated from the original LaTeX sources.
+      </p>
+    </footer>
+
+    <style>
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
+        padding: 0.7rem clamp(1rem, 4vw, 3rem);
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+      .brand-mark {
+        color: var(--sea);
+        font-size: 1.1rem;
+      }
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.6rem, 2vw, 1.3rem);
+        font-size: 0.85rem;
+      }
+      .site-nav a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .site-nav a:hover {
+        color: var(--accent);
+      }
+      .page {
+        max-width: 46rem;
+        margin: 0 auto;
+        padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 4vw, 1.5rem) 4rem;
+      }
+      .site-footer {
+        border-top: 1px solid var(--line);
+        padding: 2rem clamp(1rem, 4vw, 3rem);
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        font-size: 0.8rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .site-footer a {
+        color: var(--accent);
+      }
+      .site-footer .fine {
+        margin-top: 0.4rem;
+        opacity: 0.8;
+      }
+    </style>
+  </body>
+</html>
