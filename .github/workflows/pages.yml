@@ -61,6 +61,10 @@ jobs:
           mkdir -p publish/pdf
           cp faithful/main.pdf publish/pdf/thesis-et.pdf
           cp faithful-en/main.pdf publish/pdf/thesis-en.pdf
+          # Keep the PDFs at the site root too, so links the previous viewer
+          # published (/seafarer/thesis-{et,en}.pdf) keep resolving.
+          cp faithful/main.pdf publish/thesis-et.pdf
+          cp faithful-en/main.pdf publish/thesis-en.pdf
 
       # On pull requests the steps above act as a build check; only deploy
       # from main.

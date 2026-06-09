@@ -153,6 +153,17 @@ function buildRefMap() {
 
 function preprocessTex(tex, lang) {
   let out = tex;
+  // 0. Flatten `\begin{minipage}...\end{minipage}` table cells. Their internal
+  //    `\\` line breaks force pandoc into a pipe table it cannot represent, so
+  //    it silently drops the cell content (e.g. the Jetson AGX Xavier specs).
+  //    Join the lines into one cell and drop layout-only commands.
+  out = out.replace(/\\begin\{minipage\}(?:\[[^\]]*\])?\{[^}]*\}([\s\S]*?)\\end\{minipage\}/g, (_, c) =>
+    c
+      .replace(/\\(raggedright|centering|arraybackslash|strut)\b/g, '')
+      .replace(/\\\\(\[[^\]]*\])?/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
   // 1. Strip `>{...}` column decorators inside table preambles. Without this,
   //    pandoc drops leading numbers in cells ("472 GFLOPs" -> "GFLOPs").
   out = out.replace(/>\{[^}]*\}/g, '');
