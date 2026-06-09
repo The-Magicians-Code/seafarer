@@ -40,8 +40,6 @@
     % auto-generated "Figure N:" / "Table N:" prefix. The counter still
     % increments, so \listoffigures, \listoftables, and \total{figure/table}
     % all work.
-    \captionsetup[figure]{labelformat=empty, labelsep=none}
-    \captionsetup[table]{labelformat=empty, labelsep=none}
 \usepackage{subcaption}                             % Support for sub-captions
     \subcaptionsetup{
         font=small
@@ -71,8 +69,8 @@
 
 % counters
 \usepackage{chngcntr}                               % Changing the resetting of counters
-    \counterwithout{table}{chapter}                 % Table counters are no longer dependent on the chapter number
-    \counterwithout{figure}{chapter}                % Figure counters are no longer dependent on the chapter number
+    \counterwithin{table}{chapter}                  % Table counters reset per chapter, numbered as <chapter>.<n>
+    \counterwithin{figure}{chapter}                 % Figure counters reset per chapter, numbered as <chapter>.<n>
 \usepackage{totcount}                               % Displaying the total value of counters
     \regtotcounter{figure}
     \regtotcounter{table}

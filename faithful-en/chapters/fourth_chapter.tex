@@ -16,7 +16,7 @@ There are several models available for object detection, differing from one anot
   >{\raggedright\arraybackslash}p{0.2830\linewidth}
   >{\raggedright\arraybackslash}p{0.2170\linewidth}
   >{\raggedright\arraybackslash}p{0.2358\linewidth}@{}}
-\caption{Table 4.1.1. Overview of the parameters of the most popular models}\\
+\caption{Overview of the parameters of the most popular models}\label{tab:4-1-1}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -28,14 +28,14 @@ MobileNet SSD V2 \cite{ref51} & 320x320 & 200 (Google Pixel 1) & 22.2 (MSCOCO) \
 EfficientDet \cite{ref52} & 1536x1536 & 153 (V100 GPU) & 55.1 (MSCOCO) \\
 \end{longtable}
 
-For this system, the model had to be chosen with the best accuracy-to-speed ratio in mind. The chosen model also had to be capable of processing information from several video inputs at once (see Table 4.1.1).
+For this system, the model had to be chosen with the best accuracy-to-speed ratio in mind. The chosen model also had to be capable of processing information from several video inputs at once (see Table~\ref{tab:4-1-1}).
 
-The YOLOv5 architecture network was selected to solve the task; it was built by Ultralytics \cite{ref53} as an evolution of YOLOv4 \cite{ref54} and is faster and more accurate than its predecessors. It is also a compact model that is easy to run on embedded systems. The model operates on the single-pass frame-processing philosophy (\emph{You Only Look Once}) -- the image passes through the network only once (unlike other models), and within that single pass object detection and classification happen together, which is why the model's detection operation is also faster (see Figure 4.1.1).
+The YOLOv5 architecture network was selected to solve the task; it was built by Ultralytics \cite{ref53} as an evolution of YOLOv4 \cite{ref54} and is faster and more accurate than its predecessors. It is also a compact model that is easy to run on embedded systems. The model operates on the single-pass frame-processing philosophy (\emph{You Only Look Once}) -- the image passes through the network only once (unlike other models), and within that single pass object detection and classification happen together, which is why the model's detection operation is also faster (see Figure~\ref{fig:image12}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=4.125in]{media/image12.png}
-\caption{Figure 4.1.1. Architecture of the YOLOv5 models \cite{ref55}}
+\caption{Architecture of the YOLOv5 models \cite{ref55}}\label{fig:image12}
 \end{figure}
 
 The model consists of three parts: backbone, neck, and head.

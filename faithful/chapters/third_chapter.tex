@@ -16,14 +16,14 @@ Juhtkontroller on seade, mis tegeleb selle külge ühendatud kaameratelt saadud 
 
 Antud ülesande lahendamiseks on saadaval mitmeid monoplaatarvuteid (\emph{Single-Board Computer}, (SBC) \cite{ref19}, \emph{System on Module} (SoM)), populaarseimatena Nvidia Jetson seeria \cite{ref20}, mis on tehisintellekti ning masinnägemise ja masinõppe rakendusteks spetsialiseeritud ja Raspberry Pi \cite{ref21}. Antud ülesande lahendamisel välistame Raspberry Pi valikutest kuna juhttorni süsteem hõlmab 4 kaameraga paralleelselt töötamist, (Raspberry Pi'l ainult 1 kaamerasisend). See vajab rohket arvutusvõimsust, kuid antud seadmel pole selle kohast võimekust, ega vajalikku riistvara (seadme protsessoris on küll integreeritud graafikakaart, kuid antud ülesande lahendamiseks jääb see liiga nõrgaks). Seetõttu paralleelsete toimingute jaoks on eelkõige kasulik eraldiseisev graafikakaart (\emph{Graphics Processing Unit} (GPU) \cite{ref22}) koos spetsialiseeritud graafikatuumadega (\emph{CUDA Cores} \cite{ref23}), mis on Nvidia Jetson arvutite eeliseks.
 
-Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel 3.1.1). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (\emph{Tensor Cores}) \cite{ref24}, (vt Joonis 3.1.1).
+Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel~\ref{tab:3-1-1}). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (\emph{Tensor Cores}) \cite{ref24}, (vt Joonis~\ref{fig:image7}).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{0.2297\linewidth}
   >{\raggedright\arraybackslash}p{0.2297\linewidth}
   >{\raggedright\arraybackslash}p{0.2568\linewidth}
   >{\raggedright\arraybackslash}p{0.2568\linewidth}@{}}
-\caption{Tabel 3.1.1. Jetson seeria arvutite parameetrid \cite{ref24}}\\
+\caption{Jetson seeria arvutite parameetrid \cite{ref24}}\label{tab:3-1-1}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -82,13 +82,13 @@ cameras\\
 
 Eeldusel et vaja on analüüsida kolmest kaamerast tulevat infot paralleelselt ning täpselt, oleks kõige mõistlikum kasutada Xavier seeria süsteemi. Seda just seetõttu, et võrreldes teiste seeriatega on Xavier seeria arvutite jõudlus tagatud suurema hulga graafikakaardi tuumadega, uuema arhitektuuriga (Volta \cite{ref25}), mis sisaldab endas maatrikskiirendeid (\emph{Tensor Cores}, mida vajavad närvivõrgud maatriksarvutustes) ning süvaõppe kiirendeid (\emph{Deep Learning Accelerator}), mis võimaldavad mitme kaamera sisendiga tõhusamalt operatsioone teha.
 
-Antud seerias on valikus nii NX kui ka AGX Jetsonid, mille hulgast on valitud parimad kandidaadid (vt Tabel 3.1.2). Nende hulgast sobilikuim on Jetson AGX Xavier, sest antud seade peab olema võimeline jooksutama mahukat närvivõrku ning tegelema mitme operatsiooniga korraga (kaameratelt info lugemine, info töötlemine närvivõrgus, töödeldud info kujutamine väljundvideol), mis nõuab suurt hulka arvutuslikku ressurssi.
+Antud seerias on valikus nii NX kui ka AGX Jetsonid, mille hulgast on valitud parimad kandidaadid (vt Tabel~\ref{tab:3-1-2}). Nende hulgast sobilikuim on Jetson AGX Xavier, sest antud seade peab olema võimeline jooksutama mahukat närvivõrku ning tegelema mitme operatsiooniga korraga (kaameratelt info lugemine, info töötlemine närvivõrgus, töödeldud info kujutamine väljundvideol), mis nõuab suurt hulka arvutuslikku ressurssi.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{0.1944\linewidth}
   >{\raggedright\arraybackslash}p{0.3241\linewidth}
   >{\raggedright\arraybackslash}p{0.4630\linewidth}@{}}
-\caption{Tabel 3.1.2. Jetson AGX Xavieri ja Xavier NXi parameetrid \cite{ref24}}\\
+\caption{Jetson AGX Xavieri ja Xavier NXi parameetrid \cite{ref24}}\label{tab:3-1-2}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -123,17 +123,17 @@ CSI Camera & Up to 6 cameras (up to 62 Gbps) & Up to 6 cameras (up to 30 Gbps) \
 \begin{figure}[H]
 \centering
 \includegraphics[width=4.09763in,height=2.08472in]{media/image7.png}
-\caption{Joonis 3.1.1. Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) \cite{ref26}}
+\caption{Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) \cite{ref26}}\label{fig:image7}
 \end{figure}
 
 \section{Tensorituumad ja CUDA}\label{tensorituumad-ja-cuda}
 
-Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA \cite{ref23} tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (\emph{Half-Precision Matrix Multiply and Accumulate}) ja IMMA (\emph{Integer Matrix Multiply and Accumulate}), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad \cite{ref27} (vt Joonis 3.2.1).
+Tensorituumade (\emph{Tensor Core'ide}) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA \cite{ref23} tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (\emph{Half-Precision Matrix Multiply and Accumulate}) ja IMMA (\emph{Integer Matrix Multiply and Accumulate}), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad \cite{ref27} (vt Joonis~\ref{fig:image8}).
 
 \begin{figure}
 \centering
 \includegraphics[width=6.10278in,height=1.64514in,alt={Jetson Xavier Tensor Core Matrix diagram}]{media/image8.png}
-\caption{Joonis 3.2.1. Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine \cite{ref27}}
+\caption{Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine \cite{ref27}}\label{fig:image8}
 \end{figure}
 
 CUDA puhul on tegemist paralleelarvutuseks mõeldud platvormi ning programmeerimise mudeliga, mis suurendab tehtavate arvutuste hulka mitmekordselt, kasutades selleks protsessori asemel graafikakaarti \cite{ref23}.
@@ -167,7 +167,7 @@ Suurema resolutsiooni korral paraneb seega tuvastustäpsus kuid väheneb interfe
 Polükromaatiline sensor sobib seevastu keskkonda, kus kontrast tausta ja objekti vahel ei ole kuigi suur või objekti tuvastamine nõuab rohkem informatsiooni. Sellisel moel pildi edastamisel esitatakse kolm väärtust maatriksina, RGB (vastavalt Red -- punane, Green -- roheline, Blue - sinine) värvustena vahemikes (0\ldots255 või 0.0\ldots1.0, näiteks {[}255, 0, 255{]}). Taoline edastusviis on andmete hulgalt kolm korda mahukam kui monokromaatilise pildi edastamisel, kuna iga piksli kohta esitatakse kolm väärtust.
 \end{quote}
 
-Seadmed, mis eelmainitud parameetrile vastaksid on järgnevad (vt Tabel 3.3.1):
+Seadmed, mis eelmainitud parameetrile vastaksid on järgnevad (vt Tabel~\ref{tab:3-3-1}):
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{0.1753\linewidth}
@@ -176,7 +176,7 @@ Seadmed, mis eelmainitud parameetrile vastaksid on järgnevad (vt Tabel 3.3.1):
   >{\raggedright\arraybackslash}p{0.1134\linewidth}
   >{\raggedright\arraybackslash}p{0.1134\linewidth}
   >{\raggedright\arraybackslash}p{0.1340\linewidth}@{}}
-\caption{Tabel 3.3.1. Parameetritele sobilikud kaamerad}\\
+\caption{Parameetritele sobilikud kaamerad}\label{tab:3-3-1}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -215,27 +215,27 @@ Ethernet \\
 
 Töö kirjutamise hetkel kasutati algselt SurveilsQUAD kaameraid, kuna need olid antud arvutisüsteemi jaoks eelnevalt ette valmistatud ning projektis olevate osapoolte poolt olid ka Xavierile vastavad tarkvaralised muudatused tehtud arvutisüsteemide instituudis. Lõputöö kirjutamise käigus valmiv projekt oli arendusfaasis, mistõttu oli ka eelarve piiratud ning piirduti esialgu kaameratega, millel oli katsetuste jaoks põhivõimekus olemas. Juhttorni disaini käigus selgus, et valitud kaamerate paigutus oli lühikeste kaablite tõttu piiratud ning tootja ei tarninud seadmetele pikemaid kaableid.
 
-Seetõttu sai valitud Arducam Mini kaamera (vt Joonis 3.3.1), mis ühendati raspberry pi külge ning omakorda etherneti kaabliga Ethernet switchi ning sealt lõpuks Jetson Xavieri külge. Sellega lahendus ka kaablite pikkuse probleem ning samuti oli võimalik ka Xavierile installeerida värskeim tarkvara, mida eelmiste kaamerate vananenud draiverid ei toetanud.
+Seetõttu sai valitud Arducam Mini kaamera (vt Joonis~\ref{fig:image9}), mis ühendati raspberry pi külge ning omakorda etherneti kaabliga Ethernet switchi ning sealt lõpuks Jetson Xavieri külge. Sellega lahendus ka kaablite pikkuse probleem ning samuti oli võimalik ka Xavierile installeerida värskeim tarkvara, mida eelmiste kaamerate vananenud draiverid ei toetanud.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=2.75104in,height=2.42839in]{media/image9.png}
-\caption{Joonis 3.3.1. Arducam Fisheye kaameraga moodul \cite{ref34}}
+\caption{Arducam Fisheye kaameraga moodul \cite{ref34}}\label{fig:image9}
 \end{figure}
 
 \section{Juhttorn}\label{juhttorn}
 
-Juhttorn asetseb laeva vööris (vt Joonis 3.4.2) ning selle ülesanne on laeva juhtimine üle võtta laeva kapteni käsul ning tegeleda sellega autonoomselt võimalikult vähese kapteni sekkumisega. Selleks on tornil olemas aju Jetson AGXi kujul, mis tegeleb kõikidest anduritest ning kaameratest saadava info kogumise, töötlemise ning seejärel juhtimisotsuse edasi saatmisega autopiloodile, mis omakorda saadab signaalid laeva mootoritele ja tüürile. Jetson saab infot oma ümbritseva keskkonna kohta kaameratest, X-band radarist, AISist ning ilmajaamast tuuleanduri kujul. Andmevahetus juhttorni süsteemis toimub läbi etherneti jaoturi ning 4G ruuteri mis võimaldab saata ning vastu võtta andmeid kasutajalt. Samuti on võimalik arendajatel teha tarkvara uuendusi laeva süsteemidele. AIS (Automaatne Identifitseerimise Süsteem) aitab määrata laeva asukoha teiste meresõidukite suhtes, kasutades satelliite, radar tuvastab punktipilvedega lähedasemaid objekte ning kaamerad ja nendel jooksev masinnägemine tuvastab objektide hulgast laevu ja teisi meresõidukeid. AIS, radar ning kaamerad masinnägemisega täiendavad üksteist, aidates laeval enda ümbruskonda tuvastada ning selles orienteeruda. Süsteemi toidab alalisvooluallikas (vt Joonis 3.4.1). 
+Juhttorn asetseb laeva vööris (vt Joonis~\ref{fig:image11}) ning selle ülesanne on laeva juhtimine üle võtta laeva kapteni käsul ning tegeleda sellega autonoomselt võimalikult vähese kapteni sekkumisega. Selleks on tornil olemas aju Jetson AGXi kujul, mis tegeleb kõikidest anduritest ning kaameratest saadava info kogumise, töötlemise ning seejärel juhtimisotsuse edasi saatmisega autopiloodile, mis omakorda saadab signaalid laeva mootoritele ja tüürile. Jetson saab infot oma ümbritseva keskkonna kohta kaameratest, X-band radarist, AISist ning ilmajaamast tuuleanduri kujul. Andmevahetus juhttorni süsteemis toimub läbi etherneti jaoturi ning 4G ruuteri mis võimaldab saata ning vastu võtta andmeid kasutajalt. Samuti on võimalik arendajatel teha tarkvara uuendusi laeva süsteemidele. AIS (Automaatne Identifitseerimise Süsteem) aitab määrata laeva asukoha teiste meresõidukite suhtes, kasutades satelliite, radar tuvastab punktipilvedega lähedasemaid objekte ning kaamerad ja nendel jooksev masinnägemine tuvastab objektide hulgast laevu ja teisi meresõidukeid. AIS, radar ning kaamerad masinnägemisega täiendavad üksteist, aidates laeval enda ümbruskonda tuvastada ning selles orienteeruda. Süsteemi toidab alalisvooluallikas (vt Joonis~\ref{fig:image10}). 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10208in,height=5.125in]{media/image10.png}
-\caption{Joonis 3.4.1. Juhttorni lihtsustatud toimimisskeem}
+\caption{Juhttorni lihtsustatud toimimisskeem}\label{fig:image10}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=4.56944in]{media/image11.jpg}
-\caption{Joonis 3.4.2. Juhttorni asetus patrulllaeval \cite{ref35}}
+\caption{Juhttorni asetus patrulllaeval \cite{ref35}}\label{fig:image11}
 \end{figure}
 
