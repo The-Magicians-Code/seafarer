@@ -4,8 +4,8 @@ The aim of the thesis is to develop a computer vision system suitable for automa
 
 % No need to change this
 The thesis is in \langEng~and contains \calculatepages pages of text,
-\total{totalchapters} chapters\ifthenelse{\equal{\totvalue{figure}}{0}}{}{% If no figures, do nothing
-, \total{figure} \ifnum\totvalue{figure}=1 figure\else figures\fi%
-}\ifthenelse{\equal{\totvalue{table}}{0}}{}{% If no tables, do nothing
-, \total{table} \ifnum\totvalue{table}=1 table\else tables\fi%
+\total{totalchapters} chapters\ifthenelse{\equal{\totvalue{totalfigures}}{0}}{}{% If no figures, do nothing
+, \total{totalfigures} \ifnum\totvalue{totalfigures}=1 figure\else figures\fi%
+}\ifthenelse{\equal{\totvalue{totaltables}}{0}}{}{% If no tables, do nothing
+, \total{totaltables} \ifnum\totvalue{totaltables}=1 table\else tables\fi%
 }.

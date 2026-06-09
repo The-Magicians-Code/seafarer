@@ -62,14 +62,14 @@ Jetson AGX Xavier software configuration:
 
 The experiments were run in two configurations: with one frame and with three frames processed in parallel, since in the production environment the neural network processes information from three frames. The \emph{mean Average Precision} parameter shown in the charts (in yellow) expresses the model's mean total accuracy across all classes; it is derived from experiments carried out on classes selected from the COCO 2017 validation dataset, with an equal number of test samples chosen from all classes \cite{ref64}. The \emph{accuracy} parameter (in red) was obtained on a separately created dataset containing only vessels. Results are shown in ascending order of model size (number of parameters) -- the smallest model on the left, the largest on the right -- to provide an intuitive overview of all parameters.
 
-The accuracy fluctuations seen in the charts for models with larger inputs (see Figures 6.2.2 and 6.2.4) are due to the fact that the scaling layers of the ``6''-suffixed models were designed for larger input resolutions, while the layers of the other models were designed for smaller input resolutions \cite{ref65}. The latter therefore exhibit lower accuracy at this resolution.
+The accuracy fluctuations seen in the charts for models with larger inputs (see Figures~\ref{fig:image25} and~\ref{fig:image27}) are due to the fact that the scaling layers of the ``6''-suffixed models were designed for larger input resolutions, while the layers of the other models were designed for smaller input resolutions \cite{ref65}. The latter therefore exhibit lower accuracy at this resolution.
 
-The speed difference between optimised and unoptimised models is at least twofold; the largest speed difference is 4.28$\times$, for the yolov5l6 pair (see Figure 6.2.3). The accuracy difference between optimised and unoptimised models is minimal ($1.7 \cdot 10^{-3}$), i.e.\ optimisation did not significantly affect accuracy. As a result, the accuracy values initially shown on the chart overlapped, so their averaged values are displayed instead.
+The speed difference between optimised and unoptimised models is at least twofold; the largest speed difference is 4.28$\times$, for the yolov5l6 pair (see Figure~\ref{fig:image26}). The accuracy difference between optimised and unoptimised models is minimal ($1.7 \cdot 10^{-3}$), i.e.\ optimisation did not significantly affect accuracy. As a result, the accuracy values initially shown on the chart overlapped, so their averaged values are displayed instead.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=3.77778in,alt={Input size 1x3x640x640}]{media/image24.png}
-\caption{Figure 6.2.1. Model performance with a single 640$\times$640-pixel frame input}
+\caption{Model performance with a single 640$\times$640-pixel frame input}\label{fig:image24}
 \end{figure}
 
 The speed difference between the fastest and slowest optimised model is 108 frames per second, with the best speed-up being fourfold. The mean optimised speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5l model and there is no significant accuracy gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
@@ -77,7 +77,7 @@ The speed difference between the fastest and slowest optimised model is 108 fram
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=3.77778in,alt={Input size 1x3x1280x1280}]{media/image25.png}
-\caption{Figure 6.2.2. Model performance with a single 1280$\times$1280-pixel frame input}
+\caption{Model performance with a single 1280$\times$1280-pixel frame input}\label{fig:image25}
 \end{figure}
 
 The speed difference between the fastest and slowest optimised model is 40 frames per second, with the best speed-up of 4.1$\times$. The mean optimised speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5m model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
@@ -87,7 +87,7 @@ The mean speed difference between the single-input 640$\times$640 and 1280$\time
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=3.77778in,alt={Input size 3x3x640x640}]{media/image26.png}
-\caption{Figure 6.2.3. Model performance with three 640$\times$640-pixel frame inputs in parallel}
+\caption{Model performance with three 640$\times$640-pixel frame inputs in parallel}\label{fig:image26}
 \end{figure}
 
 The speed difference between the fastest and slowest optimised model is 52 frames per second, with the best speed-up of 4.3$\times$. The mean optimised speed difference is 3.4$\times$. Model accuracy grows up to the YOLOv5l model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
@@ -97,7 +97,7 @@ The three-input 640$\times$640 models are on average 1.4$\times$ faster than the
 \begin{figure}
 \centering
 \includegraphics[width=6.10174in,height=3.77778in,alt={Input size 3x3x1280x1280}]{media/image27.png}
-\caption{Figure 6.2.4. Model performance with three 1280$\times$1280-pixel frame inputs in parallel}
+\caption{Model performance with three 1280$\times$1280-pixel frame inputs in parallel}\label{fig:image27}
 \end{figure}
 
 The speed difference between the fastest and slowest optimised model is 16 frames per second, with the best speed-up of 4.2$\times$. The mean optimised model speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5m model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases. In this case the models are 1.1$\times$ faster than the single-input models at the same resolution.

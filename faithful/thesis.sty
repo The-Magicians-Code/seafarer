@@ -39,8 +39,6 @@
     % numbering from the original .docx, so suppress LaTeX's auto-generated
     % "Figure N:" / "Table N:" prefix. The counter still increments, so
     % \listoffigures, \listoftables, and \total{figure/table} all work.
-    \captionsetup[figure]{labelformat=empty, labelsep=none}
-    \captionsetup[table]{labelformat=empty, labelsep=none}
 \usepackage{subcaption}                             % Support for sub-captions
     \subcaptionsetup{
         font=small
@@ -70,14 +68,19 @@
 
 % counters
 \usepackage{chngcntr}                               % Changing the resetting of counters
-    \counterwithout{table}{chapter}                 % Table counters are no longer dependent on the chapter number
-    \counterwithout{figure}{chapter}                % Figure counters are no longer dependent on the chapter number
+    \counterwithin{table}{chapter}                  % Table counters reset per chapter, numbered as <chapter>.<n>
+    \counterwithin{figure}{chapter}                 % Figure counters reset per chapter, numbered as <chapter>.<n>
 \usepackage{totcount}                               % Displaying the total value of counters
-    \regtotcounter{figure}
-    \regtotcounter{table}
     \newtotcounter{totalchapters}
+    \newtotcounter{totalfigures}                    % cumulative; figure resets per chapter
+    \newtotcounter{totaltables}                     % cumulative; table resets per chapter
 \usepackage{assoccnt}                               % Avoiding mistakes while counting chapters
     \DeclareAssociatedCounters{chapter}{totalchapters}
+% Hook the figure/table cumulative counters directly: assoccnt + chngcntr
+% \counterwithin interact in a way that resets totalfigures/totaltables to 0
+% at each chapter break, so step them ourselves at each captioned env start.
+\AtBeginEnvironment{figure}{\stepcounter{totalfigures}}
+\AtBeginEnvironment{longtable}{\stepcounter{totaltables}}
 \usepackage[abspage,user,lastpage]{zref}            % Counting the pages of the main text
     \newcounter{netpages}
     \makeatletter
@@ -171,8 +174,8 @@
     \setlength{\cftfigindent}{0pt}                       % No indentation for figure entries in the LOF
     \setlength{\cfttabindent}{0pt}                       % No indentation for table entries in the LOT
 
-    \setlength{\cfttabnumwidth}{\widthof{\cfttabname 00.~}} % Adjusts the width of the table number column in the LOT based on the word "Table/Tabel" and a two-digit number
-    \setlength{\cftfignumwidth}{\widthof{\cftfigname 00.~}} % Adjusts the width of the figure number column in the LOF based on the word "Figure/Joonis" and a two-digit number
+    \setlength{\cfttabnumwidth}{\widthof{\cfttabname 00.00.~}} % Adjusts the width of the table number column in the LOT based on the word "Table/Tabel" and a two-digit number
+    \setlength{\cftfignumwidth}{\widthof{\cftfigname 00.00.~}} % Adjusts the width of the figure number column in the LOF based on the word "Figure/Joonis" and a two-digit number
 
     \renewcommand{\cftpartleader}{\cftdotfill{\cftdotsep}}      % Uses dots for part entries in the TOC
     \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}      % Uses dots for chapter entries in the TOC

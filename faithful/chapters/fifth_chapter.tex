@@ -3,44 +3,44 @@ Antud töö eesmärgiks oli luua masinnägemise rakendus selliselt, et ta oleks 
 
 \section{Töökeskkond}\label{tuxf6uxf6keskkond}
 
-Tarkvara arendamine ning masinnägemise protsesside töö toimub isoleeritud keskkonnas, mis võimaldab testida tarkvara erinevate riistvara konfiguratsioonidega süsteemidel. Samuti tagab selline arendusvõte turvalisuse ja stabiilsuse poolelt hostsüsteemi tarkvara ning oleku puutumatuse. Konteinerdamine võimaldab ühel seadmel jooksutada mitut rakendust, mis kõik võivad olla erinevate konfiguratsioonidega ning tarkvaradega, seejuures kasutaja poolt määratud otsese ligipääsuga hosti riistvarale (vt Joonis 5.1.1).
+Tarkvara arendamine ning masinnägemise protsesside töö toimub isoleeritud keskkonnas, mis võimaldab testida tarkvara erinevate riistvara konfiguratsioonidega süsteemidel. Samuti tagab selline arendusvõte turvalisuse ja stabiilsuse poolelt hostsüsteemi tarkvara ning oleku puutumatuse. Konteinerdamine võimaldab ühel seadmel jooksutada mitut rakendust, mis kõik võivad olla erinevate konfiguratsioonidega ning tarkvaradega, seejuures kasutaja poolt määratud otsese ligipääsuga hosti riistvarale (vt Joonis~\ref{fig:image13}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=4.67812in,height=3.72586in]{media/image13.png}
-\caption{Joonis 5.1.1. Konteinerdatud rakenduste toimimise lihtsustatud skeem \cite{ref57}}
+\caption{Konteinerdatud rakenduste toimimise lihtsustatud skeem \cite{ref57}}\label{fig:image13}
 \end{figure}
 
-Süsteemi arenduseks ja testimiseks loodi keskkond eraldiseisva arendusmasina peal, kasutades virtualiseerimiskeskkonda Dockerit \cite{ref58}. Aluseks võeti Nvidia NGC keskkonnast PyTorchi konteiner, mõeldud x86\_64 arhitektuuriga seadmetele \cite{ref59}. Selle sisse ehitati Jetsoni tarkvaraliste spetsiifilisustega analoogne keskkond ning loodi ka koodis arhitektuuripõhised funktsioonid, mis rakendusid vastavalt eripäradele arendussüsteemile ja toodangsüsteemile (vt Joonis 5.1.2 ja 5.1.3).
+Süsteemi arenduseks ja testimiseks loodi keskkond eraldiseisva arendusmasina peal, kasutades virtualiseerimiskeskkonda Dockerit \cite{ref58}. Aluseks võeti Nvidia NGC keskkonnast PyTorchi konteiner, mõeldud x86\_64 arhitektuuriga seadmetele \cite{ref59}. Selle sisse ehitati Jetsoni tarkvaraliste spetsiifilisustega analoogne keskkond ning loodi ka koodis arhitektuuripõhised funktsioonid, mis rakendusid vastavalt eripäradele arendussüsteemile ja toodangsüsteemile (vt Joonis~\ref{fig:image14} ja~\ref{fig:image15}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=1.83333in]{media/image14.png}
-\caption{Joonis 5.1.2. Arendusmasina konteinerisse installeeritud tarkvarade versioonid, mis ühilduvad toodangmasina konteineri seisundiga kõige paremini}
+\caption{Arendusmasina konteinerisse installeeritud tarkvarade versioonid, mis ühilduvad toodangmasina konteineri seisundiga kõige paremini}\label{fig:image14}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.09626in,height=2.09526in]{media/image15.png}
-\caption{Joonis 5.1.3. Toodangsüsteemi konteineri tarkvarade versioonid}
+\caption{Toodangsüsteemi konteineri tarkvarade versioonid}\label{fig:image15}
 \end{figure}
 
 Toodangsüsteemi jaoks loodi samuti konteiner, mille põhjaks konfigureeriti samuti NGC keskkonnast konteiner, mis on üles ehitatud L4T (\emph{Linux for Tegra}) süsteemiga, spetsiifiliselt loodud aarch64 arhitektuuriga Jetson seadmetele \cite{ref60}. See konfigureeriti vastavalt masinnägemiseks vajalike lisateekide ning seoti riistvaral oleva närvivõrkude mudelite optimeerimise rakendusega TensorRT \cite{ref61}.
 
 \section{Põhiprogramm}\label{puxf5hiprogramm}
 
-Peamine töö toimub inferentsi skriptis (vt lihtsustatud Joonis 5.2.1, tehniline Joonis 5.2.3), millele kasutaja annab sisendiks närvivõrgumudeli ning selle vajalikud parameetrid, sisendstriimi (videofail või kaamera) ning vajadusel ka soovitud režiimi (videosalvestus või videoväljastuseta debugimiseks ja kiiruse kontrolliks mõeldud režiim) (vt Joonis 5.2.2)
+Peamine töö toimub inferentsi skriptis (vt lihtsustatud Joonis~\ref{fig:image16}, tehniline Joonis~\ref{fig:image18}), millele kasutaja annab sisendiks närvivõrgumudeli ning selle vajalikud parameetrid, sisendstriimi (videofail või kaamera) ning vajadusel ka soovitud režiimi (videosalvestus või videoväljastuseta debugimiseks ja kiiruse kontrolliks mõeldud režiim) (vt Joonis~\ref{fig:image17})
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.00897in,height=4.07576in]{media/image16.png}
-\caption{Joonis 5.2.1. Põhiprogrammi lihtsustatud plokkskeem}
+\caption{Põhiprogrammi lihtsustatud plokkskeem}\label{fig:image16}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=6.10174in,height=0.33333in]{media/image17.png}
-\caption{Joonis 5.2.2. Põhiprogrammi käitamise näide käsurealt}
+\caption{Põhiprogrammi käitamise näide käsurealt}\label{fig:image17}
 \end{figure}
 
 Pythoniga käitatakse skript nimega inference.py, millele antakse sisendiks TensorRT-ga optimeeritud mudel, nimega yolov5m6, sisendstriimiks antakse videofail video.mp4, samuti lülitatakse sisse performance režiim, mis käitab protsessi ilma veebiliidese videoväljundita kasutajale, selle abil on võimalik hinnata süsteemi latentsust ning otsest mõju Xavieri ressursside kasutusele.
@@ -48,27 +48,27 @@ Pythoniga käitatakse skript nimega inference.py, millele antakse sisendiks Tens
 \begin{figure}[H]
 \centering
 \includegraphics[width=5.71979in,height=6.17581in]{media/image18.png}
-\caption{Joonis 5.2.3. Masinnägemise programmi toimimise lihtsustatud plokkskeem}
+\caption{Masinnägemise programmi toimimise lihtsustatud plokkskeem}\label{fig:image18}
 \end{figure}
 
-Masina arhitektuuri tuvastamiseks kasutatakse pythoni moodulit, vastavalt millele rakendatakse vajalikud seadesätted skripti käitanud keskkonna jaoks. Arenduskeskkonnaks kasutatakse lauarvutit, mis on x86\_64 arhitektuuriga, mille seadistamisel initsialiseeritakse vastav videodekooder ning enkooder, samuti määratakse ka erikasutusel olev port ning kaameratest tuleva info jaoks skaleerimise parameeter (vt Joonis 5.2.4).
+Masina arhitektuuri tuvastamiseks kasutatakse pythoni moodulit, vastavalt millele rakendatakse vajalikud seadesätted skripti käitanud keskkonna jaoks. Arenduskeskkonnaks kasutatakse lauarvutit, mis on x86\_64 arhitektuuriga, mille seadistamisel initsialiseeritakse vastav videodekooder ning enkooder, samuti määratakse ka erikasutusel olev port ning kaameratest tuleva info jaoks skaleerimise parameeter (vt Joonis~\ref{fig:image19}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=4.21875in,height=1.96875in]{media/image19.png}
-\caption{Joonis 5.2.4. Arhitektuuripõhiste parameetrite initsialiseerimine}
+\caption{Arhitektuuripõhiste parameetrite initsialiseerimine}\label{fig:image19}
 \end{figure}
 
 Närvivõrgu mudel loetakse sisse kasutaja poolt defineeritud ``model'' parameetriga, mis kontrollib mudeli olemasolu ning faili formaati, antud juhul on mudeli formaadiks .engine tüüpi TensorRTga \cite{ref60} optimeeritud mudelid. Pärast mudeli formaadi kontrolli loetakse sisse mudeli parameetrite metadata, vastavalt millele allokeeritakse graafikakaardi mälu ning tuumade ressurss.
 
 Kaameratest info lugemiseks kasutatakse Nvidia graafikakaardil asetsevat riistvarakiirendit Nvidia Video Decoder (NVDEC) \cite{ref62}, mis võimaldab protsessoril ja graafikakaardil tegeleda täielikult närvivõrgu haldamise ning andmete töötlusega.
 
-Kaameratest saadud kaadrid skaleeritakse närvivõrgule sobivasse sisendformaati, seejärel toimub mudelis kaadritelt informatsiooni hankimine ning statistiliste väljundite formuleerimine. Seejärel saadetakse väljundinfo järeltöötlusesse, kus toimub tulemuste vormistamine ning kaadrile tuvastatud objektide asukohtade ning kindluse tõenäosuse kuvamine (vt Joonis 5.2.5). Seejärel loetakse sisse uus kaader ning programmi töö kordub kuni enam kaadreid sisse ei tule ehk kas kaamera töö lõpeb või kasutaja lõpetab programmi töö.
+Kaameratest saadud kaadrid skaleeritakse närvivõrgule sobivasse sisendformaati, seejärel toimub mudelis kaadritelt informatsiooni hankimine ning statistiliste väljundite formuleerimine. Seejärel saadetakse väljundinfo järeltöötlusesse, kus toimub tulemuste vormistamine ning kaadrile tuvastatud objektide asukohtade ning kindluse tõenäosuse kuvamine (vt Joonis~\ref{fig:image20}). Seejärel loetakse sisse uus kaader ning programmi töö kordub kuni enam kaadreid sisse ei tule ehk kas kaamera töö lõpeb või kasutaja lõpetab programmi töö.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=5.98021in,height=3.72487in]{media/image20.png}
-\caption{Joonis 5.2.5. Kaadrile kuvatud närvivõrgu poolt genereeritud ja töödeldud tuvastused (kastid ja nende sees olevad tuvastatud klassid koos tõenäosustega)}
+\caption{Kaadrile kuvatud närvivõrgu poolt genereeritud ja töödeldud tuvastused (kastid ja nende sees olevad tuvastatud klassid koos tõenäosustega)}\label{fig:image20}
 \end{figure}
 
 \section{Masinnägemise mudeli ja tarkvara optimeerimine}\label{masinnuxe4gemise-mudeli-ja-tarkvara-optimeerimine}
@@ -79,19 +79,19 @@ Rakenduse esimeseks probleemiks oli kaameratelt tuleva striimi lugemine mitme si
 
 Selle lahendamiseks võeti kasutusele Jetsonisse integreeritud riistvaraline videodekooder NVDEC \cite{ref41}, OpenCV abil, millele anti ette kiirendusega gstreameri käsk, mis sisaldas endas sisendit ja videodekoodri kutsungit.
 
-Teise probleemina ei olnud võimalik suuremaid masinnägemise mudeleid edukalt jooksutada, kuna mudelid laeti protsessori mällu ning marginaalne osa arvutuslikust tööst koos kaadrite töötlusega närvivõrgus kandus graafikakaardile (vt Joonis 5.3.1).
+Teise probleemina ei olnud võimalik suuremaid masinnägemise mudeleid edukalt jooksutada, kuna mudelid laeti protsessori mällu ning marginaalne osa arvutuslikust tööst koos kaadrite töötlusega närvivõrgus kandus graafikakaardile (vt Joonis~\ref{fig:image21}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=5.94792in,height=4.05208in]{media/image21.png}
-\caption{Joonis 5.3.1. YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeerimata mudeli jooksmine ei utiliseeri kogu graafikakaarti, monitooringurakenduses jtop \cite{ref43}}
+\caption{YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeerimata mudeli jooksmine ei utiliseeri kogu graafikakaarti, monitooringurakenduses jtop \cite{ref43}}\label{fig:image21}
 \end{figure}
 
 Antud probleemile leiti lahenduseks Nvidia TensorRT tööriist, mis on võimeline sisendiks võtma mitmes formaadis närvivõrke ning need vastavalt olemasolevale riistvarale kiirendama. Antud tööriista kasutamisel valmistati närvivõrgud ette ONNX \cite{ref63} formaadis, mis on kõige universaalsem ning hõlpsasti kasutatav masinõppe mudelite interpreteerimise viis.
 
 TensorRT tööpõhimõte on mudelis kvantiseerimine ehk mudeli parameetrite arvutusliku täpsuse vähendamine (nt 32lt ujukomaarvult, 16le ujukomaarvule), see võimaldab kasutada suure jõudlusega vektorarvutusi selleks spetsialiseeritud riistvaral marginaalsete mõjutustega mudeli täpsusele. Teisena toimub mudeli kärpimine ehk ebavajalike ning minimaalselt mudeli inferentsi tulemusi mõjutavate parameetrite eemaldamine, tehes mudeli mahtu väiksemaks, mille tõttu ka mudeli kiirus paraneb (vt peatükk 5.2).
 
-Optimeerimiste tulemusena (vt Joonis 5.3.2) on:
+Optimeerimiste tulemusena (vt Joonis~\ref{fig:image22}) on:
 
 \begin{itemize}
 \item
@@ -107,6 +107,6 @@ Optimeerimiste tulemusena (vt Joonis 5.3.2) on:
 \begin{figure}[H]
 \centering
 \includegraphics[width=5.90625in,height=4.03125in]{media/image22.png}
-\caption{Joonis 5.3.2. YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeeritud mudeli jooksmine utiliseerib kogu graafikakaardi}
+\caption{YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeeritud mudeli jooksmine utiliseerib kogu graafikakaardi}\label{fig:image22}
 \end{figure}
 

@@ -36,23 +36,23 @@ The convolutional layer is the CNN's first layer, the fully connected layer is t
 
 The \textbf{convolutional} layer (\emph{convolutional layer}) is the most important part of a CNN; the largest amount of computation takes place here. This layer requires input data, a filter, and a feature map. Assume the input is a colour image in the form of a three-dimensional matrix (green, red, blue -- three channels; height, width, depth -- three dimensions). With that, the input data are defined. We also need a feature-detection function -- the kernel or \textbf{filter} -- which moves stepwise across the data, checks whether a particular feature is present in the image, and performs the corresponding computations. The operation just described is convolution.
 
-The \textbf{filter} is a two-dimensional matrix filled with constant weights that represents a portion of the image. Filters come in various sizes, but traditionally they are three-by-three matrices. The filter is applied to a portion of the image, producing the dot product of the image region matrix and the filter matrix, which is passed on to the output matrix. The filter matrix then shifts forward by a predetermined number of pixels until this operation has been performed across the entire image, resulting in a map of convolutional features (see Figure 2.2.1).
+The \textbf{filter} is a two-dimensional matrix filled with constant weights that represents a portion of the image. Filters come in various sizes, but traditionally they are three-by-three matrices. The filter is applied to a portion of the image, producing the dot product of the image region matrix and the filter matrix, which is passed on to the output matrix. The filter matrix then shifts forward by a predetermined number of pixels until this operation has been performed across the entire image, resulting in a map of convolutional features (see Figure~\ref{fig:image5}).
 
 \begin{figure}
 \centering
 \includegraphics[width=6.10174in,height=3.55556in,alt={matrix multiplication in convolutional neural networks}]{media/image5.png}
-\caption{Figure 2.2.1. The image, represented as a matrix (left), is operated on with the filter (centre), producing a dot product as a feature map (right).}
+\caption{The image, represented as a matrix (left), is operated on with the filter (centre), producing a dot product as a feature map (right).}\label{fig:image5}
 \end{figure}
 
 Looking at the figure, we see that in the output matrix a single argument corresponds to several input pixels -- i.e., for this operation both the convolutional layer and the pooling layer discussed next belong to the partially connected layers of the neural network. After each convolutional operation the feature map is processed in a ReLU \cite{ref16} activation function layer, and the resulting outputs are then sent into the \textbf{pooling} layer.
 
 The \textbf{pooling} layer downsamples the input, thereby reducing the number of input parameters, increasing the efficiency of the neural network, and reducing the risk of overfitting. Similar to the operations of the convolutional layer, processing here also covers the whole image; the only difference from convolution is that the filter in this layer has no weights. In this layer it is possible to perform max pooling and average pooling. In the first case, as the filter moves across the image, the maximum-value pixel is chosen and sent to the output matrix; in the second case, the mean value of the pixels under the filter as it moves across the image is computed and passed to the output matrix. Max pooling is used more than average pooling.
 
-The \textbf{fully connected} layer classifies the information gathered and filtered from the previous layers. This layer uses the softmax \cite{ref17} activation function to classify the inputs correctly, producing a probability estimate for each class such that the estimates for all classes sum to one (see Figure 2.2.2) \cite{ref18}.
+The \textbf{fully connected} layer classifies the information gathered and filtered from the previous layers. This layer uses the softmax \cite{ref17} activation function to classify the inputs correctly, producing a probability estimate for each class such that the estimates for all classes sum to one (see Figure~\ref{fig:image6}) \cite{ref18}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=5.25073in,height=3.89638in]{media/image6.png}
-\caption{Figure 2.2.2. SoftMax-applied output layer in the neural network (purple) and probabilities for each class (right) \cite{ref17}}
+\caption{SoftMax-applied output layer in the neural network (purple) and probabilities for each class (right) \cite{ref17}}\label{fig:image6}
 \end{figure}
 
