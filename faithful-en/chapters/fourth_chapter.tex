@@ -11,14 +11,12 @@ For \textbf{neural networks} there are several platforms and frameworks: TensorF
 
 There are several models available for object detection, differing from one another in accuracy, input resolution, size, and speed. Choosing a model means accounting for the system's throughput: more capable systems such as servers can run massive, accurate models in parallel with minimal impact on input-processing speed. Smaller systems such as laptops and embedded systems, by contrast, are better suited to running smaller, faster models.
 
-Table 4.1.1. Overview of the parameters of the most popular models
-
-{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{0.2453\linewidth}
   >{\raggedright\arraybackslash}p{0.2830\linewidth}
   >{\raggedright\arraybackslash}p{0.2170\linewidth}
   >{\raggedright\arraybackslash}p{0.2358\linewidth}@{}}
+\caption{Table 4.1.1. Overview of the parameters of the most popular models}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -29,15 +27,16 @@ YOLOv5 \cite{ref50} & 1280x1280 & 26.2 (V100 GPU) & 72.7 (MSCOCO) \\
 MobileNet SSD V2 \cite{ref51} & 320x320 & 200 (Google Pixel 1) & 22.2 (MSCOCO) \\
 EfficientDet \cite{ref52} & 1536x1536 & 153 (V100 GPU) & 55.1 (MSCOCO) \\
 \end{longtable}
-}
 
 For this system, the model had to be chosen with the best accuracy-to-speed ratio in mind. The chosen model also had to be capable of processing information from several video inputs at once (see Table 4.1.1).
 
 The YOLOv5 architecture network was selected to solve the task; it was built by Ultralytics \cite{ref53} as an evolution of YOLOv4 \cite{ref54} and is faster and more accurate than its predecessors. It is also a compact model that is easy to run on embedded systems. The model operates on the single-pass frame-processing philosophy (\emph{You Only Look Once}) -- the image passes through the network only once (unlike other models), and within that single pass object detection and classification happen together, which is why the model's detection operation is also faster (see Figure 4.1.1).
 
+\begin{figure}[H]
+\centering
 \includegraphics[width=6.10174in,height=4.125in]{media/image12.png}
-
-Figure 4.1.1. Architecture of the YOLOv5 models \cite{ref55}
+\caption{Figure 4.1.1. Architecture of the YOLOv5 models \cite{ref55}}
+\end{figure}
 
 The model consists of three parts: backbone, neck, and head.
 

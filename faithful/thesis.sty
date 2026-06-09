@@ -35,6 +35,12 @@
     labelsep=period,                                % Period separator between label and caption
     font=small                                      % 10 pt fontsize
     }
+    % Captions in this thesis include the manual "Joonis N.N.N." / "Tabel N.N.N."
+    % numbering from the original .docx, so suppress LaTeX's auto-generated
+    % "Figure N:" / "Table N:" prefix. The counter still increments, so
+    % \listoffigures, \listoftables, and \total{figure/table} all work.
+    \captionsetup[figure]{labelformat=empty, labelsep=none}
+    \captionsetup[table]{labelformat=empty, labelsep=none}
 \usepackage{subcaption}                             % Support for sub-captions
     \subcaptionsetup{
         font=small

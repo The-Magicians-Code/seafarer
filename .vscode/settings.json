@@ -1,16 +1,39 @@
 {
   "latex-workshop.latex.tools": [
     {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-pdf",
+        "-bibtex",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
       "name": "pdflatex",
       "command": "pdflatex",
       "args": ["-interaction=nonstopmode", "-synctex=1", "%DOC%"],
+      "env": {}
+    },
+    {
+      "name": "biber",
+      "command": "biber",
+      "args": ["%DOCFILE%"],
       "env": {}
     }
   ],
   "latex-workshop.latex.recipes": [
     {
-      "name": "pdflatex x2",
-      "tools": ["pdflatex", "pdflatex"]
+      "name": "latexmk (biber)",
+      "tools": ["latexmk"]
+    },
+    {
+      "name": "pdflatex × biber × pdflatex × 2",
+      "tools": ["pdflatex", "biber", "pdflatex", "pdflatex"]
     }
   ],
   "latex-workshop.latex.autoBuild.run": "onSave"
