@@ -3,6 +3,7 @@ name: Build and deploy thesis site
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -61,12 +62,16 @@ jobs:
           cp faithful/main.pdf publish/pdf/thesis-et.pdf
           cp faithful-en/main.pdf publish/pdf/thesis-en.pdf
 
+      # On pull requests the steps above act as a build check; only deploy
+      # from main.
       - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
         with:
           path: publish/
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
