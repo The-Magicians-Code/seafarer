@@ -11,14 +11,12 @@ Masinnägemise süsteemide loomiseks on olemas erinevaid tarkvaralisi lahendusi.
 
 Objektide tuvastamiseks on saadaval mitmeid mudeleid, mis erinevad üksteisest täpsuse, sisendresolutsiooni, suuruse ja kiiruse poolest. Mudeli valimisel tuleb arvestada süsteemi jõudlusega, võimekamad süsteemid nagu näiteks serverid, suudavad jooksutada massiivseid ning täpseid mudeleid paralleelselt ja minimaalse mõjuga sisendite töötlemise kiirusele. Väiksemad süsteemid nagu sülearvutid ning manussüsteemid seevastu oleksid sobivamad väiksemate ning suurema kiirusega mudelite jooksutamiseks.
 
-Tabel 4.1.1. Populaarseimate mudelite parameetrite ülevaade
-
-{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{0.2453\linewidth}
   >{\raggedright\arraybackslash}p{0.2830\linewidth}
   >{\raggedright\arraybackslash}p{0.2170\linewidth}
   >{\raggedright\arraybackslash}p{0.2358\linewidth}@{}}
+\caption{Tabel 4.1.1. Populaarseimate mudelite parameetrite ülevaade}\\
 \toprule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -29,15 +27,16 @@ YOLOv5 \cite{ref50} & 1280x1280 & 26,2 (V100 GPU) & 72,7 (MSCOCO) \\
 MobileNet SSD V2 \cite{ref51} & 320x320 & 200 (Google Pixel 1) & 22,2 (MSCOCO) \\
 EfficientDet \cite{ref52} & 1536x1536 & 153 (V100 GPU) & 55,1 (MSCOCO) \\
 \end{longtable}
-}
 
 Antud süsteemi jaoks tuli mudeli valimisel arvestada parima mudeli täpsuse ja kiiruse suhtega. Samuti pidi valitav mudel olema ka võimeline mitmelt videosisendilt korraga infot töötlema (vt Tabel 4.1.1).
 
 Antud ülesande lahendamiseks osutus valituks Yolov5 arhitektuuriga närvivõrk, mis on Ultralytics'i \cite{ref53} poolt loodud edasiarendusena Yolov4st \cite{ref54} ning on kiirem ja täpsem kui selle eelkäijad. Samuti on tegemist ka kompaktse mudeliga, mis on hõlpsasti sardsüsteemidel jooksutatav. Mudel toimib ühekordsel kaadri töötlemise filosoofial (\emph{You Only Look Once}) ehk pilt läbib võrku ainult ühe korra (erinevalt teistest mudelitest), mille käigus toimub objektituvastus ja klassifikatsioon korraga, mistõttu on ka mudeli tuvastuste operatsiooni kiirus suurem (vt Joonis 4.1.1).
 
+\begin{figure}[H]
+\centering
 \includegraphics[width=6.10174in,height=4.125in]{media/image12.png}
-
-Joonis 4.1.1. Yolov5 mudelite arhitektuur \cite{ref55}
+\caption{Joonis 4.1.1. Yolov5 mudelite arhitektuur \cite{ref55}}
+\end{figure}
 
 Mudel koosneb kolmest osast: Selgroog, kael ja pea.
 

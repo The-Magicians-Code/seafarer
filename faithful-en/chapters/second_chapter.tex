@@ -41,10 +41,8 @@ The \textbf{filter} is a two-dimensional matrix filled with constant weights tha
 \begin{figure}
 \centering
 \includegraphics[width=6.10174in,height=3.55556in,alt={matrix multiplication in convolutional neural networks}]{media/image5.png}
-\caption{matrix multiplication in convolutional neural networks}
+\caption{Figure 2.2.1. The image, represented as a matrix (left), is operated on with the filter (centre), producing a dot product as a feature map (right).}
 \end{figure}
-
-Figure 2.2.1. The image, represented as a matrix (left), is operated on with the filter (centre), producing a dot product as a feature map (right).
 
 Looking at the figure, we see that in the output matrix a single argument corresponds to several input pixels -- i.e., for this operation both the convolutional layer and the pooling layer discussed next belong to the partially connected layers of the neural network. After each convolutional operation the feature map is processed in a ReLU \cite{ref16} activation function layer, and the resulting outputs are then sent into the \textbf{pooling} layer.
 
@@ -52,6 +50,9 @@ The \textbf{pooling} layer downsamples the input, thereby reducing the number of
 
 The \textbf{fully connected} layer classifies the information gathered and filtered from the previous layers. This layer uses the softmax \cite{ref17} activation function to classify the inputs correctly, producing a probability estimate for each class such that the estimates for all classes sum to one (see Figure 2.2.2) \cite{ref18}.
 
+\begin{figure}[H]
+\centering
 \includegraphics[width=5.25073in,height=3.89638in]{media/image6.png}
+\caption{Figure 2.2.2. SoftMax-applied output layer in the neural network (purple) and probabilities for each class (right) \cite{ref17}}
+\end{figure}
 
-Figure 2.2.2. SoftMax-applied output layer in the neural network (purple) and probabilities for each class (right) \cite{ref17}
