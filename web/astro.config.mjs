@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
-import tailwindcss from '@tailwindcss/vite';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
@@ -13,11 +13,13 @@ export default defineConfig({
   base: '/seafarer',
   trailingSlash: 'ignore',
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    // Astro 6: remark/rehype plugins are configured on the unified() processor.
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex],
+    }),
   },
   integrations: [mdx()],
-  vite: {
-    plugins: [tailwindcss()],
-  },
+  // Tailwind v4 is wired through PostCSS (postcss.config.mjs) rather than the
+  // Vite plugin, which is incompatible with Astro 6's Rolldown-based bundler.
 });
