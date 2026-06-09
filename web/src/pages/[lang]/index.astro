@@ -1,0 +1,100 @@
+---
+import ThesisLayout from '../../layouts/ThesisLayout.astro';
+import { getChapters } from '../../lib/chapters';
+import { ui, abstracts, LANGS, withBase, type Lang } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+const chapters = await getChapters(lang);
+const ab = abstracts[lang];
+const first = chapters[0];
+---
+<ThesisLayout lang={lang} title={t.title} otherPath={lang === 'en' ? 'et/' : 'en/'} description={ab.body}>
+  <article class="prose">
+    <p class="kicker">{t.meta}</p>
+    <h1>{t.title}</h1>
+    <p class="byline">{t.author}</p>
+
+    <section class="abstract">
+      <h2>{t.abstract}</h2>
+      <p>{ab.body}</p>
+      <p class="kw"><strong>{t.keywords}:</strong> {ab.keywords}.</p>
+    </section>
+
+    <div class="cta">
+      {first && <a class="primary" href={withBase(`${lang}/${first.data.slug}`)}>{t.next} →</a>}
+      <a class="ghost" href={withBase(`pdf/#${lang}`)}>{t.readPdf}</a>
+    </div>
+
+    <h2 id="contents">{t.contents}</h2>
+    <ol class="toc">
+      {
+        chapters.map((c) => (
+          <li>
+            <a href={withBase(`${lang}/${c.data.slug}`)}>{c.data.title}</a>
+          </li>
+        ))
+      }
+      <li><a href={withBase(`${lang}/references`)}>{t.references}</a></li>
+    </ol>
+  </article>
+</ThesisLayout>
+
+<style>
+  .kicker {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .byline {
+    color: var(--muted);
+    margin-top: -0.4rem;
+  }
+  .abstract {
+    border-left: 3px solid var(--sea);
+    padding-left: 1.1rem;
+    margin: 2rem 0;
+  }
+  .abstract h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+  .kw {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin: 2rem 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .cta a {
+    text-decoration: none;
+    padding: 0.55rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .cta .primary {
+    background: var(--sea);
+    color: #fff;
+  }
+  .cta .ghost {
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .toc {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .toc li {
+    margin: 0.3rem 0;
+  }
+</style>

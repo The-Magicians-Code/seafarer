@@ -1,0 +1,17 @@
+---
+import { DEFAULT_LANG, withBase } from '../lib/i18n';
+// Static redirect to the default language landing page.
+const target = withBase(`${DEFAULT_LANG}/`);
+---
+<!doctype html>
+<html lang={DEFAULT_LANG}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Seafarer — thesis</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href={target}>{target}</a>…</p>
+  </body>
+</html>

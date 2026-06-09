@@ -1,0 +1,258 @@
+---
+title: "Riistvara valik"
+order: 4
+slug: "04-hardware"
+lang: "et"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+Riistvara valikul lähtuti etteantud nõuetest, et loodav juhttorni prototüüp toimiks võimalikult veatult ning töökindlalt. Samuti arvestati ka sellega, et juhttorn oleks võimalikult lihtsasti ümber seadistatav erinevatele laevatüüpidele kasutamiseks. Esitatud nõuded süsteemile olid järgnevad:
+
+- Sisendiks kolm kaamerat, resolutsiooniga vähemalt 1000x1000 pikslit
+
+- Laevade tuvastuskiirus vähemalt 15 kaadrit sekundis
+
+Tulevikus plaanitakse taolist süsteemi rakendada erinevatel laevatüüpidel, mistõttu on komponendid valitud laialdaselt kasutatavate ning hõlpsasti saadaolevate seadmete hulgast.
+
+## Juhtkontroller ehk pardaarvuti
+
+Juhtkontroller on seade, mis tegeleb selle külge ühendatud kaameratelt saadud informatsiooni töötlemisega ning tulemuste edastamisega autopiloodile. Pardaarvuti asetseb laeva juhttornis, ümbritsetuna kolmest kaamerast. Kaameratelt saadava info peal (antud kontekstis reaalajas video) rakendatakse analüütilisi algoritme, mille väljundina saadakse info (tuvastatud objektid ning nende suhteline asukoht kaadris), mis edastatakse autopiloodile, andes lisainfot ümbritseva keskkonna kohta, mille põhjal viimane teeb otsuse, kuidas laevaga käituda.
+
+Antud ülesande lahendamiseks on saadaval mitmeid monoplaatarvuteid (*Single-Board Computer*, (SBC) <Cite lang="et" items={[{"n":19,"id":"ref19","title":"Technopedia, Single-Board Computer"}]} />, *System on Module* (SoM)), populaarseimatena Nvidia Jetson seeria <Cite lang="et" items={[{"n":20,"id":"ref20","title":"Nvidia Embedded AI Systems"}]} />, mis on tehisintellekti ning masinnägemise ja masinõppe rakendusteks spetsialiseeritud ja Raspberry Pi <Cite lang="et" items={[{"n":21,"id":"ref21","title":"Raspberry Pi, Model 4B datasheet"}]} />. Antud ülesande lahendamisel välistame Raspberry Pi valikutest kuna juhttorni süsteem hõlmab 4 kaameraga paralleelselt töötamist, (Raspberry Pi’l ainult 1 kaamerasisend). See vajab rohket arvutusvõimsust, kuid antud seadmel pole selle kohast võimekust, ega vajalikku riistvara (seadme protsessoris on küll integreeritud graafikakaart, kuid antud ülesande lahendamiseks jääb see liiga nõrgaks). Seetõttu paralleelsete toimingute jaoks on eelkõige kasulik eraldiseisev graafikakaart (*Graphics Processing Unit* (GPU) <Cite lang="et" items={[{"n":22,"id":"ref22","title":"Graphics Processing Unit"}]} />) koos spetsialiseeritud graafikatuumadega (*CUDA Cores* <Cite lang="et" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} />), mis on Nvidia Jetson arvutite eeliseks.
+
+Jetsonite seeriasse kuuluvad 4 seadet: Nano, TX2, Xavier NX ning AGX Xavier, mille hulgast viimane kõige võimekam (vt Tabel <Ref label="1" title="Tabel 1" href="et/04-hardware#tab:3-1-1" />). Nano on kõige algelisem versioon, millega saab lihtsaimaid masinnägemise rakendusi valmistada, TX2 on sellest mõnevõrra võimekam protsessori ning graafikakaardi arvutusvõimsuse kohalt ning Xavier NX ning AGX Xavier on mõeldud tööstuslikkele kasutusaladele ning nende eelisteks on kuue- ja kaheksatuumalised protsessorid ning Volta arhitektuuriga graafikakaardid, mis sisaldavad ka endas maatriksoperatsioonide kiirendeid (*Tensor Cores*) <Cite lang="et" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} />, (vt Joonis <Ref label="5" title="Joonis 5" href="et/04-hardware#fig:image7" />).
+
+<div id="tab:3-1-1">
+
+<table>
+<caption>Jetson seeria arvutite parameetrid <Cite lang="et" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} /></caption>
+
+<tbody>
+<tr>
+<td><strong>Parameters</strong></td>
+<td><strong>Jetson Nano</strong></td>
+<td><strong>Jetson TX2 Series (NX, TX2i)</strong></td>
+<td><strong>Jetson Xavier Series (NX, AGX)</strong></td>
+</tr>
+<tr>
+<td>AI Performance</td>
+<td>472 GFLOPs</td>
+<td>1.33 TFLOPs</td>
+<td>21/30 TOPs</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>128-core NVIDIA Maxwell™</td>
+<td>256-core NVIDIA Pascal™</td>
+<td>384/512-core NVIDIA Volta™ with 48/64 Tensor Cores</td>
+</tr>
+<tr>
+<td>CPU</td>
+<td>Quad-Core Arm Cortex-A57</td>
+<td>Dual-Core NVIDIA Denver and Quad-Core Arm Cortex-A57</td>
+<td>6/8-core NVIDIA Carmel Arm</td>
+</tr>
+<tr>
+<td>DL Accelerator</td>
+<td><div class="center">
+<hr />
+</div></td>
+<td><div class="center">
+<hr />
+</div></td>
+<td>2x NVDLA v1</td>
+</tr>
+<tr>
+<td>Vision Accelerator</td>
+<td><div class="center">
+<hr />
+</div></td>
+<td><div class="center">
+<hr />
+</div></td>
+<td>2x PVA v1</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td><p>4 GB</p>
+<p>64-bit LPDDR4</p></td>
+<td><p>4/8 GB</p>
+<p>128-bit LPDDR4</p></td>
+<td><p>8/16/32/64 GB</p>
+<p>128-bit LPDDR4x</p></td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>16 GB</td>
+<td>16/32 GB</td>
+<td>16/35/64 GB</td>
+</tr>
+<tr>
+<td>CSI Camera</td>
+<td><p>Up to 4 cameras</p>
+<p>(up to 18 Gbps)</p></td>
+<td>Up to 5/6 cameras (up to 30 Gbps)</td>
+<td><p>Up to 6 cameras</p>
+<p>(up to 62 Gbps)</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+Eeldusel et vaja on analüüsida kolmest kaamerast tulevat infot paralleelselt ning täpselt, oleks kõige mõistlikum kasutada Xavier seeria süsteemi. Seda just seetõttu, et võrreldes teiste seeriatega on Xavier seeria arvutite jõudlus tagatud suurema hulga graafikakaardi tuumadega, uuema arhitektuuriga (Volta <Cite lang="et" items={[{"n":25,"id":"ref25","title":"Nvidia Volta Architecture"}]} />), mis sisaldab endas maatrikskiirendeid (*Tensor Cores*, mida vajavad närvivõrgud maatriksarvutustes) ning süvaõppe kiirendeid (*Deep Learning Accelerator*), mis võimaldavad mitme kaamera sisendiga tõhusamalt operatsioone teha.
+
+Antud seerias on valikus nii NX kui ka AGX Jetsonid, mille hulgast on valitud parimad kandidaadid (vt Tabel <Ref label="2" title="Tabel 2" href="et/04-hardware#tab:3-1-2" />). Nende hulgast sobilikuim on Jetson AGX Xavier, sest antud seade peab olema võimeline jooksutama mahukat närvivõrku ning tegelema mitme operatsiooniga korraga (kaameratelt info lugemine, info töötlemine närvivõrgus, töödeldud info kujutamine väljundvideol), mis nõuab suurt hulka arvutuslikku ressurssi.
+
+<div id="tab:3-1-2">
+
+|  |  |  |
+|:---|:---|:---|
+| **Parameters** | **Jetson AGX Xavier** | **Jetson Xavier NX 16GB** |
+| AI Performance | 32 TOPs | 21 TOPs |
+| GPU | 512-core NVIDIA Volta™ GPU with 64 Tensor Cores | 384-core NVIDIA Volta™ GPU with 48 Tensor Cores |
+| CPU | 8-core NVIDIA Carmel Arm®v8.2 64-bit CPU 8MB L2 + 4MB L3 | 6-core NVIDIA Carmel Arm®v8.2 64-bit CPU 6MB L2 + 4MB L3 |
+| DL Accelerator | 2x NVDLA v1 | 2x NVDLA v1 |
+| Vision Accelerator | 2x PVA v1 | 2x PVA v1 |
+| Memory | 32 GB 256-bit LPDDR4x 136,5 GB/s | 16 GB 128-bit LPDDR4x 59,7 GB/s |
+| Storage | 32 GB eMMC 5.1 | 16 GB eMMC 5.1 |
+| CSI Camera | Up to 6 cameras (up to 62 Gbps) | Up to 6 cameras (up to 30 Gbps) |
+
+Jetson AGX Xavieri ja Xavier NXi parameetrid <Cite lang="et" items={[{"n":24,"id":"ref24","title":"Jetson Modules Technical Specifications"}]} />
+
+</div>
+
+<Figure id="fig:image7" n={5} word="Joonis" src="image7.png">
+Valitud arvuti: Jetson AGX Xavier (paremal ilma jahutusplokita) <Cite lang="et" items={[{"n":26,"id":"ref26","title":"Jetson AGX Xavier"}]} />
+</Figure>
+
+## Tensorituumad ja CUDA
+
+Tensorituumade (*Tensor Core’ide*) puhul on tegemist programmeeritavate maatrikstehete kiirenditega, mis viivad läbi operatsioone CUDA <Cite lang="et" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} /> tuumadega paralleelselt. Antud tuumad rakendavad uuemat sorti ujukomaarvudega ja täisarvudega teostatavad tehted HMMA (*Half-Precision Matrix Multiply and Accumulate*) ja IMMA (*Integer Matrix Multiply and Accumulate*), mille mõjul lineaarsed tehted, signaalitöötlus ning süvaõppeinterferents kiirenevad <Cite lang="et" items={[{"n":27,"id":"ref27","title":"NVIDIA Jetson AGX Xavier Delivers 32 TeraOps for New Era of AI in Robotics"}]} /> (vt Joonis <Ref label="6" title="Joonis 6" href="et/04-hardware#fig:image8" />).
+
+<Figure id="fig:image8" n={6} word="Joonis" src="image8.png">
+Tensor Core, kolmedimensiooniliste 4x4x4 maatriksite korrutamine ning summeerimine <Cite lang="et" items={[{"n":27,"id":"ref27","title":"NVIDIA Jetson AGX Xavier Delivers 32 TeraOps for New Era of AI in Robotics"}]} />
+</Figure>
+
+CUDA puhul on tegemist paralleelarvutuseks mõeldud platvormi ning programmeerimise mudeliga, mis suurendab tehtavate arvutuste hulka mitmekordselt, kasutades selleks protsessori asemel graafikakaarti <Cite lang="et" items={[{"n":23,"id":"ref23","title":"CUDA FAQ"}]} />.
+
+CUDA eesmärgiks on kiirendada paralleelarvutusi ning CUDA tuum on analoogne protsessori tuumaga. Ainukeseks erinevuseks on nende ehitus, protsessori tuum on võimeline lahendama kompleksseid arvutusi jadamisi, CUDA tuum lihtsamaid arvutusi graafikakaardis. Eeliseks graafikakaardil protsessori ees on see, et CUDA tuumasid on ühele kiibile paigutatud tuhandeid, mis võimaldab komplekssed arvutused jagada mitmete tuumade vahel ära ning seetõttu ka sooritada arvutused kiiremini, kui protsessor väiksema arvu võimekamate tuumadega. Antud tehnoloogia on integreeritud ning laialdaselt kasutusel masinõppe vallas Nvidia poolt.
+
+## Kaamerad
+
+Kaamerate puhul tuleb arvestada mitmete parameetritega, et tagada süsteemi nõuetekohasus ning edukas toimimine. Kuna antud ülesandes asetseb masinnägemissüsteem juhttornis, mis kinnitub laeva mastile, tuleb kindlasti arvestada sellega et kaamerad või seade kuhu nad asetatakse, peavad võimelised töötama laialdastes temperatuurivahemikes ning muutlikes ilmastikuoludes. Samuti tuleks kaamera tarkvara puhul eelistada üldjuhul värskeimat ja selgelt dokumenteeritud materjali ning arvestada selle ühilduvust juhtarvutiga. See tagab parema kaamera konfigureerimise ning võimaldab ka seeläbi rakendatavat masinnägemistarkvara hõlpsamini hallata.
+
+Kaamerate valikul arvestati järgnevate parameetritega:
+
+- **Resolutsioon** (pikslites, px) – otseselt seotud objektide tuvastustäpsusega ning tuvastuskiirusega. Mida väiksema resolutsiooniga sisend antakse tuvastusalgoritmile, seda ebatäpsem/ebakindlam on närvivõrgu ennustustulemus. Sel juhul on tuvastusprotsessi kiirus suurem, kuna algoritm tegeleb väiksema andmehulgaga, millega arvutusprotsesse on vähe, mis lõpptulemusena parandab interferentsi kiirust.
+
+> Suurema resolutsiooni korral paraneb seega tuvastustäpsus kuid väheneb interferentsi kiirus, sest sisendandmete hulk suureneb. Suure resolutsiooniga fotol on rohkem informatsiooni, mis omakorda võimaldab närvivõrgul kindlamaid ennustusi anda.
+
+- **Kaadrisagedus** (*Frames per second* – kaadrit sekundis, FPS) – parameeter, mis kirjeldab kaamera informatsioonivoo edastuskiirust ehk suhet edastatava kaadrihulga ning aja vahel. Suur kaadrisagedus tagab visuaalselt sujuvama andmevoo kuvamise ning lihtsama jälgitavuse, samuti on ka andmekadu väiksem. Väikese kaadrisageduse korral oleks objekti jälgimine ning teekonna ennustamine oluliselt raskem, sest visuaalselt on objekti liikumine katkendlik ning seetõttu ka närvivõrgu ennustuste täpsus halvatud.
+
+- **Värvussensor** (mono-, polükromaatiline sensor) – ehk ühevärviline või mitmevärviline sensor. Ühevärviline sensor on sobilik keskkondadesse, kus objekti ning keskkonna vaheline värvikontrast on suur, tagades efektiivse objektituvastuse. Kuna tegemist on monokromaatilise pildiga, siis iga piksli kohta esitatakse üks väärtus, mis jääb kindlasse vahemikku (üldjuhul 0…255 või 0.0…1.0)
+
+> Polükromaatiline sensor sobib seevastu keskkonda, kus kontrast tausta ja objekti vahel ei ole kuigi suur või objekti tuvastamine nõuab rohkem informatsiooni. Sellisel moel pildi edastamisel esitatakse kolm väärtust maatriksina, RGB (vastavalt Red – punane, Green – roheline, Blue - sinine) värvustena vahemikes (0…255 või 0.0…1.0, näiteks \[255, 0, 255\]). Taoline edastusviis on andmete hulgalt kolm korda mahukam kui monokromaatilise pildi edastamisel, kuna iga piksli kohta esitatakse kolm väärtust.
+
+Seadmed, mis eelmainitud parameetrile vastaksid on järgnevad (vt Tabel <Ref label="3" title="Tabel 3" href="et/04-hardware#tab:3-3-1" />):
+
+<div id="tab:3-3-1">
+
+<table>
+<caption>Parameetritele sobilikud kaamerad</caption>
+
+<tbody>
+<tr>
+<td><strong>Kaamera nimi</strong></td>
+<td><strong>Resolutsioon(px)</strong></td>
+<td><strong>Kaadrisagedus (FPS)</strong></td>
+<td colspan="2"><strong>Töötemperatuur (°C)</strong></td>
+<td><strong>Liides</strong></td>
+</tr>
+<tr>
+<td>SurveilsQUAD - Sony IMX290 System <Cite lang="et" items={[{"n":28,"id":"ref28","title":"SurveilsQUAD - Sony IMX290 Synchronized Multi-Camera System"}]} /></td>
+<td>1920x1080</td>
+<td>120</td>
+<td>-30</td>
+<td>85</td>
+<td>CSI</td>
+</tr>
+<tr>
+<td>OpenCV AI Kit: OAK—D <Cite lang="et" items={[{"n":29,"id":"ref29","title":"OpenCV AI Kit: OAK---D-PoE-- OpenCV.AI"}]} /></td>
+<td>1280x800 (stereo) 4056x3040 (keskmine)</td>
+<td><p>120 (stereo)</p>
+<p>60 (keskmine)</p></td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C/PoE</td>
+</tr>
+<tr>
+<td>OpenCV AI Kit: OAK—1-PoE <Cite lang="et" items={[{"n":30,"id":"ref30","title":"OAK-1-PoE --- DepthAI Hardware Documentation 1.0.0 documentation"}]} /></td>
+<td>4056x3040</td>
+<td>60</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C/PoE</td>
+</tr>
+<tr>
+<td>Atlas IP67 7.1 MP Model <Cite lang="et" items={[{"n":31,"id":"ref31","title":"Atlas IP67 7.1 MP Model"}]} /></td>
+<td>3208x2200</td>
+<td>74</td>
+<td>-20</td>
+<td>55</td>
+<td>PoE</td>
+</tr>
+<tr>
+<td>Atlas IP67 2.8 MP Model <Cite lang="et" items={[{"n":32,"id":"ref32","title":"Atlas IP67 2.8 MP Model"}]} /></td>
+<td>1936x1464</td>
+<td>173</td>
+<td>-20</td>
+<td>55</td>
+<td>PoE</td>
+</tr>
+<tr>
+<td>Arducam 12MP IMX477 <Cite lang="et" items={[{"n":33,"id":"ref33","title":"Arducam 12MP IMX477"}]} /></td>
+<td>4056x3040</td>
+<td>60</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>USB-C</td>
+</tr>
+<tr>
+<td>Arducam Fisheye Camera <Cite lang="et" items={[{"n":34,"id":"ref34","title":"Arducam Fisheye Camera for Raspberry Pi -- 5MP OV5647"}]} /></td>
+<td>2592×1944</td>
+<td>30</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>CSI ja Ethernet</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+\*N/A – andmed puuduvad
+
+Töö kirjutamise hetkel kasutati algselt SurveilsQUAD kaameraid, kuna need olid antud arvutisüsteemi jaoks eelnevalt ette valmistatud ning projektis olevate osapoolte poolt olid ka Xavierile vastavad tarkvaralised muudatused tehtud arvutisüsteemide instituudis. Lõputöö kirjutamise käigus valmiv projekt oli arendusfaasis, mistõttu oli ka eelarve piiratud ning piirduti esialgu kaameratega, millel oli katsetuste jaoks põhivõimekus olemas. Juhttorni disaini käigus selgus, et valitud kaamerate paigutus oli lühikeste kaablite tõttu piiratud ning tootja ei tarninud seadmetele pikemaid kaableid.
+
+Seetõttu sai valitud Arducam Mini kaamera (vt Joonis <Ref label="7" title="Joonis 7" href="et/04-hardware#fig:image9" />), mis ühendati raspberry pi külge ning omakorda etherneti kaabliga Ethernet switchi ning sealt lõpuks Jetson Xavieri külge. Sellega lahendus ka kaablite pikkuse probleem ning samuti oli võimalik ka Xavierile installeerida värskeim tarkvara, mida eelmiste kaamerate vananenud draiverid ei toetanud.
+
+<Figure id="fig:image9" n={7} word="Joonis" src="image9.png">
+Arducam Fisheye kaameraga moodul <Cite lang="et" items={[{"n":34,"id":"ref34","title":"Arducam Fisheye Camera for Raspberry Pi -- 5MP OV5647"}]} />
+</Figure>
+
+## Juhttorn
+
+Juhttorn asetseb laeva vööris (vt Joonis <Ref label="9" title="Joonis 9" href="et/04-hardware#fig:image11" />) ning selle ülesanne on laeva juhtimine üle võtta laeva kapteni käsul ning tegeleda sellega autonoomselt võimalikult vähese kapteni sekkumisega. Selleks on tornil olemas aju Jetson AGXi kujul, mis tegeleb kõikidest anduritest ning kaameratest saadava info kogumise, töötlemise ning seejärel juhtimisotsuse edasi saatmisega autopiloodile, mis omakorda saadab signaalid laeva mootoritele ja tüürile. Jetson saab infot oma ümbritseva keskkonna kohta kaameratest, X-band radarist, AISist ning ilmajaamast tuuleanduri kujul. Andmevahetus juhttorni süsteemis toimub läbi etherneti jaoturi ning 4G ruuteri mis võimaldab saata ning vastu võtta andmeid kasutajalt. Samuti on võimalik arendajatel teha tarkvara uuendusi laeva süsteemidele. AIS (Automaatne Identifitseerimise Süsteem) aitab määrata laeva asukoha teiste meresõidukite suhtes, kasutades satelliite, radar tuvastab punktipilvedega lähedasemaid objekte ning kaamerad ja nendel jooksev masinnägemine tuvastab objektide hulgast laevu ja teisi meresõidukeid. AIS, radar ning kaamerad masinnägemisega täiendavad üksteist, aidates laeval enda ümbruskonda tuvastada ning selles orienteeruda. Süsteemi toidab alalisvooluallikas (vt Joonis <Ref label="8" title="Joonis 8" href="et/04-hardware#fig:image10" />).
+
+<Figure id="fig:image10" n={8} word="Joonis" src="image10.png">
+Juhttorni lihtsustatud toimimisskeem
+</Figure>
+
+<Figure id="fig:image11" n={9} word="Joonis" src="image11.jpg">
+Juhttorni asetus patrulllaeval <Cite lang="et" items={[{"n":35,"id":"ref35","title":"Mindchip Artificial Captain"}]} />
+</Figure>

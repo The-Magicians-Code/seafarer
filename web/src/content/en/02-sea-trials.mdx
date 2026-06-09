@@ -1,0 +1,35 @@
+---
+title: "Sea trials"
+order: 2
+slug: "02-sea-trials"
+lang: "en"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+During shipbuilding, the vessel’s parameters need to be determined to confirm that they meet the previously specified requirements. These parameters are also recorded in the vessel’s handbook. To determine them, sea trials have been devised in which the vessel covers a designated route while manual measurements are taken; these measurements are then used to assess the vessel’s capabilities and to inform the development of future vessels.
+
+Sea trials are necessary for measurement accuracy and trial reproducibility. At the time of writing, measurements are taken with precise equipment, but the vessels are operated by different people, and the results are recorded manually – which introduces inaccuracies and does not guarantee consistent reproducibility of the trials.
+
+Several problems arise with manually conducted sea trials:
+
+1.  Differences in measurement results, which depend on the vessel operator’s reactions and psychological state.
+
+2.  Because the vessel is generally operated by a single person during the trials, that person must monitor several activities in parallel while collecting data, which in turn entails partial data loss over certain periods.
+
+3.  Entry of measurement data is not automated; preparing the protocol is labour-intensive and requires the cooperation of several people.
+
+4.  The vessel has no awareness of its surrounding environment (no capability to handle situations and avoid accidents on its own), so this task falls to the captain, whose inattention may create critical situations or cause accidents.
+
+It is therefore reasonable to automate the sea trials. To do so, the vessel would need to be equipped with autonomy-enabling features that allow it to perform the trials on its own and to log data during them.
+
+An autonomous system issues specific navigation commands to the vessel and records data over a designated period. Precise results emerge from the collected material. For example, a vessel moving in waves has a constantly varying speed, so a measured speed is directly tied to the moment of recording. By analysing the data from a chosen recording period, the speed characteristics of the vessel during the trial can be determined. Pre-programmed sea trials help avoid operator-to-operator variability – for example, the rate at which the vessel turns and the time taken to do so depend on the operator’s intuition and other personal traits, which in turn hinders an objective assessment of the vessel’s maximum capability <Cite lang="en" items={[{"n":13,"id":"ref13","title":"Laevade eelseadistatud autonoomsete avaveekatsete tehnoloogia arendamine"}]} /> (see Figure <Ref label="2" title="Figure 2" href="en/02-sea-trials#fig:image4" />).
+
+<Figure id="fig:image4" n={2} word="Figure" src="image4.png">
+Sea trial designed for measuring the vessel’s turning radius <Cite lang="en" items={[{"n":13,"id":"ref13","title":"Laevade eelseadistatud autonoomsete avaveekatsete tehnoloogia arendamine"}]} />
+</Figure>
+
+The information collected during automated sea trials gives vessel designers and engineers a good overview, which in turn is a great help when designing more capable vessels and developing existing watercraft.

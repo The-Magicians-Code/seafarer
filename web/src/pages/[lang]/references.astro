@@ -1,0 +1,65 @@
+---
+import ThesisLayout from '../../layouts/ThesisLayout.astro';
+import references from '../../data/references.json';
+import { ui, LANGS, type Lang } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+const refs = [...references].sort((a, b) => a.n - b.n);
+---
+<ThesisLayout lang={lang} title={t.references} otherPath={lang === 'en' ? 'et/references' : 'en/references'}>
+  <article class="prose">
+    <h1>{t.references}</h1>
+    <ol class="reflist">
+      {
+        refs.map((r) => (
+          <li id={`ref-${r.n}`} value={r.n}>
+            <span class="rtitle">{r.title}</span>
+            {r.url && (
+              <>
+                {' '}
+                <a class="rurl" href={r.url} target="_blank" rel="noopener noreferrer">
+                  {r.url}
+                </a>
+              </>
+            )}
+            {r.urldate && <span class="rdate"> ({r.urldate})</span>}
+          </li>
+        ))
+      }
+    </ol>
+  </article>
+</ThesisLayout>
+
+<style>
+  .reflist {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .reflist li {
+    margin: 0.55rem 0;
+    scroll-margin-top: 5rem;
+  }
+  .reflist li:target {
+    background: #fff6d8;
+    border-radius: 4px;
+    padding: 0.2rem 0.4rem;
+    margin-left: -0.4rem;
+  }
+  .rtitle {
+    color: var(--ink);
+  }
+  .rurl {
+    color: var(--accent);
+    word-break: break-all;
+    font-size: 0.82rem;
+  }
+  .rdate {
+    color: var(--muted);
+  }
+</style>

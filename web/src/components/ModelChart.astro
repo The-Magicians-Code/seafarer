@@ -1,0 +1,160 @@
+---
+import benchmarks from '../data/benchmarks.json';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  id: string;
+  n: number;
+  word: string;
+  lang: Lang;
+  dataset: keyof typeof benchmarks.datasets;
+}
+const { id, n, word, lang, dataset } = Astro.props;
+const ds = benchmarks.datasets[dataset];
+
+const labels = {
+  et: { fp16: 'FP16', unoptimised: 'Optimeerimata', map: 'mean Average Precision', accuracy: 'Täpsus', fpsAxis: 'Kaadrit sekundis', rateAxis: 'mAP / Täpsus' },
+  en: { fp16: 'FP16', unoptimised: 'Unoptimised', map: 'mean Average Precision', accuracy: 'Accuracy', fpsAxis: 'Frames per second', rateAxis: 'mAP / Accuracy' },
+}[lang];
+
+const payload = {
+  models: benchmarks.models,
+  rows: ds.rows,
+  inputShape: ds.inputShape,
+  labels,
+};
+---
+<figure id={id} class="model-chart">
+  <p class="chart-shape" style="font:600 0.8rem ui-monospace,monospace;color:var(--muted);margin:0 0 .4rem">
+    {ds.inputShape}
+  </p>
+  <div class="chart-controls" role="group" aria-label="series toggles">
+    <label><input type="checkbox" data-series="fp16" checked /> <span style="color:#6f9e0e">■</span> {labels.fp16}</label>
+    <label><input type="checkbox" data-series="unoptimised" checked /> <span style="color:#3a86ff">■</span> {labels.unoptimised}</label>
+    <label><input type="checkbox" data-series="map" checked /> <span style="color:#e8a200">■</span> {labels.map}</label>
+    <label><input type="checkbox" data-series="accuracy" checked /> <span style="color:#e1463a">■</span> {labels.accuracy}</label>
+  </div>
+  <div class="chart-fps"></div>
+  <div class="chart-acc"></div>
+  <figcaption><span class="fignum">{word} {n}.</span> <slot /></figcaption>
+  <script type="application/json" class="chart-data" set:html={JSON.stringify(payload)}></script>
+</figure>
+
+<script>
+  import * as Plot from '@observablehq/plot';
+
+  const COLORS = {
+    fp16: '#6f9e0e',
+    unoptimised: '#3a86ff',
+    map: '#e8a200',
+    accuracy: '#e1463a',
+  };
+
+  type Row = { model: string; fp16: number; unoptimised: number; map: number; accuracy: number };
+  type Payload = { models: string[]; rows: Row[]; labels: Record<string, string> };
+
+  function render(fig: HTMLElement) {
+    const dataEl = fig.querySelector<HTMLScriptElement>('.chart-data');
+    if (!dataEl?.textContent) return;
+    const { models, rows, labels } = JSON.parse(dataEl.textContent) as Payload;
+
+    const fpsHost = fig.querySelector<HTMLElement>('.chart-fps')!;
+    const accHost = fig.querySelector<HTMLElement>('.chart-acc')!;
+    const enabled = new Set(
+      [...fig.querySelectorAll<HTMLInputElement>('input[data-series]')]
+        .filter((c) => c.checked)
+        .map((c) => c.dataset.series!),
+    );
+    const width = Math.max(320, Math.min(fig.clientWidth || 720, 860));
+
+    // ---- Speed (FPS) grouped bars -----------------------------------
+    const speedSeries = (['fp16', 'unoptimised'] as const).filter((s) => enabled.has(s));
+    fpsHost.replaceChildren();
+    if (speedSeries.length) {
+      const tidy = rows.flatMap((r) =>
+        speedSeries.map((s) => ({ model: r.model, series: labels[s], value: r[s], key: s })),
+      );
+      fpsHost.append(
+        Plot.plot({
+          width,
+          height: 300,
+          marginBottom: 64,
+          marginLeft: 48,
+          x: { axis: null },
+          fx: { domain: models, label: null, tickRotate: -35 },
+          y: { label: `↑ ${labels.fpsAxis}`, grid: true, nice: true },
+          color: {
+            domain: speedSeries.map((s) => labels[s]),
+            range: speedSeries.map((s) => COLORS[s]),
+            legend: true,
+          },
+          marks: [
+            Plot.barY(tidy, {
+              fx: 'model',
+              x: 'series',
+              y: 'value',
+              fill: 'series',
+              sort: { fx: null },
+              tip: true,
+              title: (d: any) => `${d.model} · ${d.series}\n${d.value} FPS`,
+            }),
+            Plot.ruleY([0]),
+          ],
+        }),
+      );
+    }
+
+    // ---- Accuracy / mAP lines ---------------------------------------
+    const rateSeries = (['map', 'accuracy'] as const).filter((s) => enabled.has(s));
+    accHost.replaceChildren();
+    if (rateSeries.length) {
+      const tidy = rows.flatMap((r) =>
+        rateSeries.map((s) => ({ model: r.model, series: labels[s], value: r[s], key: s })),
+      );
+      accHost.append(
+        Plot.plot({
+          width,
+          height: 240,
+          marginBottom: 64,
+          marginLeft: 48,
+          x: { domain: models, label: null, tickRotate: -35, grid: true },
+          y: { domain: [0, 1], label: `↑ ${labels.rateAxis}`, grid: true },
+          color: {
+            domain: rateSeries.map((s) => labels[s]),
+            range: rateSeries.map((s) => COLORS[s]),
+            legend: true,
+          },
+          marks: [
+            Plot.line(tidy, { x: 'model', y: 'value', stroke: 'series', strokeWidth: 1.5, curve: 'catmull-rom' }),
+            Plot.dot(tidy, {
+              x: 'model',
+              y: 'value',
+              fill: 'series',
+              r: 4,
+              tip: true,
+              title: (d: any) => `${d.model} · ${d.series}\n${d.value.toFixed(2)}`,
+            }),
+          ],
+        }),
+      );
+    }
+  }
+
+  function init() {
+    const figs = [...document.querySelectorAll<HTMLElement>('.model-chart')];
+    for (const fig of figs) {
+      render(fig);
+      fig.querySelectorAll<HTMLInputElement>('input[data-series]').forEach((cb) =>
+        cb.addEventListener('change', () => render(fig)),
+      );
+    }
+    let t: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(t);
+      t = setTimeout(() => figs.forEach(render), 150);
+    });
+  }
+
+  if (document.readyState !== 'loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+</script>

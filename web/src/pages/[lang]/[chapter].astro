@@ -1,0 +1,106 @@
+---
+import { render } from 'astro:content';
+import ThesisLayout from '../../layouts/ThesisLayout.astro';
+import { getChapters, neighbours } from '../../lib/chapters';
+import { ui, LANGS, withBase, type Lang } from '../../lib/i18n';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of LANGS) {
+    const chapters = await getChapters(lang);
+    for (const entry of chapters) {
+      paths.push({ params: { lang, chapter: entry.data.slug }, props: { entry } });
+    }
+  }
+  return paths;
+}
+
+const { entry } = Astro.props;
+const lang = entry.data.lang as Lang;
+const t = ui[lang];
+const chapters = await getChapters(lang);
+const { prev, next } = neighbours(chapters, entry.data.slug);
+const { Content } = await render(entry);
+const otherPath = `${lang === 'en' ? 'et' : 'en'}/${entry.data.slug}`;
+const num = entry.data.order;
+---
+<ThesisLayout lang={lang} title={entry.data.title} otherPath={otherPath}>
+  <article class="prose">
+    <p class="chapter-kicker">{t.chapter} {num}</p>
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </article>
+
+  <nav class="chapter-nav" aria-label="chapters">
+    {
+      prev ? (
+        <a class="prev" href={withBase(`${lang}/${prev.data.slug}`)}>
+          <span>← {t.prev}</span>
+          <strong>{prev.data.title}</strong>
+        </a>
+      ) : (
+        <a class="prev" href={withBase(`${lang}/`)}>
+          <span>← {t.home}</span>
+          <strong>{t.contents}</strong>
+        </a>
+      )
+    }
+    {
+      next ? (
+        <a class="next" href={withBase(`${lang}/${next.data.slug}`)}>
+          <span>{t.next} →</span>
+          <strong>{next.data.title}</strong>
+        </a>
+      ) : (
+        <a class="next" href={withBase(`${lang}/references`)}>
+          <span>{t.next} →</span>
+          <strong>{t.references}</strong>
+        </a>
+      )
+    }
+  </nav>
+</ThesisLayout>
+
+<style>
+  .chapter-kicker {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--sea);
+    margin-bottom: 0.3rem;
+  }
+  .chapter-nav {
+    max-width: 46rem;
+    margin: 3rem auto 0;
+    padding: 1.5rem clamp(1rem, 4vw, 1.5rem) 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  .chapter-nav a {
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    max-width: 48%;
+  }
+  .chapter-nav .next {
+    text-align: right;
+    margin-left: auto;
+  }
+  .chapter-nav span {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .chapter-nav strong {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .chapter-nav a:hover strong {
+    color: var(--accent);
+  }
+</style>

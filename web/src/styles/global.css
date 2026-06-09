@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
+
+:root {
+  --ink: #14181d;
+  --muted: #5b6671;
+  --line: #e3e6ea;
+  --bg: #fbfbf9;
+  --accent: #1d6fb8;
+  --sea: #0c5a78;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Anchor jumps clear the sticky header. */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Reading column ------------------------------------------------ */
+.prose {
+  font-size: 1.075rem;
+  line-height: 1.75;
+}
+.prose > * + * {
+  margin-top: 1.15em;
+}
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin-top: 2.2rem;
+  scroll-margin-top: 5rem;
+}
+.prose h1 {
+  font-size: 1.9rem;
+}
+.prose h2 {
+  font-size: 1.45rem;
+}
+.prose h3 {
+  font-size: 1.2rem;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.prose a:hover {
+  color: var(--sea);
+}
+.prose ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+}
+.prose ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.prose li + li {
+  margin-top: 0.4rem;
+}
+.prose blockquote {
+  border-left: 3px solid var(--line);
+  padding-left: 1rem;
+  color: var(--muted);
+}
+.prose code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: #eef1f4;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+/* ---- Tables -------------------------------------------------------- */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose table caption {
+  caption-side: bottom;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding-top: 0.5rem;
+  text-align: left;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+}
+.prose thead th,
+.prose tr:first-child td {
+  background: #f1f4f6;
+  font-weight: 600;
+}
+
+/* ---- Figures ------------------------------------------------------- */
+figure {
+  margin: 2rem 0;
+}
+figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+figcaption {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+  line-height: 1.5;
+}
+figcaption .fignum {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---- Citations & cross-references --------------------------------- */
+.cite {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cite a {
+  text-decoration: none;
+  color: var(--accent);
+}
+.xref {
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Interactive charts ------------------------------------------- */
+.model-chart figure {
+  margin: 0;
+}
+.model-chart .chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.model-chart .chart-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  user-select: none;
+}
+.model-chart svg {
+  max-width: 100%;
+  height: auto;
+}

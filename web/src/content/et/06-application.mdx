@@ -1,0 +1,99 @@
+---
+title: "Masinnägemise rakendus"
+order: 6
+slug: "06-application"
+lang: "et"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+Antud töö eesmärgiks oli luua masinnägemise rakendus selliselt, et ta oleks võimeline võimalikult varieeruvatel juhtkontrolleritel jooksma. Selleks oli tarvis pakendada rakendus ära nii, et kontrolleris olemasolevaid seadistusi ei muudetaks ega lisanduvaid tarkvarasid ei installitaks. Samal ajal pidi rakendus olema võimeline vastavalt riistvarale valima sisemised seadistused nii, et tarkvara töö oleks võimalikult riistvaralähedane ehk optimeeritud, tagades seetõttu oma universaalsuse. Rakenduse sisendid pidid olema kasutajale lihtsasti interpreteeritavad ning hästi dokumenteeritud, vältimaks valesid sisendeid. Tarkvara takerdunud töö korral oli tähtsal kohal korrektse ja informatiivse veateate kuvamine. Lihtsustatud versioon seadme tarkvaralisest lahendusest on töö autori poolt avaldatud, saadaval ning pidevalt uuendamisel Githubis <Cite lang="et" items={[{"n":56,"id":"ref56","title":"Yolo-dualdev, Develop and deploy TensorRT optimized YOLO models on Nvidia"}]} />.
+
+## Töökeskkond
+
+Tarkvara arendamine ning masinnägemise protsesside töö toimub isoleeritud keskkonnas, mis võimaldab testida tarkvara erinevate riistvara konfiguratsioonidega süsteemidel. Samuti tagab selline arendusvõte turvalisuse ja stabiilsuse poolelt hostsüsteemi tarkvara ning oleku puutumatuse. Konteinerdamine võimaldab ühel seadmel jooksutada mitut rakendust, mis kõik võivad olla erinevate konfiguratsioonidega ning tarkvaradega, seejuures kasutaja poolt määratud otsese ligipääsuga hosti riistvarale (vt Joonis <Ref label="11" title="Joonis 11" href="et/06-application#fig:image13" />).
+
+<Figure id="fig:image13" n={11} word="Joonis" src="image13.png">
+Konteinerdatud rakenduste toimimise lihtsustatud skeem <Cite lang="et" items={[{"n":57,"id":"ref57","title":"Docker, Use containers to Build, Share and Run your applications"}]} />
+</Figure>
+
+Süsteemi arenduseks ja testimiseks loodi keskkond eraldiseisva arendusmasina peal, kasutades virtualiseerimiskeskkonda Dockerit <Cite lang="et" items={[{"n":58,"id":"ref58","title":"Docker: Accelerated, Containerized Application Development"}]} />. Aluseks võeti Nvidia NGC keskkonnast PyTorchi konteiner, mõeldud x86_64 arhitektuuriga seadmetele <Cite lang="et" items={[{"n":59,"id":"ref59","title":"The PyTorch NGC Container"}]} />. Selle sisse ehitati Jetsoni tarkvaraliste spetsiifilisustega analoogne keskkond ning loodi ka koodis arhitektuuripõhised funktsioonid, mis rakendusid vastavalt eripäradele arendussüsteemile ja toodangsüsteemile (vt Joonis <Ref label="12" title="Joonis 12" href="et/06-application#fig:image14" /> ja <Ref label="13" title="Joonis 13" href="et/06-application#fig:image15" />).
+
+<Figure id="fig:image14" n={12} word="Joonis" src="image14.png">
+Arendusmasina konteinerisse installeeritud tarkvarade versioonid, mis ühilduvad toodangmasina konteineri seisundiga kõige paremini
+</Figure>
+
+<Figure id="fig:image15" n={13} word="Joonis" src="image15.png">
+Toodangsüsteemi konteineri tarkvarade versioonid
+</Figure>
+
+Toodangsüsteemi jaoks loodi samuti konteiner, mille põhjaks konfigureeriti samuti NGC keskkonnast konteiner, mis on üles ehitatud L4T (*Linux for Tegra*) süsteemiga, spetsiifiliselt loodud aarch64 arhitektuuriga Jetson seadmetele <Cite lang="et" items={[{"n":60,"id":"ref60","title":"Machine Learning Container for Jetson and JetPack"}]} />. See konfigureeriti vastavalt masinnägemiseks vajalike lisateekide ning seoti riistvaral oleva närvivõrkude mudelite optimeerimise rakendusega TensorRT <Cite lang="et" items={[{"n":61,"id":"ref61","title":"Nvidia TensorRT"}]} />.
+
+## Põhiprogramm
+
+Peamine töö toimub inferentsi skriptis (vt lihtsustatud Joonis <Ref label="14" title="Joonis 14" href="et/06-application#fig:image16" />, tehniline Joonis <Ref label="16" title="Joonis 16" href="et/06-application#fig:image18" />), millele kasutaja annab sisendiks närvivõrgumudeli ning selle vajalikud parameetrid, sisendstriimi (videofail või kaamera) ning vajadusel ka soovitud režiimi (videosalvestus või videoväljastuseta debugimiseks ja kiiruse kontrolliks mõeldud režiim) (vt Joonis <Ref label="15" title="Joonis 15" href="et/06-application#fig:image17" />)
+
+<Figure id="fig:image16" n={14} word="Joonis" src="image16.png">
+Põhiprogrammi lihtsustatud plokkskeem
+</Figure>
+
+<Figure id="fig:image17" n={15} word="Joonis" src="image17.png">
+Põhiprogrammi käitamise näide käsurealt
+</Figure>
+
+Pythoniga käitatakse skript nimega inference.py, millele antakse sisendiks TensorRT-ga optimeeritud mudel, nimega yolov5m6, sisendstriimiks antakse videofail video.mp4, samuti lülitatakse sisse performance režiim, mis käitab protsessi ilma veebiliidese videoväljundita kasutajale, selle abil on võimalik hinnata süsteemi latentsust ning otsest mõju Xavieri ressursside kasutusele.
+
+<Figure id="fig:image18" n={16} word="Joonis" src="image18.png">
+Masinnägemise programmi toimimise lihtsustatud plokkskeem
+</Figure>
+
+Masina arhitektuuri tuvastamiseks kasutatakse pythoni moodulit, vastavalt millele rakendatakse vajalikud seadesätted skripti käitanud keskkonna jaoks. Arenduskeskkonnaks kasutatakse lauarvutit, mis on x86_64 arhitektuuriga, mille seadistamisel initsialiseeritakse vastav videodekooder ning enkooder, samuti määratakse ka erikasutusel olev port ning kaameratest tuleva info jaoks skaleerimise parameeter (vt Joonis <Ref label="17" title="Joonis 17" href="et/06-application#fig:image19" />).
+
+<Figure id="fig:image19" n={17} word="Joonis" src="image19.png">
+Arhitektuuripõhiste parameetrite initsialiseerimine
+</Figure>
+
+Närvivõrgu mudel loetakse sisse kasutaja poolt defineeritud “model” parameetriga, mis kontrollib mudeli olemasolu ning faili formaati, antud juhul on mudeli formaadiks .engine tüüpi TensorRTga <Cite lang="et" items={[{"n":60,"id":"ref60","title":"Machine Learning Container for Jetson and JetPack"}]} /> optimeeritud mudelid. Pärast mudeli formaadi kontrolli loetakse sisse mudeli parameetrite metadata, vastavalt millele allokeeritakse graafikakaardi mälu ning tuumade ressurss.
+
+Kaameratest info lugemiseks kasutatakse Nvidia graafikakaardil asetsevat riistvarakiirendit Nvidia Video Decoder (NVDEC) <Cite lang="et" items={[{"n":62,"id":"ref62","title":"Accelerated GStreamer User Guide"}]} />, mis võimaldab protsessoril ja graafikakaardil tegeleda täielikult närvivõrgu haldamise ning andmete töötlusega.
+
+Kaameratest saadud kaadrid skaleeritakse närvivõrgule sobivasse sisendformaati, seejärel toimub mudelis kaadritelt informatsiooni hankimine ning statistiliste väljundite formuleerimine. Seejärel saadetakse väljundinfo järeltöötlusesse, kus toimub tulemuste vormistamine ning kaadrile tuvastatud objektide asukohtade ning kindluse tõenäosuse kuvamine (vt Joonis <Ref label="18" title="Joonis 18" href="et/06-application#fig:image20" />). Seejärel loetakse sisse uus kaader ning programmi töö kordub kuni enam kaadreid sisse ei tule ehk kas kaamera töö lõpeb või kasutaja lõpetab programmi töö.
+
+<Figure id="fig:image20" n={18} word="Joonis" src="image20.png">
+Kaadrile kuvatud närvivõrgu poolt genereeritud ja töödeldud tuvastused (kastid ja nende sees olevad tuvastatud klassid koos tõenäosustega)
+</Figure>
+
+## Masinnägemise mudeli ja tarkvara optimeerimine
+
+Masinnägemise rakenduse algfaasis esinesid mitmed probleemid nii kaameratelt sisendite lugemisel kui ka masinnägemise mudeli jooksutamisel riistvara peal.
+
+Rakenduse esimeseks probleemiks oli kaameratelt tuleva striimi lugemine mitme sisendi korral, mis oli protsessorile koormav (kaadrite läbilaskevõime oli madal) ning seetõttu ka juhtkontrolleri temperatuur oli kõrge. Selle tagajärjena ei jätkunud ressurssi teistele seadmetele mis Jetsoniga suhtlesid (radari toimimine oli halvatud). Samuti ei olnud ka masinnägemine töövõimeline kuna kogu protsessor oli hõivatud kaameratelt tulevate kaadrite lugemise ning nende ümberskaleerimisega.
+
+Selle lahendamiseks võeti kasutusele Jetsonisse integreeritud riistvaraline videodekooder NVDEC <Cite lang="et" items={[{"n":41,"id":"ref41","title":"Nvidia Video Decoder"}]} />, OpenCV abil, millele anti ette kiirendusega gstreameri käsk, mis sisaldas endas sisendit ja videodekoodri kutsungit.
+
+Teise probleemina ei olnud võimalik suuremaid masinnägemise mudeleid edukalt jooksutada, kuna mudelid laeti protsessori mällu ning marginaalne osa arvutuslikust tööst koos kaadrite töötlusega närvivõrgus kandus graafikakaardile (vt Joonis <Ref label="19" title="Joonis 19" href="et/06-application#fig:image21" />).
+
+<Figure id="fig:image21" n={19} word="Joonis" src="image21.png">
+YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeerimata mudeli jooksmine ei utiliseeri kogu graafikakaarti, monitooringurakenduses jtop <Cite lang="et" items={[{"n":43,"id":"ref43","title":"Jetson-Stats"}]} />
+</Figure>
+
+Antud probleemile leiti lahenduseks Nvidia TensorRT tööriist, mis on võimeline sisendiks võtma mitmes formaadis närvivõrke ning need vastavalt olemasolevale riistvarale kiirendama. Antud tööriista kasutamisel valmistati närvivõrgud ette ONNX <Cite lang="et" items={[{"n":63,"id":"ref63","title":"Open Neural Network Exchange"}]} /> formaadis, mis on kõige universaalsem ning hõlpsasti kasutatav masinõppe mudelite interpreteerimise viis.
+
+TensorRT tööpõhimõte on mudelis kvantiseerimine ehk mudeli parameetrite arvutusliku täpsuse vähendamine (nt 32lt ujukomaarvult, 16le ujukomaarvule), see võimaldab kasutada suure jõudlusega vektorarvutusi selleks spetsialiseeritud riistvaral marginaalsete mõjutustega mudeli täpsusele. Teisena toimub mudeli kärpimine ehk ebavajalike ning minimaalselt mudeli inferentsi tulemusi mõjutavate parameetrite eemaldamine, tehes mudeli mahtu väiksemaks, mille tõttu ka mudeli kiirus paraneb (vt peatükk 5.2).
+
+Optimeerimiste tulemusena (vt Joonis <Ref label="20" title="Joonis 20" href="et/06-application#fig:image22" />) on:
+
+- graafikakaardi kasutus tõusnud (43,1 % langes 99,8 %)
+
+- keskmine energiakasutus vähenenud 26,8 % (20,1 W langes 14,7 W)
+
+- töötemperatuurid langenud 3,3 % (46 ° langes 44,5 °)
+
+- mälu kasutus langenud 1,6 % (18,5 GB langes 18,2 GB)
+
+<Figure id="fig:image22" n={20} word="Joonis" src="image22.png">
+YOLOv5l, ühe sisendiga, resolutsioonil 640x640 pikslit, optimeeritud mudeli jooksmine utiliseerib kogu graafikakaardi
+</Figure>

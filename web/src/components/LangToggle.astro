@@ -1,0 +1,36 @@
+---
+import { ui, withBase, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Equivalent path in the other language, without base, e.g. "en/07-results". */
+  otherPath: string;
+}
+const { lang, otherPath } = Astro.props;
+const other: Lang = lang === 'en' ? 'et' : 'en';
+---
+<div class="lang-toggle" role="group" aria-label="language">
+  <span class="current">{ui[lang].langName}</span>
+  <a href={withBase(otherPath)} hreflang={other}>{ui[lang].otherLang}</a>
+</div>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.82rem;
+  }
+  .lang-toggle .current {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .lang-toggle a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .lang-toggle a:hover {
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+title: "Results"
+order: 7
+slug: "07-results"
+lang: "en"
+---
+
+import Figure from '../../components/Figure.astro';
+import ModelChart from '../../components/ModelChart.astro';
+import Cite from '../../components/Cite.astro';
+import Ref from '../../components/Ref.astro';
+
+Selecting the most suitable model was based on inference speed and the model’s accuracy in evaluating objects. All experiments were carried out on a Jetson AGX Xavier 32 GB unit. The model-evaluation experiments were carried out under ideal conditions, which excluded all possible factors that could introduce deviations in the test results of the evaluated model.
+
+These experiments analyse only the neural-network model’s processing capability, isolated from the rest of the system (cameras, preprocessing of the frames coming from them, and presentation/transmission of the detected-object information from the frames to other systems), in order to obtain the most optimal and bias-free result regarding model performance and hardware utilisation.
+
+## Conducting the experiments
+
+The experimental environment conforms to the following conditions:
+
+1.  The frames used for inference are specifically selected, standardised, and prepared before the test begins – i.e., scaled to the size required for the neural-network input and preprocessed. This excludes any additional work or load on the GPU and CPU that would negatively affect the neural network’s operation, and allows all the tested models to be evaluated equally on a common dataset.
+
+2.  Before each test run, the tested models have undergone a hardware warm-up phase – i.e., have been fully read into the GPU memory of the machine and have run 50 calibration inference iterations using the previously mentioned prepared test frames. This creates an environment in which all models are equally prepared and ready to operate at their maximum capability.
+
+3.  The number of test runs is 1000, during which the inference speed and detection accuracy on the prepared frames are measured.
+
+4.  Detection accuracy is evaluated using the following formula:
+
+> 
+
+$$
+\alpha = \frac{\text{Correct detections}}{\text{All detections}},\ 0 \le \alpha \le 1
+$$
+
+>
+> The closer the result is to one, the more accurate the model and the more capable it is of detecting objects.
+
+1.  The model’s speed is evaluated by the time taken for inference in milliseconds (shown in the charts as the number of frames processed in one second).
+
+Jetson AGX Xavier software configuration:
+
+- JetPack 5.0.2
+
+- Ubuntu 20.04.5
+
+- kernel 5.10.104-tegra
+
+- L4T 35.1.0
+
+- Python 3.8.10
+
+- torch 1.12.0
+
+- torchvision 0.13.0
+
+- cv2 4.5.0
+
+- TensorRT 8.4.1.5
+
+- CUDA 11.4
+
+## Analysis of results
+
+The experiments were run in two configurations: with one frame and with three frames processed in parallel, since in the production environment the neural network processes information from three frames. The *mean Average Precision* parameter shown in the charts (in yellow) expresses the model’s mean total accuracy across all classes; it is derived from experiments carried out on classes selected from the COCO 2017 validation dataset, with an equal number of test samples chosen from all classes <Cite lang="en" items={[{"n":64,"id":"ref64","title":"COCO, Common Objects in Context"}]} />. The *accuracy* parameter (in red) was obtained on a separately created dataset containing only vessels. Results are shown in ascending order of model size (number of parameters) – the smallest model on the left, the largest on the right – to provide an intuitive overview of all parameters.
+
+The accuracy fluctuations seen in the charts for models with larger inputs (see Figures <Ref label="22" title="Figure 22" href="en/07-results#fig:image25" /> and <Ref label="24" title="Figure 24" href="en/07-results#fig:image27" />) are due to the fact that the scaling layers of the “6”-suffixed models were designed for larger input resolutions, while the layers of the other models were designed for smaller input resolutions <Cite lang="en" items={[{"n":65,"id":"ref65","title":"YOLOv5, Pretrained checkpoints"}]} />. The latter therefore exhibit lower accuracy at this resolution.
+
+The speed difference between optimised and unoptimised models is at least twofold; the largest speed difference is 4.28$\times$, for the yolov5l6 pair (see Figure <Ref label="23" title="Figure 23" href="en/07-results#fig:image26" />). The accuracy difference between optimised and unoptimised models is minimal ($1.7 \cdot 10^{-3}$), i.e. optimisation did not significantly affect accuracy. As a result, the accuracy values initially shown on the chart overlapped, so their averaged values are displayed instead.
+
+<ModelChart id="fig:image24" n={21} word="Figure" lang="en" dataset="image24">
+Model performance with a single 640<span class="math inline">×</span>640-pixel frame input
+</ModelChart>
+
+The speed difference between the fastest and slowest optimised model is 108 frames per second, with the best speed-up being fourfold. The mean optimised speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5l model and there is no significant accuracy gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
+
+<ModelChart id="fig:image25" n={22} word="Figure" lang="en" dataset="image25">
+Model performance with a single 1280<span class="math inline">×</span>1280-pixel frame input
+</ModelChart>
+
+The speed difference between the fastest and slowest optimised model is 40 frames per second, with the best speed-up of 4.1$\times$. The mean optimised speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5m model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
+
+The mean speed difference between the single-input 640$\times$640 and 1280$\times$1280 models is 36 frames per second.
+
+<ModelChart id="fig:image26" n={23} word="Figure" lang="en" dataset="image26">
+Model performance with three 640<span class="math inline">×</span>640-pixel frame inputs in parallel
+</ModelChart>
+
+The speed difference between the fastest and slowest optimised model is 52 frames per second, with the best speed-up of 4.3$\times$. The mean optimised speed difference is 3.4$\times$. Model accuracy grows up to the YOLOv5l model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases.
+
+The three-input 640$\times$640 models are on average 1.4$\times$ faster than the single-input models at the same resolution.
+
+<ModelChart id="fig:image27" n={24} word="Figure" lang="en" dataset="image27">
+Model performance with three 1280<span class="math inline">×</span>1280-pixel frame inputs in parallel
+</ModelChart>
+
+The speed difference between the fastest and slowest optimised model is 16 frames per second, with the best speed-up of 4.2$\times$. The mean optimised model speed difference is 3.5$\times$. Model accuracy grows up to the YOLOv5m model and there is no significant gain beyond it; from that model onward the speed-to-accuracy ratio decreases. In this case the models are 1.1$\times$ faster than the single-input models at the same resolution.
+
+The mean speed difference between the three-input 640$\times$640 and 1280$\times$1280 models is 18 frames per second.
+
+The three-input models are on average 1.2$\times$ faster than the single-input models.
